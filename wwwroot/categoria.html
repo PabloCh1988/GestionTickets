@@ -1,0 +1,68 @@
+
+<!-- Tablas Categorias -->
+<div class="grid-margin">
+  <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalCrearCategorias">Agregar
+    Categoria</button>
+</div>
+
+
+<div class="row">
+  <div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Categorías</h4>
+        <div class="table-responsive">
+          <table id="categorias" class="table">
+            <thead>
+              <tr>
+                <th> Id </th>
+                <th> Nombre </th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
+          <!-- MODAL -->
+          <div id="modalCrearCategorias" class="modal fade" tabindex="-1" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Agregar Nueva Categoria</h5>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+
+                    <input type="hidden" id="CategoriaId">
+
+                    <label for="Descripcion" class="form-label">Nombre</label>
+                    <input type="text" id="Descripcion" class="form-control text-light" placeholder="Nombre">
+
+                    <span id="errorCategoria" class="text-danger"></span>
+
+
+                    <p id="errorCrear" hidden style="color:red"></p>
+
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-warning" onclick="VaciarModal()">Cancelar</button>
+                  <button type="button" class="btn btn-outline-primary" onclick="GuardarCategoria();">Guardar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/Categoria.js"></script>
+
+<script type="text/javascript">
+      window.onload = ObtenerCategorias();
+    
+</script>
+
