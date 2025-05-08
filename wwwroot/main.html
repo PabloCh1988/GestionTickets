@@ -15,6 +15,8 @@
   <link rel="stylesheet" href="assets/vendors/flag-icon-css/css/flag-icon.min.css">
   <link rel="stylesheet" href="assets/vendors/owl-carousel-2/owl.carousel.min.css">
   <link rel="stylesheet" href="assets/vendors/owl-carousel-2/owl.theme.default.min.css">
+  <!-- Sweet Alert -->
+  <link href=" https://cdn.jsdelivr.net/npm/sweetalert2@11.21.0/dist/sweetalert2.min.css " rel="stylesheet">
   <!-- End plugin css for this page -->
   <!-- inject:css -->
   <!-- endinject -->
@@ -35,54 +37,7 @@
       </div>
       <ul class="nav">
         <li class="nav-item profile">
-          <div class="profile-desc">
-            <div class="profile-pic">
-              <div class="count-indicator">
-                <img class="img-xs rounded-circle " src="assets/images/faces/face15.jpg" alt="">
-                <span class="count bg-success"></span>
-              </div>
-              <div class="profile-name">
-                <h5 class="mb-0 font-weight-normal">Henry Klein</h5>
-                <span>Gold Member</span>
-              </div>
-            </div>
-            <a href="#" id="profile-dropdown" data-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
-            <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list"
-              aria-labelledby="profile-dropdown">
-              <a href="#" class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-dark rounded-circle">
-                    <i class="mdi mdi-settings text-primary"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <p class="preview-subject ellipsis mb-1 text-small">Account settings</p>
-                </div>
-              </a>
-              <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-dark rounded-circle">
-                    <i class="mdi mdi-onepassword  text-info"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <p class="preview-subject ellipsis mb-1 text-small">Change Password</p>
-                </div>
-              </a>
-              <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-dark rounded-circle">
-                    <i class="mdi mdi-calendar-today text-success"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <p class="preview-subject ellipsis mb-1 text-small">To-do list</p>
-                </div>
-              </a>
-            </div>
-          </div>
+          
         </li>
         <li class="nav-item nav-category">
           <span class="nav-link"></span>
@@ -430,9 +385,10 @@
   <!-- Plugin js for this page -->
   <script src="assets/vendors/chart.js/Chart.min.js"></script>
   <script src="assets/vendors/progressbar.js/progressbar.min.js"></script>
-  <script src="assets/vendors/jvectormap/jquery-jvectormap.min.js"></script>
-  <script src="assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
   <script src="assets/vendors/owl-carousel-2/owl.carousel.min.js"></script>
+  <!-- Sweet Alert -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <!-- End plugin js for this page -->
   <!-- inject:js -->
   <script src="assets/js/off-canvas.js"></script>
@@ -448,16 +404,18 @@
   <script src="js/Categoria.js"></script>
   <script src="js/index.js"></script>
   <script src="js/common/ObtenerCategoriasDropdown.js"></script>
+
   <script src="lib/bootstrap/js/bootstrap.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"
     integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   
   <script type="text/javascript">
-    // window.onload = ObtenerCategorias();
-    window.onload = CargarHtmlTickets();
-    window.onload = CargarHtmlCategorias();
-    // window.onload = ObtenerTickets();
-    window.onload = ObtenerCategoriasDropdown();
+    window.onload = function () {
+      CargarHtmlTickets();
+      CargarHtmlCategorias();
+      ObtenerCategoriasDropdown();
+      ObtenerTickets();
+    }
     
   </script>
 </body>

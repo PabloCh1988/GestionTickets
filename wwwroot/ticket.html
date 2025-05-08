@@ -1,7 +1,7 @@
 
 <!-- Tablas Tickets -->
 <div class="grid-margin">
-  <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalCrearTickets">Agregar
+  <button class="btn btn-outline-success" data-bs-toggle="modal" onclick="AbrirModalCrearTicket()">Agregar
     Ticket</button>
 </div>
 
@@ -42,13 +42,13 @@
                   <div class="row">
 
                     <label for="Titulo" class="form-label">Titulo</label>
-                    <input type="text" id="Titulo" class="form-control" placeholder="Titulo">
+                    <input type="text" id="Titulo" class="form-control text-light" placeholder="Titulo">
 
                     <label for="Descripcion" class="form-label">Descripción</label>
-                    <input type="text" id="Descripcion" class="form-control" placeholder="Descripción">
+                    <input type="text" id="Descripcion" class="form-control text-light" placeholder="Descripción">
 
                     <label for="Prioridad" class="form-label">Prioridad</label>
-                    <select id="Prioridad" class="form-control">
+                    <select id="Prioridad" class="form-control text-light">
                       <option value="Baja">Baja</option>
                       <option value="Media">Media</option>
                       <option value="Alta">Alta</option>
@@ -58,7 +58,7 @@
                     <select id="Usuario" class="form-control form-select"></select> -->
 
                     <label for="CategoriaId" class="form-label">Categoría</label>
-                    <select id="CategoriaId" class="form-control form-select"></select>
+                    <select id="CategoriaId" class="form-control form-select text-light"></select>
 
 
                     <p id="errorCrear" hidden style="color:red"></p>
@@ -66,8 +66,52 @@
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-outline-warning" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="button" class="btn btn-outline-warning" onclick="VaciarModalTicket()"">Cancelar</button>
                   <button type="button" class="btn btn-outline-primary" onclick="CrearTicket();">Guardar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MODAL Editar-->
+          <div id="modalEditarTickets" class="modal fade" tabindex="-1" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Editar Ticket</h5>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+
+                    <input type="hidden" id="ticketId">
+
+                    <label for="TituloEditar" class="form-label">Titulo</label>
+                    <input type="text" id="TituloEditar" class="form-control text-light">
+
+                    <label for="DescripcionEditar" class="form-label">Descripción</label>
+                    <input type="text" id="DescripcionEditar" class="form-control text-light">
+
+                    <label for="PrioridadEditar" class="form-label">Prioridad</label>
+                    <select id="PrioridadEditar" class="form-control text-light">
+                      <option value="Baja">Baja</option>
+                      <option value="Media">Media</option>
+                      <option value="Alta">Alta</option>
+                    </select>
+
+                    <!-- <label for="Usuario" class="form-label">Usuario</label>
+                    <select id="Usuario" class="form-control form-select"></select> -->
+
+                    <label for="CategoriaIdEditar" class="form-label">Categoría</label>
+                    <select id="CategoriaIdEditar" class="form-control form-select text-light"></select>
+
+
+                    <p id="errorEditar" hidden style="color:red"></p>
+
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-warning" onclick="VaciarModalTicket()">Cancelar</button>
+                  <button type="button" class="btn btn-outline-primary" onclick="EditarTicket();">Guardar</button>
                 </div>
               </div>
             </div>
@@ -77,11 +121,16 @@
     </div>
   </div>
 </div>
-<!-- <script src="js/common/ObtenerCategoriasDropdown.js"></script>
+
 <script src="js/Ticket.js"></script>
+<script src="js/common/ObtenerCategoriasDropdown.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
 <script type="text/javascript">
-      window.onload = ObtenerTickets();
-      window.onload = ObtenerCategoriasDropdown();
+      window.onload = function(){
+      ObtenerTickets();
+      ObtenerCategoriasDropdown();
+      }
     
-</script> -->
+</script>

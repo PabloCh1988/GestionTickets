@@ -1,4 +1,7 @@
+console.log("Archivo Categoria.js cargado correctamente.");
+
 function CargarHtmlCategorias() {
+    // console.log("CargarHtmlCategorias ejecutada.");
     fetch("categoria.html")
         .then(response => response.text()) // Obtener el contenido del archivo HTML
         .then(data => {
@@ -20,22 +23,25 @@ const authHeaders = () => ({
 
 
 async function ObtenerCategorias() {
-    const res = await fetch(API_URLCategoria); //Realizar la petición a la API
-    const categorias = await res.json(); //Convertir la respuesta a JSON
-    const tbody = document.querySelector("#categorias tbody"); //Seleccionar el tbody de la tabla
-    tbody.innerHTML = ""; //Limpiar el contenido del tbody
+    const tbody = document.querySelector("#categorias tbody"); // Seleccionar el tbody de la tabla
+    if (!tbody) {
+        console.error("El elemento <tbody> no existe en el DOM.");
+        return;
+    }
 
-    categorias.forEach(cat => { //Recorrer cada categoría y crear una fila en la tabla
-        const row = document.createElement("tr"); //Crear una nueva fila
-        //Agregar el contenido de la fila con los datos de la categoría
+    const res = await fetch(API_URLCategoria); // Realizar la petición a la API
+    const categorias = await res.json(); // Convertir la respuesta a JSON
+    tbody.innerHTML = ""; // Limpiar el contenido del tbody
 
-        row.innerHTML = ` 
+    categorias.forEach(cat => { // Recorrer cada categoría y crear una fila en la tabla
+        const row = document.createElement("tr"); // Crear una nueva fila
+        row.innerHTML = `
             <td>${cat.categoriaId}</td>
             <td>${cat.descripcion}</td>
             <td><button class="btn btn-outline-success" onclick="AbrirModalEditar(${cat.categoriaId}, '${cat.descripcion}')">Editar</button></td>
             <td><button class="btn btn-outline-danger" onclick="EliminarCategoria(${cat.categoriaId})">Eliminar</button></td>
         `;
-        tbody.appendChild(row); //Agregar la fila al tbody
+        tbody.appendChild(row); // Agregar la fila al tbody
     });
 }
 
@@ -45,25 +51,6 @@ function AbrirModalEditar(categoriaId, descripcion) {
     $('#modalCrearCategorias').modal('show'); //Mostrar el modal
 }
 
-// function ObtenerCategorias() {
-//     fetch(API_URLCategoria)
-//         .then(response => response.json())
-//         .then(data => MostrarCategorias(data))
-//         .catch(error => console.error("No se pudo acceder a la api, verifique el mensaje de error: ", error))
-// }
-
-// function MostrarCategorias(data) {
-//     $("#categorias").empty();
-//     $.each(data, function (i, item) {
-//         $("#categorias").append(`
-//             <tr>
-//                 <td>${item.categoriaId}</td>
-//                 <td>${item.descripcion}</td>
-//                 <td><button class="btn btn-outline-success" onclick="EditarCategoria(${item.categoriaId})">Editar</button></td>
-//                 <td><button class="btn btn-outline-danger" onclick="EliminarCategoria(${item.categoriaId})">Eliminar</button></td>
-//             </tr>`);
-//     });
-// }
 
 function VaciarModal() {
     $("#Descripcion").val("");
@@ -115,135 +102,79 @@ async function CrearCategorias() {
         $('#errorCrear').empty(); // Limpiar los mensajes de error
         ObtenerCategorias();
         VaciarModal();
+
+        Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Categoría creada",
+            background: '#000000',
+            color: '#f1f1f1',
+            showConfirmButton: false,
+            timer: 1500
+          });
     } else {
         alert("Error al crear: " + await res.text());
     }
 }
 
 async function EditarCategorias(categoriaId) {
-    let idCategoria = document.getElementById("CategoriaId").value;
-    let editarCategoria = {
-        categoriaId: idCategoria,
-        descripcion: document.getElementById("Descripcion").value
-    } // Crear un objeto con la descripción y el ID de la categoría
+    // Obtener los valores del formulario
+    const descripcion = document.getElementById("Descripcion").value.trim();
 
-    if (editarCategoria.descripcion == "") {
-        mensajesError('#errorCrear', null, "El campo Nombre es requerido.")
+    // Validar que la descripción no esté vacía
+    if (!descripcion) {
+        mensajesError('#errorCrear', null, "El campo Descripción es requerido.");
         return;
-    } // Validar que la descripción no esté vacía
+    }
 
-    const res = await fetch(`${API_URLCategoria}/${categoriaId}`, {
-        method: "PUT",
-        headers: authHeaders(),
-        body: JSON.stringify(editarCategoria)
-    })  // Realizar la petición a la API
-        .then(response => response.json) // // Convertir la respuesta a JSON
-    .then(response => {
-            if (response.codigo != 1) {
-                document.getElementById("errorCategoria").textContent = response.mensaje;
-                alert("Error al actualizar: " +  res.text()); // Mostrar mensaje de error
-            }
-            else {
-                document.getElementById("CategoriaId").value = 0; // Limpiar el campo de ID
-                document.getElementById("Descripcion").value = ""; // Limpiar el campo de descripción
-                $('#errorCrear').empty(); // Limpiar los mensajes de error
-                ObtenerCategorias();
-                VaciarModal();
-            }
-        })
-    // if (res.ok) {
-    //     document.getElementById("CategoriaId").value = 0; // Limpiar el campo de ID
-    //     document.getElementById("Descripcion").value = ""; // Limpiar el campo de descripción
-    //     $('#errorCrear').empty(); // Limpiar los mensajes de error
-    //     ObtenerCategorias();
-    //     VaciarModal();
-    // } else {
-    //     alert("Error al actualizar: " + await res.text()); // Mostrar mensaje de error
-    // }
+    // Crear el objeto con los datos de la categoría
+    const editarCategoria = {
+        categoriaId: categoriaId, // Usar el ID pasado como argumento
+        descripcion: descripcion
+    };
+
+    try {
+        // Realizar la solicitud PUT a la API
+        const res = await fetch(`${API_URLCategoria}/${categoriaId}`, {
+            method: "PUT",
+            headers: authHeaders(),
+            body: JSON.stringify(editarCategoria)
+        });
+
+        if (res.ok) {
+            // Si la solicitud fue exitosa, limpiar el modal y actualizar la lista
+            VaciarModal();
+            ObtenerCategorias();
+        } else {
+            // Si la solicitud falla, mostrar el mensaje de error devuelto por el servidor
+            const errorText = await res.text();
+            mensajesError('#errorCrear', null, `Error al actualizar: ${errorText}`);
+        }
+    } catch (error) {
+        // Manejar errores de red u otros problemas
+        console.error("Error al actualizar la categoría:", error);
+        mensajesError('#errorCrear', null, "Ocurrió un error al intentar actualizar la categoría.");
+    }
 }
 
-// function GuardarCategoria() {
-//     let categoriaId = document.getElementById("CategoriaId").value;
-//     let descripcion = document.getElementById("Descripcion").value;
-
-
-//     let categoria = {
-//         descripcion: descripcion
-//     };
-
-//     if (categoriaId) { // Si categoriaId tiene un valor, actualiza
-//         GuardarCategoriaActualizada(categoriaId, categoria);
-//     } else { // Si no tiene valor, crea una nueva categoría
-//         CrearCategoria();
-//     }
-// }
-
-// function CrearCategoria() {
-//     let crearCategoria = {
-//         descripcion: document.getElementById("Descripcion").value,
-//     }
-//     if (crearCategoria.descripcion == "") {
-//         mensajesError('#errorCrear', null, "El campo Descripcion es requerido.")
-//         return;
-//     }
-//     fetch(API_URLCategoria, {
-//         method: "POST",
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify(crearCategoria)
-//     })
-//         .then(response => response.json())
-//         .then(data => {
-//             if (data.status == undefined || data.status == 204) {
-//                 VaciarModal();
-//                 ObtenerCategorias();
-//             } else {
-//                 mensajesError('#errorCrear', data);
-//             }
-//         })
-//         .catch(error => console.error("No se pudo acceder a la API, verifique el mensaje de error: ", error));
-// }
-
-// function EditarCategoria(categoriaId) {
-//     fetch(`${API_URLCategoria}/${categoriaId}`)
-//         .then(response => response.json())
-//         .then(data => {
-//             $("#Descripcion").val(data.descripcion);
-//             $("#CategoriaId").val(data.categoriaId);
-//             $('#modalCrearCategorias').modal('show');
-//         })
-//         .catch(error => console.error("No se pudo acceder a la API, verifique el mensaje de error: ", error));
-// }
-
-// function GuardarCategoriaActualizada(categoriaId, categoria) {
-//     fetch(`${API_URLCategoria}/${categoriaId}`, {
-//         method: "PUT",
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify(categoria)
-//     })
-
-//         .then(response => response.json())
-//         .then(data => {
-//             if (data.status == undefined || data.status == 204) {
-//                 document.getElementById("CategoriaId").value = 0;
-//                 document.getElementById("Descripcion").value = "";
-//                 VaciarModal();
-//                 ObtenerCategorias();
-//             } else {
-//                 mensajesError('#errorCrear', data);
-//             }
-//         })
-//         .catch(error => console.error("No se pudo acceder a la API, verifique el mensaje de error: ", error));
-// }
 
 function EliminarCategoria(categoriaId) {
-    let siElimina = confirm("¿Está seguro de eliminar esta categoría?.")
-    if (siElimina == true) {
-        EliminarSi(categoriaId);
-    }
+// Mostrar un mensaje de confirmación antes de eliminar la categoría
+    Swal.fire({
+        title: "Estas seguro de eliminar esta categoria?",
+        icon: 'warning',
+        background: '#000000',
+        color: '#f1f1f1',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminarla'
+      }).then((result) => {
+        if (result.isConfirmed) {
+            EliminarSi(categoriaId);
+        
+        }
+      });
 }
 
 function EliminarSi(categoriaId) {
@@ -251,21 +182,20 @@ function EliminarSi(categoriaId) {
         method: "DELETE"
     })
         .then(() => {
+            Swal.fire({
+                title: "Eliminado!",
+                text: "La categoría ha sido eliminada.",
+                icon: 'success',
+                background: '#000000',
+                color: '#f1f1f1',
+                showConfirmButton: false,
+                timer: 1500
+            });
             ObtenerCategorias();
         })
         .catch(error => console.error("No se pudo acceder a la api, verifique el mensaje de error: ", error))
 }
 
-// function ActualizarCategoria(categoriaId) {
-//     fetch(`${API_URLCategoria}/${categoriaId}`)
-//         .then(response => response.json())
-//         .then(data => {
-//             $("#Descripcion").val(data.descripcion);
-//             $("#categoriaId").val(data.categoriaId);
-//             $('#modalCrearCategorias').modal('show');
-//         })
-//         .catch(error => console.error("No se pudo acceder a la api, verifique el mensaje de error: ", error))
-// }
 
 function mensajesError(id, data, mensaje) {
     $(id).empty();

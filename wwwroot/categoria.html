@@ -17,11 +17,14 @@
               <tr>
                 <th> Id </th>
                 <th> Nombre </th>
+                <i class="bi bi-pencil-square"></i>
                 <th></th>
                 <th></th>
               </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+              <!-- Aquí se llenará la tabla con JavaScript -->
+            </tbody>
           </table>
 
           <!-- MODAL -->
@@ -60,9 +63,12 @@
 </div>
 
 <script src="js/Categoria.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script type="text/javascript">
-      window.onload = ObtenerCategorias();
+      window.onload = function () {
+        ObtenerCategorias();
+      }
     
 </script>
 

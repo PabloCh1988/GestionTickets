@@ -51,10 +51,8 @@ namespace GestionTickets.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(ticket).State = EntityState.Modified;
-
             try 
-            {
+            {   // PARA QUE FUNCIONE ESTE PUT DEBEMOS ELIMINAR EL MODIFIED DE LA CLASE TICKET
                 //LLAMADA A LA BASE DE DATOS PARA EDITAR UN TICKET
                 // Se busca el ticket por su ID
                 var ticketEditar = await _context.Tickets.FindAsync(id);

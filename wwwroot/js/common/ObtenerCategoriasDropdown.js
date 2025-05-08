@@ -12,4 +12,11 @@ function CompletarDropdown(data) {
             "<option value='"+ item.categoriaId + "'>" + item.descripcion + "</option>"            
         )
     })
+
+    $("#CategoriaIdEditar").empty();
+    $.each(data, function(index, item) {
+        $('#CategoriaIdEditar').append(
+            "<option value='"+ item.categoriaId + "'>" + item.descripcion + "</option>"            
+        )
+    })
 }

@@ -3609,6 +3609,10 @@
       "PackagePath": "staticwebassets\\gulpfile.js"
     },
     {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\img\\pencil-square.svg",
+      "PackagePath": "staticwebassets\\img\\pencil-square.svg"
+    },
+    {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\index.html",
       "PackagePath": "staticwebassets\\index.html"
     },
@@ -3623,6 +3627,10 @@
     {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\common\\ObtenerCategoriasDropdown.js",
       "PackagePath": "staticwebassets\\js\\common\\ObtenerCategoriasDropdown.js"
+    },
+    {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\common\\auth.js",
+      "PackagePath": "staticwebassets\\js\\common\\auth.js"
     },
     {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\index.js",

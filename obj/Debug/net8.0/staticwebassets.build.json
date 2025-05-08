@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "1kpuhxJMPZRA82k99Kqo0MlWveXeF0tTAy1fNSZK2Hg=",
+  "Hash": "B6QjhaB8zS4bZUYxrDbogoAohdfmAdfHWoJfgWWpWA0=",
   "Source": "GestionTickets",
   "BasePath": "_content/GestionTickets",
   "Mode": "Default",
@@ -17155,6 +17155,25 @@
       "OriginalItemSpec": "wwwroot\\gulpfile.js"
     },
     {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\img\\pencil-square.svg",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "img/pencil-square.svg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\img\\pencil-square.svg"
+    },
+    {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\index.html",
       "SourceId": "GestionTickets",
       "SourceType": "Discovered",
@@ -17191,6 +17210,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\Categoria.js"
+    },
+    {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\common\\auth.js",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "js/common/auth.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\common\\auth.js"
     },
     {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\common\\ObtenerCategoriasDropdown.js",

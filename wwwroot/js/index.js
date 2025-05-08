@@ -1,13 +1,13 @@
-const signUpButton = document.getElementById('signUp'); 
+const signUpButton = document.getElementById('signUp');
 const signInButton = document.getElementById('signIn');
 const container = document.getElementById('container'); //
 
 signUpButton.addEventListener('click', () => {
-	container.classList.add("right-panel-active");
+    container.classList.add("right-panel-active");
 });
 
 signInButton.addEventListener('click', () => {
-	container.classList.remove("right-panel-active");
+    container.classList.remove("right-panel-active");
 });
 
 
@@ -29,7 +29,15 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
     }); // Enviar la solicitud POST a la API
 
     const result = await response.text(); // Obtener la respuesta de la API
-    alert(result);
+
+    Swal.fire({
+        title: 'Respuesta del servidor',
+        text: result,
+        icon: 'info',
+        background: '#000000',
+        color: '#f1f1f1',
+        confirmButtonText: 'Aceptar'
+    });
 });
 
 document.getElementById("loginForm").addEventListener("submit", async (e) => { // Agregar el evento de envío al formulario de inicio de sesión
@@ -50,47 +58,70 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => { /
         const result = await response.json(); // Obtener la respuesta de la API        
         // document.getElementById("tokenOutput").textContent = result.token;
         localStorage.setItem("token", result.token); // Guardar el token en el almacenamiento local
-        window.location.href = "main.html"; // Redirigir a la página principal
+        // Mensaje de éxito para el usuaio logueado
+        Swal.fire({
+            title: 'Usuario logueado',
+            text: 'Bienvenido ' + data.email,
+            icon: 'success',
+            background: '#000000',
+            color: '#f1f1f1',
+            confirmButtonColor: '#8f5fe8',
+            confirmButtonText: 'Aceptar'
+        })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "main.html"; // Redirigir a la página principal luego de Aceptar
+                }
+            });
+
     } else {
-        alert("Login fallido");
+        Swal.fire({
+            title: "Login Fallido",
+            text: "Por favor verifique su usuario y contraseña.",
+            icon: 'error',
+            background: '#000000',
+            color: '#f1f1f1',
+            confirmButtonColor: '#8f5fe8',
+            confirmButtonText: 'Aceptar'
+        });
     }
 });
 
- //FUNCION DE LEER TOKEN DEL DISPOSITIVO
- const getToken = () => localStorage.getItem("token");
+//FUNCION DE LEER TOKEN DEL DISPOSITIVO
+const getToken = () => localStorage.getItem("token");
 
- async function cerrarSesion() {
-     const token = getToken();//
-     const email = localStorage.getItem("email"); // suponiendo que guardaste el email al hacer login
+async function cerrarSesion() {
+    const token = getToken();//
+    const email = localStorage.getItem("email"); // suponiendo que guardaste el email al hacer login
 
-     if (!token || !email) { //
-         localStorage.removeItem("token");
-         localStorage.removeItem("email");
-         window.location.href = "index.html";
-         return;
-     }
+    if (!token || !email) { //
+        localStorage.removeItem("token");
+        localStorage.removeItem("email");
+        window.location.href = "index.html";
+        return;
+    }
 
-     try {
-         const res = await fetch("https://localhost:7065/api/auth/logout", {
-             method: "POST",
-             headers: {
-                 "Content-Type": "application/json",
-                 "Authorization": `Bearer ${token}`
-             },
-             body: JSON.stringify({ email })
-         });
+    try {
+        const res = await fetch("https://localhost:7065/api/auth/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ email })
+        });
 
-         if (res.ok) {
-             alert("Sesión cerrada correctamente");
-         } else {
-             alert("Error al cerrar sesión: " + await res.text());
-         }
-     } catch (error) {
-         console.error("Error en logout:", error);
-     }
+        if (res.ok) {
+            alert("Sesión cerrada correctamente");
+        } else {
+            alert("Error al cerrar sesión: " + await res.text());
+        }
+    } catch (error) {
+        console.error("Error en logout:", error);
+    }
 
-     // Limpiar token y redirigir
-     localStorage.removeItem("token");
-     localStorage.removeItem("email");
-     window.location.href = "index.html";
- }
+    // Limpiar token y redirigir
+    localStorage.removeItem("token");
+    localStorage.removeItem("email");
+    window.location.href = "index.html";
+}

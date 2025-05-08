@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionTickets.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250424225917_MigracionInicial")]
+    [Migration("20250505222525_MigracionInicial")]
     partial class MigracionInicial
     {
         /// <inheritdoc />
