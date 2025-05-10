@@ -50,20 +50,26 @@ namespace GestionTickets.Controllers
             {
                 return BadRequest();
             }
+            // Verifica si ya existe un Ticket con la misma descripción
+            var existeTicket = await _context.Tickets.Where(t => t.Titulo == ticket.Titulo && t.TicketId != id).CountAsync(); 
+            if (existeTicket > 0)
+            {
+                return BadRequest("Ya existe un ticket con la misma descripción.");
+            }
 
-            try 
+            try
             {   // PARA QUE FUNCIONE ESTE PUT DEBEMOS ELIMINAR EL MODIFIED DE LA CLASE TICKET
                 //LLAMADA A LA BASE DE DATOS PARA EDITAR UN TICKET
                 // Se busca el ticket por su ID
                 var ticketEditar = await _context.Tickets.FindAsync(id);
-            if(ticketEditar != null)
-            {
-                ticketEditar.Titulo = ticket.Titulo;
-                ticketEditar.Descripcion = ticket.Descripcion;
-                ticketEditar.Prioridad = ticket.Prioridad;
-                ticketEditar.CategoriaId = ticket.CategoriaId;
-   
-            }
+                if (ticketEditar != null)
+                {
+                    ticketEditar.Titulo = ticket.Titulo;
+                    ticketEditar.Descripcion = ticket.Descripcion;
+                    ticketEditar.Prioridad = ticket.Prioridad;
+                    ticketEditar.CategoriaId = ticket.CategoriaId;
+
+                }
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)

@@ -48,8 +48,8 @@ function MostrarTickets(data) {
             "<td>" + item.fechaCierre + "</td>",
             "<td>" + item.usuarioClienteId + "</td>",
             "<td>" + item.categoriaId + "</td>",
-            "<td><button class='btn btn-primary' onclick='BuscarTicketId(" + item.ticketId + ")'>Editar</button></td>",
-            "<td><button class='btn btn-danger' onclick='EliminarTicket(" + item.ticketId + ")'>Eliminar</button></td>",
+            "<td><button class='btn btn-outline-success  mdi mdi-border-color' onclick='BuscarTicketId(" + item.ticketId + ")'></button></td>",
+            "<td><button class='btn btn-outline-danger   mdi mdi-close' onclick='EliminarTicket(" + item.ticketId + ")'></button></td>",
             "</tr>"
         );
     });
@@ -63,6 +63,8 @@ function VaciarModalTicket() {
     $('#errorCrearTicket').empty(); // Limpiar mensajes de error
     $('#errorCrear').empty(); // Limpiar mensajes de error
     $('#errorEditar').empty(); // Limpiar mensajes de error
+    $('#modalCrearTickets').modal('hide'); // Cerrar el modal
+    $('#modalEditarTickets').modal('hide'); // Cerrar el modal de edición
 }
 
 

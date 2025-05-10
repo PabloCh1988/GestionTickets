@@ -49,7 +49,7 @@ namespace GestionTickets.Controllers
             var existeCategoria = await _context.Categorias.Where(c => c.Descripcion == categoria.Descripcion && c.CategoriaId != id).CountAsync(); // Verifica si ya existe una categoría con la misma descripción
             if (existeCategoria > 0)
             {
-                return BadRequest(new {codigo = 0, mensaje = "Ya existe una categoría con la misma descripción."}); 
+                return BadRequest("Ya existe una categoría con la misma descripción."); 
             }
 
             if (id != categoria.CategoriaId)
@@ -108,8 +108,6 @@ namespace GestionTickets.Controllers
             categoria.Eliminado = true; // Marca la categoría como eliminada
             await _context.SaveChangesAsync();
 
-            // _context.Categorias.Remove(categoria);
-            // await _context.SaveChangesAsync();
 
             return NoContent();
         }

@@ -21132,4 +21132,18 @@ div.tagsinput {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
 
+  .fila-desactivada {
+    background-color: #6c7293 !important; /* Rojo claro tipo Bootstrap */
+    color: #ffffff !important;            /* Texto rojo oscuro */
+    opacity: 0.7;                         Opcional: hace ver la fila más tenue
+}
+.btn-activado {
+    background-color: #28a745 !important; /* Verde */
+    color: #fff !important;
+}
+.btn-desactivado {
+    background-color: #dc3545 !important; /* Rojo */
+    color: #fff !important;
+}
+
 /*# sourceMappingURL=maps/style.css.map */

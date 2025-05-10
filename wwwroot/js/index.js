@@ -56,7 +56,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => { /
 
     if (response.ok) {
         const result = await response.json(); // Obtener la respuesta de la API        
-        // document.getElementById("tokenOutput").textContent = result.token;
+        
         localStorage.setItem("token", result.token); // Guardar el token en el almacenamiento local
         // Mensaje de éxito para el usuaio logueado
         Swal.fire({
@@ -87,14 +87,13 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => { /
     }
 });
 
-//FUNCION DE LEER TOKEN DEL DISPOSITIVO
-const getToken = () => localStorage.getItem("token");
-
 async function cerrarSesion() {
-    const token = getToken();//
-    const email = localStorage.getItem("email"); // suponiendo que guardaste el email al hacer login
+    const getToken = () => localStorage.getItem("token");
 
-    if (!token || !email) { //
+    const token = getToken();
+    const email = localStorage.getItem("email");
+
+    if (!token || !email) {
         localStorage.removeItem("token");
         localStorage.removeItem("email");
         window.location.href = "index.html";
@@ -112,16 +111,34 @@ async function cerrarSesion() {
         });
 
         if (res.ok) {
-            alert("Sesión cerrada correctamente");
+            Swal.fire({
+                title: "Sesión cerrada",
+                text: "Has cerrado sesión correctamente.",
+                icon: "success",
+                confirmButtonText: "Aceptar"
+            }).then(() => {
+                localStorage.removeItem("token");
+                localStorage.removeItem("email");
+                window.location.href = "index.html";
+            });
         } else {
-            alert("Error al cerrar sesión: " + await res.text());
+            const errorText = await res.text();
+            Swal.fire({
+                title: "Error",
+                text: `Error al cerrar sesión: ${errorText}`,
+                icon: "error",
+                confirmButtonText: "Aceptar"
+            });
         }
     } catch (error) {
         console.error("Error en logout:", error);
+        Swal.fire({
+            title: "Error",
+            text: "Ocurrió un error al intentar cerrar sesión.",
+            icon: "error",
+            confirmButtonText: "Aceptar"
+        });
     }
-
-    // Limpiar token y redirigir
-    localStorage.removeItem("token");
-    localStorage.removeItem("email");
-    window.location.href = "index.html";
 }
+
+window.cerrarSesion = cerrarSesion;
