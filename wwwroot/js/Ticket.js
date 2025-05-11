@@ -38,21 +38,26 @@ function MostrarTickets(data) {
     $("#todosLosTickets").empty(); // Limpiar la tabla antes de llenarla
     $.each(data, function (index, item) {
         $("#todosLosTickets").append(
-            "<tr>",
-            "<td>" + item.ticketId + "</td>",
-            "<td>" + item.titulo + "</td>",
-            "<td>" + item.descripcion + "</td>",
-            "<td>" + item.estado + "</td>",
-            "<td>" + item.prioridad + "</td>",
-            "<td>" + item.fechaCreacion + "</td>",
-            "<td>" + item.fechaCierre + "</td>",
-            "<td>" + item.usuarioClienteId + "</td>",
-            "<td>" + item.categoriaId + "</td>",
-            "<td><button class='btn btn-outline-success  mdi mdi-border-color' onclick='BuscarTicketId(" + item.ticketId + ")'></button></td>",
-            "<td><button class='btn btn-outline-danger   mdi mdi-close' onclick='EliminarTicket(" + item.ticketId + ")'></button></td>",
+            "<tr>" +
+            // "<td>" + item.ticketId + "</td>" + // Eliminado: no mostrar el ID
+            "<td>" + item.titulo + "</td>" +
+            "<td>" + item.descripcion + "</td>" +
+            "<td>" + item.estado + "</td>" +
+            "<td>" + item.prioridad + "</td>" +
+            "<td>" + formatearFecha(item.fechaCreacion) + "</td>" +
+            "<td>" + formatearFecha(item.fechaCierre) + "</td>" +
+            // "<td>" + item.usuarioClienteId + "</td>" +
+            "<td>" + item.categoriaId + "</td>" +
+            "<td><button class='btn btn-outline-success  mdi mdi-border-color' onclick='BuscarTicketId(" + item.ticketId + ")'></button></td>" +
+            "<td><button class='btn btn-outline-danger   mdi mdi-close' onclick='EliminarTicket(" + item.ticketId + ")'></button></td>" +
             "</tr>"
         );
     });
+}
+function formatearFecha(fecha) {
+    if (!fecha) return "";
+    // Quita la 'T' y los milisegundos si existen
+    return fecha.replace('T', ' ').split('.')[0];
 }
 
 function VaciarModalTicket() {

@@ -96,12 +96,12 @@ function renderizarCategoriasJQuery(data) {
                 "<td>" + item.descripcion + "</td>" +
                 "<td>" +
                     // Botón de edición
-                    "<button class='btn btn-outline-success  mdi mdi-border-color' data-action='edit' style='" + botonEditarVisible + " onclick=\"AbrirModalEditar(" + item.categoriaId + ", '" + item.descripcion.replace(/'/g, "\\'") + "')\">" +
+                    "<button class='btn btn-outline-success mdi mdi-border-color' data-action='edit' style='" + botonEditarVisible + "' onclick=\"AbrirModalEditar(" + item.categoriaId + ", '" + item.descripcion.replace(/'/g, "\\'") + "')\">" +
                     "</button>" +
                 "</td>" +
                 "<td>" +
                     // Botón de activación/desactivación
-                    "<button class='" + "' data-action='delete' style='background: none; border: none;' onclick=\"ToggleEliminado(" + item.categoriaId + ", " + item.eliminado + ")\" title='" + (item.eliminado ? "Activar categoría" : "Desactivar categoría") + "'>" +
+                    "<button class='' data-action='delete' style='background: none; border: none;' onclick=\"ToggleEliminado(" + item.categoriaId + ", " + item.eliminado + ")\" title='" + (item.eliminado ? "Activar categoría" : "Desactivar categoría") + "'>" +
                         "<i class='btn btn-outline-danger " + iconClass + "'></i>" +
                     "</button>" +
                 "</td>" +
