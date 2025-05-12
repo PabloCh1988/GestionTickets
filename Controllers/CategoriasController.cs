@@ -31,7 +31,7 @@ namespace GestionTickets.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Categoria>> GetCategoria(int id)
         {
-            var categoria = await _context.Categorias.FindAsync(id);
+            var categoria = await _context.Categorias.FindAsync(id); // Verifica si la categoría existe
 
             if (categoria == null)
             {
@@ -45,9 +45,10 @@ namespace GestionTickets.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategoria(int id, Categoria categoria)
-        {
+        { 
             var existeCategoria = await _context.Categorias.Where(c => c.Descripcion == categoria.Descripcion && c.CategoriaId != id).CountAsync(); // Verifica si ya existe una categoría con la misma descripción
-            if (existeCategoria > 0)
+            if (existeCategoria > 0) // Si existe una categoría con la misma descripción y un id diferente al que se está actualizando
+            // se retorna un mensaje de error
             {
                 return BadRequest("Ya existe una categoría con la misma descripción."); 
             }
@@ -84,7 +85,8 @@ namespace GestionTickets.Controllers
         public async Task<ActionResult<Categoria>> PostCategoria(Categoria categoria)
         {
             var existeCategoria = await _context.Categorias.Where(c => c.Descripcion == categoria.Descripcion).CountAsync(); // Verifica si ya existe una categoría con la misma descripción
-            if (existeCategoria > 0)
+            if (existeCategoria > 0) // Si existe una categoría con la misma descripción
+            // se retorna un mensaje de error
             {
                 return BadRequest("Ya existe una categoría con la misma descripción.");
             }
@@ -100,13 +102,13 @@ namespace GestionTickets.Controllers
         public async Task<IActionResult> DeleteCategoria(int id)
         {
             var categoria = await _context.Categorias.FindAsync(id); // Verifica si la categoría existe
-            if (categoria == null)
+            if (categoria == null) // Si la categoria existe
             {
                 return NotFound();
             }
 
             categoria.Eliminado = true; // Marca la categoría como eliminada
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); 
 
 
             return NoContent();

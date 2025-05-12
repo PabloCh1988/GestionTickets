@@ -1,25 +1,25 @@
-const signUpButton = document.getElementById('signUp');
-const signInButton = document.getElementById('signIn');
-const container = document.getElementById('container'); //
+const signUpButton = document.getElementById('signUp'); // Obtener el botón de registro
+const signInButton = document.getElementById('signIn'); // Obtener el botón de inicio de sesión
+const container = document.getElementById('container'); // Obtener el contenedor principal
 
-signUpButton.addEventListener('click', () => {
-    container.classList.add("right-panel-active");
+signUpButton.addEventListener('click', () => { // Agregar evento al botón de registro
+    container.classList.add("right-panel-active"); // Agregar clase al contenedor para mostrar el formulario de registro
 });
 
-signInButton.addEventListener('click', () => {
-    container.classList.remove("right-panel-active");
+signInButton.addEventListener('click', () => { // Agregar evento al botón de inicio de sesión
+    container.classList.remove("right-panel-active"); // Quitar clase al contenedor para mostrar el formulario de inicio de sesión
 });
 
 
 const apiBase = "https://localhost:7065/api/auth"; //MEDIO DE CONEXION A LA API
 
 document.getElementById("registerForm").addEventListener("submit", async (e) => { // Agregar el evento de envío al formulario de registro
-    e.preventDefault(); // Prevenir el comportamiento predeterminado del formulario
+    e.preventDefault(); // Prevenir el comportamiento predeterminado del formulario, es decir, que se recargue la pagina
     // Obtener los valores de los campos del formulario
     const data = {
-        nombreCompleto: document.getElementById("regNombre").value,
-        email: document.getElementById("regEmail").value,
-        password: document.getElementById("regPassword").value
+        nombreCompleto: document.getElementById("regNombre").value, // Obtener el nombre completo
+        email: document.getElementById("regEmail").value, // Obtener el email
+        password: document.getElementById("regPassword").value // Obtener la contraseña
     };
 
     const response = await fetch(`${apiBase}/register`, {
@@ -29,7 +29,7 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
     }); // Enviar la solicitud POST a la API
 
     const result = await response.text(); // Obtener la respuesta de la API
-
+    // Mostrar mensaje de éxito o error
     Swal.fire({
         title: 'Respuesta del servidor',
         text: result,
@@ -58,7 +58,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => { /
         const result = await response.json(); // Obtener la respuesta de la API        
         
         localStorage.setItem("token", result.token); // Guardar el token en el almacenamiento local
-        // Mensaje de éxito para el usuaio logueado
+        // Mensaje de éxito para el usuario logueado
         Swal.fire({
             title: 'Usuario logueado',
             text: 'Bienvenido ' + data.email,
@@ -86,20 +86,21 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => { /
         });
     }
 });
-
+ // Función para cerrar sesión
+// Esta función se encarga de cerrar la sesión del usuario y redirigirlo a la página de inicio de sesión
 async function cerrarSesion() {
     const getToken = () => localStorage.getItem("token");
 
     const token = getToken();
     const email = localStorage.getItem("email");
-
+    // Verificar si el token y el email existen
     if (!token || !email) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("email");
-        window.location.href = "index.html";
+        localStorage.removeItem("token");// Eliminar el token del almacenamiento local
+        localStorage.removeItem("email");// Eliminar el email del almacenamiento local
+        window.location.href = "index.html";// Redirigir a la página de inicio de sesión
         return;
     }
-
+    // Realizar la solicitud de cierre de sesión a la API
     try {
         const res = await fetch("https://localhost:7065/api/auth/logout", {
             method: "POST",
@@ -109,9 +110,9 @@ async function cerrarSesion() {
             },
             body: JSON.stringify({ email })
         });
-
+        // Verificar la respuesta de la API
         if (res.ok) {
-            Swal.fire({
+            Swal.fire({ // Mostrar mensaje de éxito
                 title: "Sesión cerrada",
                 text: "Has cerrado sesión correctamente.",
                 icon: "success",

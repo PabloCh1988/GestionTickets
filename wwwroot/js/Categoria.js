@@ -1,7 +1,5 @@
-console.log("Archivo Categoria.js cargado correctamente.");
-
+// Cargar el contenido del archivo HTML al cargar la página
 function CargarHtmlCategorias() {
-    // console.log("CargarHtmlCategorias ejecutada.");
     fetch("categoria.html")
         .then(response => response.text()) // Obtener el contenido del archivo HTML
         .then(data => {
@@ -27,7 +25,7 @@ async function ObtenerCategorias() {
     renderizarCategoriasJQuery(categorias); // Usar el renderizado jQuery personalizado
 }
 
-// ToggleEliminado actualizado para funcionar correctamente con el renderizado jQuery
+// Función para eliminar una categoría y mostrar un mensaje de confirmación
 async function ToggleEliminado(categoriaId, estadoActual) {
     try {
         // Obtener la categoría completa antes de actualizar
@@ -38,7 +36,7 @@ async function ToggleEliminado(categoriaId, estadoActual) {
             throw new Error("No se pudo obtener la categoría actual");
         }
         const categoria = await resGet.json();
-        categoria.eliminado = !estadoActual;
+        categoria.eliminado = !estadoActual; // Cambiar el estado de eliminado
 
         // Enviar el objeto completo actualizado
         const res = await fetch(`${API_URLCategoria}/${categoriaId}`, {
@@ -46,9 +44,9 @@ async function ToggleEliminado(categoriaId, estadoActual) {
             headers: authHeaders(),
             body: JSON.stringify(categoria)
         });
-
+        // Verificar si la respuesta fue exitosa
         if (res.ok) {
-            Swal.fire({
+            Swal.fire({ // Mostrar mensaje de éxito
                 title: "Estado actualizado",
                 text: `La categoría ha sido ${categoria.eliminado ? "deshabilitada" : "habilitada"}.`,
                 icon: "success",
@@ -57,8 +55,9 @@ async function ToggleEliminado(categoriaId, estadoActual) {
                 showConfirmButton: false,
                 timer: 1200
             });
-            ObtenerCategorias();
-        } else {
+            ObtenerCategorias(); // Actualizar la lista de categorías
+        } else { // Si hubo un error, mostrar mensaje de error
+            // Obtener el mensaje de error del servidor
             const errorText = await res.text();
             Swal.fire({
                 title: "Error",
@@ -86,13 +85,13 @@ async function ToggleEliminado(categoriaId, estadoActual) {
 function renderizarCategoriasJQuery(data) {
     $('#todasLasCategorias').empty();
     $.each(data, function (index, item) {
-        let categoriaClass = item.eliminado ? "fila-desactivada" : ""; // Clase para categorías eliminadas
-        let iconClass = item.eliminado ? "mdi mdi-close-box" : "mdi mdi-close"; // Ícono de habilitar/deshabilitar
-        // let buttonColorClass = item.eliminado ? "btn-activado" : "btn-desactivado";
+        let categoriaDesactivada = item.eliminado ? "fila-desactivada" : ""; // Clase para categorías eliminadas
+        let iconoHabilitado = item.eliminado ? "mdi mdi-close-box" : "mdi mdi-close"; // Ícono de habilitar/deshabilitar
         let botonEditarVisible = item.eliminado ? "display: none;" : "";
 
         $('#todasLasCategorias').append(
-            "<tr class='" + categoriaClass + "'>" +
+            "<tr class='" + categoriaDesactivada + "'>" +
+                "<td>" + item.categoriaId + "</td>" +
                 "<td>" + item.descripcion + "</td>" +
                 "<td>" +
                     // Botón de edición
@@ -102,7 +101,7 @@ function renderizarCategoriasJQuery(data) {
                 "<td>" +
                     // Botón de activación/desactivación
                     "<button class='' data-action='delete' style='background: none; border: none;' onclick=\"ToggleEliminado(" + item.categoriaId + ", " + item.eliminado + ")\" title='" + (item.eliminado ? "Activar categoría" : "Desactivar categoría") + "'>" +
-                        "<i class='btn btn-outline-danger " + iconClass + "'></i>" +
+                        "<i class='btn btn-outline-danger " + iconoHabilitado + "'></i>" +
                     "</button>" +
                 "</td>" +
             "</tr>"
@@ -126,14 +125,14 @@ function VaciarModal() {
 }
 
 function GuardarCategoria() {
-    let categoriaId = document.getElementById("CategoriaId").value;
-    let descripcion = document.getElementById("Descripcion").value;
+    let categoriaId = document.getElementById("CategoriaId").value; // Obtener el ID de la categoría
+    let descripcion = document.getElementById("Descripcion").value; // Obtener el valor de la descripción
 
-
+    // Crear un objeto con la descripción
     let categoria = {
         descripcion: descripcion
     };
-
+    // Validar que la descripción no esté vacía
     if (descripcion.descripcion == "") {
         mensajesError('#errorCrear', null, "El campo Descripcion es requerido.")
         return;
@@ -150,11 +149,11 @@ async function CrearCategorias() {
     const crearCategoria = {
         descripcion: document.getElementById("Descripcion").value
     }; // Crear un objeto con la descripción
-
+    // Validar que la descripción no esté vacía
     if (crearCategoria.descripcion == "") {
         mensajesError('#errorCrear', null, "El campo Nombre es requerido.")
         return;
-    } // Validar que la descripción no esté vacía
+    } 
 
     const res = await fetch(API_URLCategoria, {
         method: "POST",
@@ -179,7 +178,9 @@ async function CrearCategorias() {
             timer: 1500
           });
     } else {
-        alert("Error al crear: " + await res.text());
+        // alert("Error al crear: " + await res.text());
+        const errorText = await res.text();
+            mensajesError('#errorCrear', null, `Error al crear: ${errorText}`);
     }
 }
 
@@ -203,7 +204,7 @@ async function EditarCategorias(categoriaId) {
         // Realizar la solicitud PUT a la API
         const res = await fetch(`${API_URLCategoria}/${categoriaId}`, {
             method: "PUT",
-            headers: authHeaders(),
+            headers: authHeaders(), //
             body: JSON.stringify(editarCategoria)
         });
 
@@ -222,46 +223,6 @@ async function EditarCategorias(categoriaId) {
         mensajesError('#errorCrear', null, "Ocurrió un error al intentar actualizar la categoría.");
     }
 }
-
-
-// function EliminarCategoria(categoriaId) {
-// // Mostrar un mensaje de confirmación antes de eliminar la categoría
-//     Swal.fire({
-//         title: "Estas seguro de eliminar esta categoria?",
-//         icon: 'warning',
-//         background: '#000000',
-//         color: '#f1f1f1',
-//         showCancelButton: true,
-//         confirmButtonColor: '#3085d6',
-//         cancelButtonColor: '#d33',
-//         confirmButtonText: 'Sí, eliminarla'
-//       }).then((result) => {
-//         if (result.isConfirmed) {
-//             EliminarSi(categoriaId);
-        
-//         }
-//       });
-// }
-
-// function EliminarSi(categoriaId) {
-//     fetch(`${API_URLCategoria}/${categoriaId}`, {
-//         method: "DELETE"
-//     })
-//         .then(() => {
-//             Swal.fire({
-//                 title: "Eliminado!",
-//                 text: "La categoría ha sido eliminada.",
-//                 icon: 'success',
-//                 background: '#000000',
-//                 color: '#f1f1f1',
-//                 showConfirmButton: false,
-//                 timer: 1500
-//             });
-//             ObtenerCategorias();
-//         })
-//         .catch(error => console.error("No se pudo acceder a la api, verifique el mensaje de error: ", error))
-// }
-
 
 function mensajesError(id, data, mensaje) {
     $(id).empty();
@@ -284,30 +245,3 @@ function mensajesError(id, data, mensaje) {
 
     $(id).attr("hidden", false);
 }
-
-// $.each(data, function (index, item) { // Recorremos cada categoría que vino desde la API.
-
-//         let categoriaClass = item.eliminado ? "fila-desactivada" : ""; // Clase para categorías eliminadas.
-//         let iconClass = item.eliminado ? "fas fa-toggle-on icono-activar" : "fas fa-toggle-off icono-activar"; // Ícono de habilitar/deshabilitar.
-//         let buttonColorClass = item.eliminado ? "btn-activado" : "btn-desactivado"; // Clases para color de activación/desactivación.
-//         let visibilityEditButton = item.eliminado ? "display: none;" : ""; // Ocultar botón de edición si está eliminado.
-
-//         // Crear la fila de la categoría con descripción y los botones.
-//         $('#todasLasCategorias').append(
-//             "<tr class='" + categoriaClass + "'>" +
-//                 "<td>" + item.descripcion + "</td>" + 
-//                 "<td>" +
-//                     // Botón de edición con solo el ícono, tamaño más grande y animación
-//                     "<button class='btn btn-editar' data-action='edit' style='" + visibilityEditButton + " background: none; border: none;' onclick='MostrarModalEditarCategoria(" + item.id + ", \"" + item.descripcion + "\")' title='Editar categoría'>" +
-//                         "<i class='fas fa-pencil-alt icono-editar'></i>" +
-//                     "</button>" +
-//                 "</td>" +
-//                 "<td>" +
-//                     // Botón de activación/desactivación con solo el ícono, tamaño más grande y animación
-//                     "<button class='btn btn-activar " + buttonColorClass + "' data-action='delete' style='background: none; border: none;' onclick='EliminarCategoriaId(" + item.id + ", " + item.eliminado + ")' title='" + (item.eliminado ? "Activar categoría" : "Desactivar categoría") + "'>" +
-//                         "<i class='" + iconClass + "'></i>" +
-//                     "</button>" +
-//                 "</td>" +
-//             "</tr>"
-//         );
-//     });

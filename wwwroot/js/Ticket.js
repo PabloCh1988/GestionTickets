@@ -121,8 +121,9 @@ async function CrearTicket() {
       });
 
     } else {
-    const errorText = await response.json();
-    mensajesError('#errorCrearTicket', null, errorText.message || "Error al crear el ticket."); // Si hay errores del servidor, mostrar mensajes de error
+    const errorText = await response.text(); // Manejar errores
+    console.log(errorText);
+    mensajesError('#errorCrear', null, `Error al crear: ${errorText}`); // Si hay errores del servidor, mostrar mensajes de error
 
     console.error("Error al crear el ticket:", errorText);
     }  

@@ -52,7 +52,8 @@ namespace GestionTickets.Controllers
             }
             // Verifica si ya existe un Ticket con la misma descripción
             var existeTicket = await _context.Tickets.Where(t => t.Titulo == ticket.Titulo && t.TicketId != id).CountAsync(); 
-            if (existeTicket > 0)
+            if (existeTicket > 0) // Si existe un ticket con la misma descripción y un id diferente al que se está actualizando
+            // se retorna un mensaje de error
             {
                 return BadRequest("Ya existe un ticket con la misma descripción.");
             }
@@ -63,12 +64,13 @@ namespace GestionTickets.Controllers
                 // Se busca el ticket por su ID
                 var ticketEditar = await _context.Tickets.FindAsync(id);
                 if (ticketEditar != null)
-                {
+                {  // Campos que se pueden editar
+                    // Se asignan los nuevos valores a los campos editables
                     ticketEditar.Titulo = ticket.Titulo;
                     ticketEditar.Descripcion = ticket.Descripcion;
                     ticketEditar.Prioridad = ticket.Prioridad;
                     ticketEditar.CategoriaId = ticket.CategoriaId;
-
+                    
                 }
                 await _context.SaveChangesAsync();
             }
@@ -91,7 +93,16 @@ namespace GestionTickets.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Ticket>> PostTicket(Ticket ticket)
-        {
+        {  // Verifica si ya existe un Ticket con la misma descripción
+            var yaExisteTicket = await _context.Tickets.Where(t => t.Titulo == ticket.Titulo).CountAsync(); 
+            if (yaExisteTicket > 0) // Si existe un ticket con la misma descripción
+            // se retorna un mensaje de error
+            {
+                return BadRequest("Ya existe un ticket con la misma descripción.");
+            }
+            
+             // Al crear un nuevo ticket, se asignan valores por defecto a los campos
+            // que no se envían en la solicitud
             ticket.FechaCreacion = DateTime.Now; // Asignar la fecha de creación al crear un nuevo ticket
             ticket.FechaCierre = Convert.ToDateTime("01/01/2025"); // Asignar una fecha de cierre por defecto
             ticket.Estado = EstadoTicket.Abierto; // Asignar el estado por defecto al crear un nuevo ticket
@@ -99,7 +110,7 @@ namespace GestionTickets.Controllers
             _context.Tickets.Add(ticket);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTicket", new { id = ticket.TicketId }, ticket);
+            return CreatedAtAction("GetTicket", new { id = ticket.TicketId }, ticket); // Retorna el ticket creado
         }
 
         // DELETE: api/Tickets/5
