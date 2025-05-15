@@ -7,7 +7,7 @@ const del = require('del');
 
 gulp.task('clean:vendors', function () {
     return del([
-      './assets/vendors/**/*'
+      '../assets/vendors/**/*'
     ]);
 });
 

@@ -1,28 +1,27 @@
-
 <!-- Tablas Tickets -->
-<div class="grid-margin">
-  <button class="btn btn-outline-success" data-bs-toggle="modal" onclick="AbrirModalCrearTicket()">Agregar
-    Ticket</button>
-</div>
+
 
 
 <div class="row">
   <div class="col-12 grid-margin">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Tickets</h4>
+        <h1 class="card-title">Tickets</h4>
+        <div class="grid-margin">
+          <button class="btn-lg btn-inverse-success" data-bs-toggle="modal" onclick="AbrirModalCrearTicket()">Agregar
+            Ticket</button>
+        </div>
         <div class="table-responsive">
-          <table class="table">
+          <table class="table table-hover">
             <thead>
               <tr>
-                
+
                 <th>Titulo</th>
                 <th>Descripcion</th>
                 <th>Estado</th>
                 <th>Prioridad</th>
                 <th>Fecha de Creación</th>
-                <th>Fecha de Cierre</th>
-                
+                <!-- <th>Fecha de Cierre</th> -->
                 <th>Categoria</th>
                 <th></th>
                 <th></th>
@@ -45,14 +44,15 @@
                     <input type="text" id="Titulo" class="form-control text-light" placeholder="Titulo">
 
                     <label for="Descripcion" class="form-label">Descripción</label>
-                    <input type="text" id="Descripcion" class="form-control text-light" placeholder="Descripción">
+                    <textarea name="Descripcion" id="Descripcion" class="form-control text-light" placeholder="Descripcion"></textarea>
+                    
 
                     <label for="Prioridad" class="form-label">Prioridad</label>
                     <select id="Prioridad" class="form-control text-light">
                       <option value="Baja">Baja</option>
                       <option value="Media">Media</option>
                       <option value="Alta">Alta</option>
-                    </select>                  
+                    </select>
 
                     <label for="CategoriaId" class="form-label">Categoría</label>
                     <select id="CategoriaId" class="form-control form-select text-light"></select>
@@ -62,8 +62,8 @@
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-outline-warning" onclick="VaciarModalTicket()"">Cancelar</button>
-                  <button type="button" class="btn btn-outline-primary" onclick="CrearTicket();">Guardar</button>
+                  <button type="button" class="btn btn-inverse-warning" onclick="VaciarModalTicket()"">Cancelar</button>
+                  <button type=" button" class="btn btn-inverse-primary" onclick="CrearTicket();">Guardar</button>
                 </div>
               </div>
             </div>
@@ -85,14 +85,14 @@
                     <input type="text" id="TituloEditar" class="form-control text-light">
 
                     <label for="DescripcionEditar" class="form-label">Descripción</label>
-                    <input type="text" id="DescripcionEditar" class="form-control text-light">
+                    <textarea name="Descripcion" id="DescripcionEditar" class="form-control text-light"></textarea>
 
                     <label for="PrioridadEditar" class="form-label">Prioridad</label>
                     <select id="PrioridadEditar" class="form-control text-light">
                       <option value="Baja">Baja</option>
                       <option value="Media">Media</option>
                       <option value="Alta">Alta</option>
-                    </select>                    
+                    </select>
 
                     <label for="CategoriaIdEditar" class="form-label">Categoría</label>
                     <select id="CategoriaIdEditar" class="form-control form-select text-light"></select>
@@ -102,8 +102,8 @@
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-outline-warning" onclick="VaciarModalTicket()">Cancelar</button>
-                  <button type="button" class="btn btn-outline-primary" onclick="EditarTicket();">Guardar</button>
+                  <button type="button" class="btn btn-inverse-warning" onclick="VaciarModalTicket()">Cancelar</button>
+                  <button type="button" class="btn btn-inverse-primary" onclick="EditarTicket();">Guardar</button>
                 </div>
               </div>
             </div>
@@ -120,9 +120,9 @@
 
 
 <script type="text/javascript">
-      window.onload = function(){
-      ObtenerTickets();
-      ObtenerCategoriasDropdown();
-      }
-    
+  window.onload = function () {
+    ObtenerTickets();
+    ObtenerCategoriasDropdown();
+  }
+
 </script>

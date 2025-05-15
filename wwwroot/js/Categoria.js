@@ -91,17 +91,16 @@ function renderizarCategoriasJQuery(data) {
 
         $('#todasLasCategorias').append(
             "<tr class='" + categoriaDesactivada + "'>" +
-                "<td>" + item.categoriaId + "</td>" +
                 "<td>" + item.descripcion + "</td>" +
                 "<td>" +
                     // Botón de edición
-                    "<button class='btn btn-outline-success mdi mdi-border-color' data-action='edit' style='" + botonEditarVisible + "' onclick=\"AbrirModalEditar(" + item.categoriaId + ", '" + item.descripcion.replace(/'/g, "\\'") + "')\">" +
+                    "<button class='btn btn-inverse-success mdi mdi-border-color' data-action='edit' style='" + botonEditarVisible + "' onclick=\"AbrirModalEditar(" + item.categoriaId + ", '" + item.descripcion.replace(/'/g, "\\'") + "')\">" +
                     "</button>" +
                 "</td>" +
                 "<td>" +
                     // Botón de activación/desactivación
                     "<button class='' data-action='delete' style='background: none; border: none;' onclick=\"ToggleEliminado(" + item.categoriaId + ", " + item.eliminado + ")\" title='" + (item.eliminado ? "Activar categoría" : "Desactivar categoría") + "'>" +
-                        "<i class='btn btn-outline-danger " + iconoHabilitado + "'></i>" +
+                        "<i class='btn btn-inverse-danger " + iconoHabilitado + "'></i>" +
                     "</button>" +
                 "</td>" +
             "</tr>"
@@ -147,7 +146,7 @@ function GuardarCategoria() {
 
 async function CrearCategorias() {
     const crearCategoria = {
-        descripcion: document.getElementById("Descripcion").value
+        descripcion: document.getElementById("Descripcion").value.trim()
     }; // Crear un objeto con la descripción
     // Validar que la descripción no esté vacía
     if (crearCategoria.descripcion == "") {
@@ -178,7 +177,6 @@ async function CrearCategorias() {
             timer: 1500
           });
     } else {
-        // alert("Error al crear: " + await res.text());
         const errorText = await res.text();
             mensajesError('#errorCrear', null, `Error al crear: ${errorText}`);
     }

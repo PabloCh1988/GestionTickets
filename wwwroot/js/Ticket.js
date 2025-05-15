@@ -9,11 +9,19 @@ function CargarHtmlTickets() {
         .catch(error => console.error("Error al cargar el archivo", error))
 }
 
-function ObtenerTickets() {
-    fetch(API_URLTicket)
-        .then(response => response.json())
-        .then(data => MostrarTickets(data))
-        .catch(error => console.error("No se pudo acceder a la api, verifique el mensaje de error: ", error))
+const API_URLTicket = "https://localhost:7065/api/tickets"
+
+async function ObtenerTickets() {
+    const getToken = () => localStorage.getItem("token"); // Obtener el token del localStorage
+
+    const authHeaders = () => ({
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${getToken()}`
+    }); // Configurar los headers de autenticación
+
+    const res = await fetch(API_URLTicket, { headers: authHeaders() });
+    const tickets = await res.json();
+    MostrarTickets(tickets); // Usar la función para mostrar los tickets
 }
 
 
@@ -22,48 +30,43 @@ function AbrirModalCrearTicket() {
     $('#modalCrearTickets').modal('show'); // Muestra el modal
 }
 
-
-const API_URLTicket = "https://localhost:7065/api/tickets"
-
-const getToken2 = () => localStorage.getItem("token"); // Obtener el token del localStorage
-
-const authHeaders2 = () => ({
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${getToken2()}`
-}); // Configurar los headers de autenticación
-
-
-
 function MostrarTickets(data) {
     $("#todosLosTickets").empty(); // Limpiar la tabla antes de llenarla
     $.each(data, function (index, item) {
         $("#todosLosTickets").append(
             "<tr>" +
-            // "<td>" + item.ticketId + "</td>" + // Eliminado: no mostrar el ID
             "<td>" + item.titulo + "</td>" +
             "<td>" + item.descripcion + "</td>" +
             "<td>" + item.estado + "</td>" +
             "<td>" + item.prioridad + "</td>" +
             "<td>" + formatearFecha(item.fechaCreacion) + "</td>" +
-            "<td>" + formatearFecha(item.fechaCierre) + "</td>" +
+            // "<td>" + formatearFecha(item.fechaCierre) + "</td>" +
             // "<td>" + item.usuarioClienteId + "</td>" +
-            "<td>" + item.categoriaId + "</td>" +
-            "<td><button class='btn btn-outline-success  mdi mdi-border-color' onclick='BuscarTicketId(" + item.ticketId + ")'></button></td>" +
-            "<td><button class='btn btn-outline-danger   mdi mdi-close' onclick='EliminarTicket(" + item.ticketId + ")'></button></td>" +
+            "<td>" + (item.categoria?.descripcion || '') + "</td>" +
+            "<td><button class='btn btn-inverse-success  mdi mdi-border-color' onclick='BuscarTicketId(" + item.ticketId + ")'></button></td>" +
+            "<td><button class='btn btn-inverse-danger   mdi mdi-close' onclick='EliminarTicket(" + item.ticketId + ")'></button></td>" +
             "</tr>"
         );
     });
 }
 function formatearFecha(fecha) {
     if (!fecha) return "";
-    // Quita la 'T' y los milisegundos si existen
-    return fecha.replace('T', ' ').split('.')[0];
+    // Convierte la fecha a objeto Date
+    const d = new Date(fecha);
+    // Si la fecha no es válida, retorna el string original
+    if (isNaN(d.getTime())) return fecha;
+    // Formato: dd/mm/yyyy hh:mm
+    const dia = String(d.getDate()).padStart(2, '0');
+    const mes = String(d.getMonth() + 1).padStart(2, '0');
+    const anio = d.getFullYear();
+    const hora = String(d.getHours()).padStart(2, '0');
+    const minutos = String(d.getMinutes()).padStart(2, '0');
+    return `${dia}/${mes}/${anio} ${hora}:${minutos}`;
 }
 
 function VaciarModalTicket() {
     $("#Titulo").val("");
     $("#Descripcion").val("");
-    $("#Prioridad").val("");
     $("#CategoriaId").val("");
     $('#errorCrearTicket').empty(); // Limpiar mensajes de error
     $('#errorCrear').empty(); // Limpiar mensajes de error
@@ -102,37 +105,44 @@ async function CrearTicket() {
         headers: authHeaders2(),
         body: JSON.stringify(crearTicket)
     });
-    
+
     if (response.ok) {
-    console.log (ObtenerTickets(), "Ticket creado exitosamente.");
+        console.log(ObtenerTickets(), "Ticket creado exitosamente.");
         // Limpiar los campos del modal            
-    $('#modalCrearTickets').modal('hide'); // Cerrar el modal
-    ObtenerTickets();  // Actualizar la lista de tickets
-    VaciarModalTicket(); // Limpiar el modal
-    // Mostrar mensaje de éxito
-    Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Ticket creado",
-        background: '#000000',
-        color: '#f1f1f1',
-        showConfirmButton: false,
-        timer: 1500
-      });
+        $('#modalCrearTickets').modal('hide'); // Cerrar el modal
+        ObtenerTickets();  // Actualizar la lista de tickets
+        VaciarModalTicket(); // Limpiar el modal
+        // Mostrar mensaje de éxito
+        Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Ticket creado",
+            background: '#000000',
+            color: '#f1f1f1',
+            showConfirmButton: false,
+            timer: 1500
+        });
 
     } else {
-    const errorText = await response.text(); // Manejar errores
-    console.log(errorText);
-    mensajesError('#errorCrear', null, `Error al crear: ${errorText}`); // Si hay errores del servidor, mostrar mensajes de error
+        const errorText = await response.text(); // Manejar errores
+        console.log(errorText);
+        mensajesError('#errorCrear', null, `Error al crear: ${errorText}`); // Si hay errores del servidor, mostrar mensajes de error
 
-    console.error("Error al crear el ticket:", errorText);
-    }  
+        console.error("Error al crear el ticket:", errorText);
+    }
 }
 
 function BuscarTicketId(ticketId) {
+    const getToken = () => localStorage.getItem("token"); // Obtener el token del localStorage
+
+    const authHeaders = () => ({
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${getToken()}`
+    }); // Configurar los headers de autenticación
+
     fetch(`${API_URLTicket}/${ticketId}`, {
         method: "GET",
-        headers: authHeaders2()
+        headers: authHeaders()
     })
         .then(response => response.json())
         .then(data => {
@@ -153,6 +163,13 @@ function BuscarTicketId(ticketId) {
 }
 
 async function EditarTicket() {
+    const getToken = () => localStorage.getItem("token"); // Obtener el token del localStorage
+
+    const authHeaders = () => ({
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${getToken()}`
+    }); // Configurar los headers de autenticación
+
     const ticketId = document.getElementById("ticketId").value; // Obtener el ID del ticket a editar
     const titulo = document.getElementById("TituloEditar").value.trim();
     const descripcion = document.getElementById("DescripcionEditar").value.trim();
@@ -178,7 +195,7 @@ async function EditarTicket() {
     try {
         const res = await fetch(`${API_URLTicket}/${ticketId}`, {
             method: "PUT",
-            headers: authHeaders2(),
+            headers: authHeaders(),
             body: JSON.stringify(editarTicket)
         });
         if (res.ok) {
@@ -194,7 +211,7 @@ async function EditarTicket() {
                 color: '#f1f1f1',
                 showConfirmButton: false,
                 timer: 1500
-              });
+            });
         } else {
             const errorText = await res.text();
             mensajesError('#errorEditar', null, `Error al actualizar: ${errorText}`);
@@ -220,11 +237,11 @@ function EliminarTicket(ticketId) {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, eliminarlo'
 
-      }).then((result) => {
+    }).then((result) => {
         if (result.isConfirmed) {
             EliminarTicketSi(ticketId);
         }
-      });
+    });
 }
 
 function EliminarTicketSi(ticketId) {

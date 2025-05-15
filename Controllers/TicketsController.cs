@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GestionTickets.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GestionTickets.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TicketsController : ControllerBase
@@ -24,7 +26,8 @@ namespace GestionTickets.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets()
         {
-            return await _context.Tickets.ToListAsync();
+            return await _context.Tickets.Include(t => t.Categoria).ToListAsync(); // Incluye la categoría relacionada
+        
         }
 
         // GET: api/Tickets/5

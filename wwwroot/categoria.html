@@ -1,21 +1,21 @@
-
 <!-- Tablas Categorias -->
-<div class="grid-margin">
-  <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalCrearCategorias">Agregar
-    Categoria</button>
-</div>
+
 
 
 <div class="row">
   <div class="col-12 grid-margin">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Categorías</h4>
+        <h1 class="card-title">Categorías</h1>
+        <div class="grid-margin">
+          <button class="btn-lg btn-inverse-success" data-bs-toggle="modal" data-bs-target="#modalCrearCategorias">Agregar
+            Categoría</button>
+        </div>
         <div class="table-responsive">
-          <table id="categorias" class="table">
+          <table id="categorias" class="table table-hover">
             <thead>
               <tr>
-                <th> Id </th>
+                <!-- <th> Id </th> -->
                 <th> Nombre </th>
                 <th></th>
                 <th></th>
@@ -49,8 +49,8 @@
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-outline-warning" onclick="VaciarModal()">Cancelar</button>
-                  <button type="button" class="btn btn-outline-primary" onclick="GuardarCategoria();">Guardar</button>
+                  <button type="button" class="btn btn-inverse-warning" onclick="VaciarModal()">Cancelar</button>
+                  <button type="button" class="btn btn-inverse-primary" onclick="GuardarCategoria();">Guardar</button>
                 </div>
               </div>
             </div>
@@ -66,9 +66,8 @@
 <script src="js/Categoria.js"></script>
 
 <script type="text/javascript">
-      window.onload = function () {
-        ObtenerCategorias();
-      }
-    
-</script>
+  window.onload = function () {
+    ObtenerCategorias();
+  }
 
+</script>
