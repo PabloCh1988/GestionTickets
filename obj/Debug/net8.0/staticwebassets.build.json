@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "B6QjhaB8zS4bZUYxrDbogoAohdfmAdfHWoJfgWWpWA0=",
+  "Hash": "rFH9kkSFt3ZTTa9UT6r2Tbgnr79NNsXpL9B8BEuXgh0=",
   "Source": "GestionTickets",
   "BasePath": "_content/GestionTickets",
   "Mode": "Default",
@@ -17210,25 +17210,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\Categoria.js"
-    },
-    {
-      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\common\\auth.js",
-      "SourceId": "GestionTickets",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
-      "BasePath": "_content/GestionTickets",
-      "RelativePath": "js/common/auth.js",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\js\\common\\auth.js"
     },
     {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\common\\ObtenerCategoriasDropdown.js",

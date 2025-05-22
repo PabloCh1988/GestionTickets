@@ -13,10 +13,12 @@ namespace GestionTickets.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
+    // Crea la clase y hereda de la clase ControllerBase
+    // Esta clase es responsable de manejar las solicitudes HTTP relacionadas con los tickets
     public class TicketsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-
+        private readonly ApplicationDbContext _context; // Se crea una variable privada de tipo ApplicationDbContext para acceder a la base de datos
+        // Constructor de la clase TicketsController
         public TicketsController(ApplicationDbContext context)
         {
             _context = context;
@@ -66,6 +68,17 @@ namespace GestionTickets.Controllers
                 //LLAMADA A LA BASE DE DATOS PARA EDITAR UN TICKET
                 // Se busca el ticket por su ID
                 var ticketEditar = await _context.Tickets.FindAsync(id);
+                
+
+                // Guardar valores originales antes de editar
+                string originalTitulo = ticketEditar.Titulo;
+                string originalDescripcion = ticketEditar.Descripcion;
+                // TENGO QUE LLAMAR A PRIORIDADTICKET PARA QUE ME TRAIGA EL ENUM
+                // Y ASIGNARLO A UNA VARIABLE
+                PrioridadTicket originalPrioridad = ticketEditar.Prioridad;
+                int originalCategoriaId = ticketEditar.CategoriaId;
+
+                // Se verifica si el ticket existe
                 if (ticketEditar != null)
                 {  // Campos que se pueden editar
                     // Se asignan los nuevos valores a los campos editables
@@ -73,9 +86,64 @@ namespace GestionTickets.Controllers
                     ticketEditar.Descripcion = ticket.Descripcion;
                     ticketEditar.Prioridad = ticket.Prioridad;
                     ticketEditar.CategoriaId = ticket.CategoriaId;
-                    
                 }
+
                 await _context.SaveChangesAsync();
+
+                // Guardar historial solo si hubo cambios
+                if (originalTitulo != ticket.Titulo)
+                {
+                    var historialTicket = new HistorialTicket
+                    {
+                        TicketId = ticket.TicketId,
+                        CampoModificado = "Titulo",
+                        ValorAnterior = originalTitulo,
+                        ValorNuevo = ticket.Titulo,
+                        FechaCambio = DateTime.Now
+                    };
+                    _context.HistorialTicket.Add(historialTicket);
+                    await _context.SaveChangesAsync();
+                }
+                if (originalDescripcion != ticket.Descripcion)
+                {
+                    var historialTicket = new HistorialTicket
+                    {
+                        TicketId = ticket.TicketId,
+                        CampoModificado = "Descripcion",
+                        ValorAnterior = originalDescripcion,
+                        ValorNuevo = ticket.Descripcion,
+                        FechaCambio = DateTime.Now
+                    };
+                    _context.HistorialTicket.Add(historialTicket);
+                    await _context.SaveChangesAsync();
+                }
+                if (originalPrioridad != ticket.Prioridad)
+                {
+                    var historialTicket = new HistorialTicket
+                    {
+                        TicketId = ticket.TicketId,
+                        CampoModificado = "Prioridad",
+                        ValorAnterior = originalPrioridad.ToString(),
+                        ValorNuevo = ticket.Prioridad.ToString(),
+                        FechaCambio = DateTime.Now
+                    };
+                    _context.HistorialTicket.Add(historialTicket);
+                    await _context.SaveChangesAsync();
+                }
+                if (originalCategoriaId != ticket.CategoriaId)
+                {
+                    var historialTicket = new HistorialTicket
+                    {
+                        TicketId = ticket.TicketId,
+                        CampoModificado = "Categoria",
+                        ValorAnterior = originalCategoriaId.ToString(),
+                        ValorNuevo = ticket.CategoriaId.ToString(),
+                        FechaCambio = DateTime.Now
+                    };
+                    _context.HistorialTicket.Add(historialTicket);
+                    await _context.SaveChangesAsync();
+                }
+                
             }
             catch (DbUpdateConcurrencyException)
             {

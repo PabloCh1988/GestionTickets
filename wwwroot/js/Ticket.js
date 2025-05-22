@@ -1,7 +1,8 @@
 function CargarHtmlTickets() {
     fetch("ticket.html")
         .then(response => response.text())
-        .then(data => {
+        .then(data => { // Obtener el contenido del archivo HTML
+            // Cargar el contenido del archivo HTML en el elemento con id "contenido"
             document.getElementById("contenido").innerHTML = data;
             $("#modalCrearTickets").modal('hide'); // Cierra el modal si está abierto
             ObtenerTickets(); // Llama a la función para obtener los tickets
@@ -9,7 +10,9 @@ function CargarHtmlTickets() {
         .catch(error => console.error("Error al cargar el archivo", error))
 }
 
-const API_URLTicket = "https://localhost:7065/api/tickets"
+const API_URLTicket = "https://localhost:7065/api/tickets";
+
+const API_URLHistorial = "https://localhost:7065/api/historialtickets";
 
 async function ObtenerTickets() {
     const getToken = () => localStorage.getItem("token"); // Obtener el token del localStorage
@@ -45,6 +48,7 @@ function MostrarTickets(data) {
             "<td>" + (item.categoria?.descripcion || '') + "</td>" +
             "<td><button class='btn btn-inverse-success  mdi mdi-border-color' onclick='BuscarTicketId(" + item.ticketId + ")'></button></td>" +
             "<td><button class='btn btn-inverse-danger   mdi mdi-close' onclick='EliminarTicket(" + item.ticketId + ")'></button></td>" +
+            "<td><button class='btn btn-inverse-warning   mdi mdi-magnify' onclick='MostrarHistorial(" + item.ticketId + ")'></button></td>" +
             "</tr>"
         );
     });
@@ -77,6 +81,13 @@ function VaciarModalTicket() {
 
 
 async function CrearTicket() {
+    const getToken = () => localStorage.getItem("token"); // Obtener el token del localStorage
+
+    const authHeaders = () => ({
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${getToken()}`
+    }); // Configurar los headers de autenticación
+
     // Obtener valores de los campos
     const titulo = document.getElementById("Titulo")?.value.trim();
     const descripcion = document.getElementById("Descripcion")?.value.trim();
@@ -96,13 +107,11 @@ async function CrearTicket() {
         prioridad: prioridad,
         categoriaId: parseInt(categoriaId),
     };
-    console.log(crearTicket);
 
     // Enviar la solicitud a la API
-    // const response = await 
     const response = await fetch(API_URLTicket, {
         method: "POST",
-        headers: authHeaders2(),
+        headers: authHeaders(),
         body: JSON.stringify(crearTicket)
     });
 
@@ -188,9 +197,6 @@ async function EditarTicket() {
         prioridad: prioridad,
         categoriaId: parseInt(categoriaId),
     };
-    console.log("URL:", `${API_URLTicket}/${ticketId}`);
-    console.log("Datos enviados:", editarTicket);
-
 
     try {
         const res = await fetch(`${API_URLTicket}/${ticketId}`, {
@@ -245,8 +251,15 @@ function EliminarTicket(ticketId) {
 }
 
 function EliminarTicketSi(ticketId) {
+        const getToken = () => localStorage.getItem("token");
+    const authHeaders = () => ({
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${getToken()}`,
+    }); // Configurar los headers de autenticación
+
     fetch(`${API_URLTicket}/${ticketId}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: authHeaders()
     })
         .then(() => {
             // Mostrar mensaje de éxito
@@ -286,3 +299,72 @@ function mensajesError(id, data, mensaje) {
 
     $(id).attr("hidden", false);
 }
+
+function MostrarHistorial(ticketId) {
+    const getToken = () => localStorage.getItem("token");
+    const authHeaders = () => ({
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${getToken()}`,
+    }); // Configurar los headers de autenticación
+
+    fetch(`${API_URLHistorial}/${ticketId}`, {
+        method: "GET",
+        headers: authHeaders()
+    }) // Realiza la solicitud a la API
+        .then(response => {
+            if (!response.ok) {
+                // Si la respuesta es 404 o error, mostrar Swal
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Sin historial',
+                    text: 'El ticket seleccionado no tiene historial de cambios.',
+                    background: '#000000',
+                    color: '#f1f1f1',
+                    confirmButtonColor: '#8f5fe8',
+                });
+                return null;
+            }
+            return response.json();
+        }) // Convierte la respuesta a JSON
+        .then(listado => { // Maneja la respuesta
+            // Si no hay historial, mostrar Swal
+            if (!listado) return; // Ya se mostró el Swal
+            $("#historialTickets").empty(); // Limpiar la tabla antes de llenarla
+            if (Array.isArray(listado) && listado.length > 0) { // Si hay historial
+                // Llenar la tabla con el historial
+                $.each(listado, function (index, item) {
+                    $("#historialTickets").append(
+                        "<tr>" +
+                        "<td>" + item.campoModificado + "</td>" +
+                        "<td>" + item.valorAnterior + "</td>" +
+                        "<td>" + item.valorNuevo + "</td>" +
+                        "<td>" + formatearFecha(item.fechaCambio) + "</td>" +
+                        "</tr>"
+                    );
+                });
+                $("#modalHistorialTickets").modal("show"); // Muestra el modal
+                // Mostrar el modal con el historial
+            } else {
+                // Si el array está vacío, mostrar Swal
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Sin historial',
+                    text: 'El ticket seleccionado no tiene historial de cambios.',
+                    background: '#000000',
+                    color: '#f1f1f1',
+                    confirmButtonColor: '#8f5fe8',
+                });
+            }
+        }) // Maneja errores de la solicitud
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo cargar el historial.',
+                background: '#000000',
+                color: '#f1f1f1',
+                confirmButtonColor: '#8f5fe8',
+            });
+            console.error("Error al buscar el historial:", error);
+        });
+};

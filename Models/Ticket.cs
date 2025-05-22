@@ -25,6 +25,8 @@ public class Ticket {
 
     public virtual ICollection<ComentariosTicket>? Comentarios { get; set; }
 
+    public virtual ICollection<HistorialTicket>? HistorialTickets { get; set; }
+
 }
 
     public enum EstadoTicket 

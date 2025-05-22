@@ -7,122 +7,154 @@
     <div class="card">
       <div class="card-body">
         <h1 class="card-title">Tickets</h4>
-        <div class="grid-margin">
-          <button class="btn-lg btn-inverse-success" data-bs-toggle="modal" onclick="AbrirModalCrearTicket()">Agregar
-            Ticket</button>
-        </div>
-        <div class="table-responsive">
-          <table class="table table-hover">
-            <thead>
-              <tr>
+          <div class="grid-margin">
+            <button class="btn-lg btn-inverse-success" data-bs-toggle="modal" onclick="AbrirModalCrearTicket()">Agregar
+              Ticket</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
 
-                <th>Titulo</th>
-                <th>Descripcion</th>
-                <th>Estado</th>
-                <th>Prioridad</th>
-                <th>Fecha de Creación</th>
-                <!-- <th>Fecha de Cierre</th> -->
-                <th>Categoria</th>
-                <th></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="todosLosTickets"></tbody>
-          </table>
+                  <th>Titulo</th>
+                  <th>Descripcion</th>
+                  <th>Estado</th>
+                  <th>Prioridad</th>
+                  <th>Fecha de Creación</th>
+                  <!-- <th>Fecha de Cierre</th> -->
+                  <th>Categoria</th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="todosLosTickets"></tbody>
+            </table>
 
-          <!-- MODAL -->
-          <div id="modalCrearTickets" class="modal fade" tabindex="-1" data-bs-backdrop="static">
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title">Agregar Nuevo Ticket</h5>
-                </div>
-                <div class="modal-body">
-                  <div>
-
-                    <label for="Titulo" class="form-label">Titulo</label>
-                    <input type="text" id="Titulo" class="form-control text-light" placeholder="Titulo">
-
-                    <label for="Descripcion" class="form-label">Descripción</label>
-                    <textarea name="Descripcion" id="Descripcion" class="form-control text-light" placeholder="Descripcion"></textarea>
-                    
-
-                    <label for="Prioridad" class="form-label">Prioridad</label>
-                    <select id="Prioridad" class="form-control text-light">
-                      <option value="Baja">Baja</option>
-                      <option value="Media">Media</option>
-                      <option value="Alta">Alta</option>
-                    </select>
-
-                    <label for="CategoriaId" class="form-label">Categoría</label>
-                    <select id="CategoriaId" class="form-control form-select text-light"></select>
-
-                    <p id="errorCrear" hidden style="color:red"></p>
-
+            <!-- MODAL -->
+            <div id="modalCrearTickets" class="modal fade" tabindex="-1" data-bs-backdrop="static">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Agregar Nuevo Ticket</h5>
                   </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-inverse-warning" onclick="VaciarModalTicket()"">Cancelar</button>
+                  <div class="modal-body">
+                    <div>
+
+                      <label for="Titulo" class="form-label">Titulo</label>
+                      <input type="text" id="Titulo" class="form-control text-light" placeholder="Titulo">
+
+                      <label for="Descripcion" class="form-label">Descripción</label>
+                      <textarea name="Descripcion" id="Descripcion" class="form-control text-light"
+                        placeholder="Descripcion"></textarea>
+
+
+                      <label for="Prioridad" class="form-label">Prioridad</label>
+                      <select id="Prioridad" class="form-control text-light">
+                        <option value="Baja">Baja</option>
+                        <option value="Media">Media</option>
+                        <option value="Alta">Alta</option>
+                      </select>
+
+                      <label for="CategoriaId" class="form-label">Categoría</label>
+                      <select id="CategoriaId" class="form-control form-select text-light"></select>
+
+                      <p id="errorCrear" hidden style="color:red"></p>
+
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-inverse-warning" onclick="VaciarModalTicket()"">Cancelar</button>
                   <button type=" button" class="btn btn-inverse-primary" onclick="CrearTicket();">Guardar</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- MODAL Editar-->
-          <div id="modalEditarTickets" class="modal fade" tabindex="-1" data-bs-backdrop="static">
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title">Editar Ticket</h5>
-                </div>
-                <div class="modal-body">
-                  <div class="row">
-
-                    <input type="hidden" id="ticketId">
-
-                    <label for="TituloEditar" class="form-label">Titulo</label>
-                    <input type="text" id="TituloEditar" class="form-control text-light">
-
-                    <label for="DescripcionEditar" class="form-label">Descripción</label>
-                    <textarea name="Descripcion" id="DescripcionEditar" class="form-control text-light"></textarea>
-
-                    <label for="PrioridadEditar" class="form-label">Prioridad</label>
-                    <select id="PrioridadEditar" class="form-control text-light">
-                      <option value="Baja">Baja</option>
-                      <option value="Media">Media</option>
-                      <option value="Alta">Alta</option>
-                    </select>
-
-                    <label for="CategoriaIdEditar" class="form-label">Categoría</label>
-                    <select id="CategoriaIdEditar" class="form-control form-select text-light"></select>
-
-                    <p id="errorEditar" hidden style="color:red"></p>
-
                   </div>
                 </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-inverse-warning" onclick="VaciarModalTicket()">Cancelar</button>
-                  <button type="button" class="btn btn-inverse-primary" onclick="EditarTicket();">Guardar</button>
+              </div>
+            </div>
+
+            <!-- MODAL Editar-->
+            <div id="modalEditarTickets" class="modal fade" tabindex="-1" data-bs-backdrop="static">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Editar Ticket</h5>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+
+                      <input type="hidden" id="ticketId">
+
+                      <label for="TituloEditar" class="form-label">Titulo</label>
+                      <input type="text" id="TituloEditar" class="form-control text-light">
+
+                      <label for="DescripcionEditar" class="form-label">Descripción</label>
+                      <textarea name="Descripcion" id="DescripcionEditar" class="form-control text-light"></textarea>
+
+                      <label for="PrioridadEditar" class="form-label">Prioridad</label>
+                      <select id="PrioridadEditar" class="form-control text-light">
+                        <option value="Baja">Baja</option>
+                        <option value="Media">Media</option>
+                        <option value="Alta">Alta</option>
+                      </select>
+
+                      <label for="CategoriaIdEditar" class="form-label">Categoría</label>
+                      <select id="CategoriaIdEditar" class="form-control form-select text-light"></select>
+
+                      <p id="errorEditar" hidden style="color:red"></p>
+
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-inverse-warning"
+                      onclick="VaciarModalTicket()">Cancelar</button>
+                    <button type="button" class="btn btn-inverse-primary" onclick="EditarTicket();">Guardar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal HISTORIAL TICKETS -->
+            <div class="modal fade" id="modalHistorialTickets" data-bs-backdrop="static" data-bs-keyboard="false"
+              tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title fs-5">Historial del Ticket</h5>
+                  </div>
+                  <div class="modal-body">
+                    <div class="table-responsive">
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>Campo Modificado</th>
+                            <th>Valor Anterior</th>
+                            <th>Valor Nuevo</th>
+                            <th>Fecha de Modificacion</th>
+                          </tr>
+                        </thead>
+                        <tbody id="historialTickets"></tbody>
+                      </table>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-inverse-warning" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
       </div>
     </div>
   </div>
-</div>
 
-<script src="js/Ticket.js"></script>
-<script src="js/common/ObtenerCategoriasDropdown.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="js/Ticket.js"></script>
+  <script src="js/common/ObtenerCategoriasDropdown.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
-<script type="text/javascript">
-  window.onload = function () {
-    ObtenerTickets();
-    ObtenerCategoriasDropdown();
-  }
+  <script type="text/javascript">
+    window.onload = function () {
+      ObtenerTickets();
+      ObtenerCategoriasDropdown();
+    }
 
-</script>
+  </script>
