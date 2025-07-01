@@ -3585,10 +3585,6 @@
       "PackagePath": "staticwebassets\\assets\\vendors\\typeahead.js\\typeahead.bundle.min.js"
     },
     {
-      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\categoria.html",
-      "PackagePath": "staticwebassets\\categoria.html"
-    },
-    {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
@@ -3621,6 +3617,10 @@
       "PackagePath": "staticwebassets\\js\\Categoria.js"
     },
     {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\Cliente.js",
+      "PackagePath": "staticwebassets\\js\\Cliente.js"
+    },
+    {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\Ticket.js",
       "PackagePath": "staticwebassets\\js\\Ticket.js"
     },
@@ -3629,8 +3629,16 @@
       "PackagePath": "staticwebassets\\js\\common\\ObtenerCategoriasDropdown.js"
     },
     {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\config.js",
+      "PackagePath": "staticwebassets\\js\\config.js"
+    },
+    {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\index.js",
       "PackagePath": "staticwebassets\\js\\index.js"
+    },
+    {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\main.js",
+      "PackagePath": "staticwebassets\\js\\main.js"
     },
     {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\lib\\bootstrap\\css\\bootstrap-grid.css",
@@ -3809,8 +3817,8 @@
       "PackagePath": "staticwebassets\\lib\\bootstrap\\js\\bootstrap.min.js.map"
     },
     {
-      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\main.html",
-      "PackagePath": "staticwebassets\\main.html"
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\login.html",
+      "PackagePath": "staticwebassets\\login.html"
     },
     {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\package-lock.json",
@@ -3881,8 +3889,20 @@
       "PackagePath": "staticwebassets\\partials\\_sidebar.html"
     },
     {
-      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\ticket.html",
-      "PackagePath": "staticwebassets\\ticket.html"
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\categoria.html",
+      "PackagePath": "staticwebassets\\views\\categoria.html"
+    },
+    {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\cliente.html",
+      "PackagePath": "staticwebassets\\views\\cliente.html"
+    },
+    {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\home.html",
+      "PackagePath": "staticwebassets\\views\\home.html"
+    },
+    {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\ticket.html",
+      "PackagePath": "staticwebassets\\views\\ticket.html"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.GestionTickets.Microsoft.AspNetCore.StaticWebAssets.props",

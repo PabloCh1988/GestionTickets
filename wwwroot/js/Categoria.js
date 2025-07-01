@@ -1,26 +1,5 @@
-// Cargar el contenido del archivo HTML al cargar la página
-function CargarHtmlCategorias() {
-    fetch("categoria.html")
-        .then(response => response.text()) // Obtener el contenido del archivo HTML
-        .then(data => {
-            document.getElementById("contenido").innerHTML = data; // Cargar el contenido del archivo HTML en el elemento con id "contenido"
-            $('#modalCrearCategorias').modal('hide'); // Ocultar el modal al cargar la página
-            ObtenerCategorias();
-        })
-        .catch(error => console.error("Error al cargar el archivo", error))
-}
-
-const API_URLCategoria = "https://localhost:7065/api/categorias";
-
-const getToken = () => localStorage.getItem("token"); // Obtener el token del localStorage
-
-const authHeaders = () => ({
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${getToken()}`
-}); // Configurar los headers de autenticación
-
 async function ObtenerCategorias() {
-    const res = await fetch(API_URLCategoria, { headers: authHeaders() });
+    const res = await authFetch(`categorias`);
     const categorias = await res.json();
     renderizarCategoriasJQuery(categorias); // Usar el renderizado jQuery personalizado
 }
@@ -29,9 +8,7 @@ async function ObtenerCategorias() {
 async function ToggleEliminado(categoriaId, estadoActual) {
     try {
         // Obtener la categoría completa antes de actualizar
-        const resGet = await fetch(`${API_URLCategoria}/${categoriaId}`, {
-            headers: authHeaders()
-        });
+        const resGet = await authFetch(`categorias/` + categoriaId);
         if (!resGet.ok) {
             throw new Error("No se pudo obtener la categoría actual");
         }
@@ -39,9 +16,8 @@ async function ToggleEliminado(categoriaId, estadoActual) {
         categoria.eliminado = !estadoActual; // Cambiar el estado de eliminado
 
         // Enviar el objeto completo actualizado
-        const res = await fetch(`${API_URLCategoria}/${categoriaId}`, {
+        const res = await authFetch(`categorias/` + categoriaId, {
             method: "PUT",
-            headers: authHeaders(),
             body: JSON.stringify(categoria)
         });
         // Verificar si la respuesta fue exitosa
@@ -96,8 +72,7 @@ function renderizarCategoriasJQuery(data) {
                     // Botón de edición
                     "<button class='btn btn-inverse-success mdi mdi-border-color' data-action='edit' style='" + botonEditarVisible + "' onclick=\"AbrirModalEditar(" + item.categoriaId + ", '" + item.descripcion.replace(/'/g, "\\'") + "')\">" +
                     "</button>" +
-                "</td>" +
-                "<td>" +
+                
                     // Botón de activación/desactivación
                     "<button class='' data-action='delete' style='background: none; border: none;' onclick=\"ToggleEliminado(" + item.categoriaId + ", " + item.eliminado + ")\" title='" + (item.eliminado ? "Activar categoría" : "Desactivar categoría") + "'>" +
                         "<i class='btn btn-inverse-danger " + iconoHabilitado + "'></i>" +
@@ -121,6 +96,7 @@ function VaciarModal() {
     $("#CategoriaId").val("");
     $('#modalCrearCategorias').modal('hide');
     $('#errorCrear').empty();
+    limpiarBackdropBootstrap();
 }
 
 function GuardarCategoria() {
@@ -154,9 +130,8 @@ async function CrearCategorias() {
         return;
     } 
 
-    const res = await fetch(API_URLCategoria, {
+    const res = await authFetch(`categorias`, {
         method: "POST",
-        headers: authHeaders(),
         body: JSON.stringify(crearCategoria)
     }); // Realizar la petición a la API
 
@@ -200,9 +175,8 @@ async function EditarCategorias(categoriaId) {
 
     try {
         // Realizar la solicitud PUT a la API
-        const res = await fetch(`${API_URLCategoria}/${categoriaId}`, {
+        const res = await authFetch(`categorias/` + categoriaId, {
             method: "PUT",
-            headers: authHeaders(), //
             body: JSON.stringify(editarCategoria)
         });
 
@@ -220,6 +194,45 @@ async function EditarCategorias(categoriaId) {
         console.error("Error al actualizar la categoría:", error);
         mensajesError('#errorCrear', null, "Ocurrió un error al intentar actualizar la categoría.");
     }
+}
+
+async function imprimirCategorias() {
+
+    const jsPDF = window.jspdf.jsPDF;
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("Gestión de Tickets", 14, 20);
+    doc.setFontSize(14);
+    doc.text("Listado de Categorías", 14, 30);
+    doc.setFontSize(10);
+    doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 14, 36);
+
+    const response = await authFetch(`categorias`);
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error al obtener categorías:", response.status, errorText);
+        alert("Error al cargar las categorías.");
+        return;
+    }
+
+    const data = await response.json();
+
+    // Filtrar solo las categorías no eliminadas
+    const categoriasNoEliminadas = data.filter(c => !c.eliminado);
+
+    const columnas = ["Nombre"];
+    const filas = categoriasNoEliminadas.map(c => [c.descripcion]);
+
+    doc.autoTable({
+        head: [columnas],
+        body: filas,
+        startY: 40,
+        styles: { fontSize: 10 }
+    });
+
+    doc.save("Listado_Categorias.pdf");
 }
 
 function mensajesError(id, data, mensaje) {
@@ -242,4 +255,13 @@ function mensajesError(id, data, mensaje) {
     }
 
     $(id).attr("hidden", false);
+}
+
+function limpiarBackdropBootstrap() {
+    // Elimina cualquier backdrop de Bootstrap que haya quedado
+    $('.modal-backdrop').remove();
+    // Elimina la clase modal-open del body si quedó
+    $('body').removeClass('modal-open');
+    // Elimina el estilo de padding del body
+    $('body').css('padding-right', '');
 }

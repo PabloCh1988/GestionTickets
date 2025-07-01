@@ -81,7 +81,11 @@ if (app.Environment.IsDevelopment())
    
 }
 
-app.UseDefaultFiles();
+// CONFIGURACION PARA QUE INICIE EN LOGIN.HTML
+app.UseDefaultFiles(new DefaultFilesOptions
+{
+    DefaultFileNames = new List<string> { "login.html" }
+});
 app.UseStaticFiles();
 
 app.UseHttpsRedirection();

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "rFH9kkSFt3ZTTa9UT6r2Tbgnr79NNsXpL9B8BEuXgh0=",
+  "Hash": "zBeBhy5JbAwz5J9af/4EJFECfItUKuEomuINV2lGVxg=",
   "Source": "GestionTickets",
   "BasePath": "_content/GestionTickets",
   "Mode": "Default",
@@ -17041,25 +17041,6 @@
       "OriginalItemSpec": "wwwroot\\assets\\vendors\\typeahead.js\\typeahead.bundle.min.js"
     },
     {
-      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\categoria.html",
-      "SourceId": "GestionTickets",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
-      "BasePath": "_content/GestionTickets",
-      "RelativePath": "categoria.html",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\categoria.html"
-    },
-    {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\css\\site.css",
       "SourceId": "GestionTickets",
       "SourceType": "Discovered",
@@ -17212,6 +17193,25 @@
       "OriginalItemSpec": "wwwroot\\js\\Categoria.js"
     },
     {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\Cliente.js",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "js/Cliente.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\Cliente.js"
+    },
+    {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\common\\ObtenerCategoriasDropdown.js",
       "SourceId": "GestionTickets",
       "SourceType": "Discovered",
@@ -17231,6 +17231,25 @@
       "OriginalItemSpec": "wwwroot\\js\\common\\ObtenerCategoriasDropdown.js"
     },
     {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\config.js",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "js/config.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\config.js"
+    },
+    {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\index.js",
       "SourceId": "GestionTickets",
       "SourceType": "Discovered",
@@ -17248,6 +17267,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\index.js"
+    },
+    {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\main.js",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "js/main.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\main.js"
     },
     {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\Ticket.js",
@@ -18105,12 +18143,12 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\js\\bootstrap.min.js.map"
     },
     {
-      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\main.html",
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\login.html",
       "SourceId": "GestionTickets",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
       "BasePath": "_content/GestionTickets",
-      "RelativePath": "main.html",
+      "RelativePath": "login.html",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -18121,7 +18159,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\main.html"
+      "OriginalItemSpec": "wwwroot\\login.html"
     },
     {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\package-lock.json",
@@ -18447,12 +18485,12 @@
       "OriginalItemSpec": "wwwroot\\partials\\_sidebar.html"
     },
     {
-      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\ticket.html",
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\categoria.html",
       "SourceId": "GestionTickets",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
       "BasePath": "_content/GestionTickets",
-      "RelativePath": "ticket.html",
+      "RelativePath": "views/categoria.html",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -18463,7 +18501,64 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\ticket.html"
+      "OriginalItemSpec": "wwwroot\\views\\categoria.html"
+    },
+    {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\cliente.html",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "views/cliente.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\views\\cliente.html"
+    },
+    {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\home.html",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "views/home.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\views\\home.html"
+    },
+    {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\ticket.html",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "views/ticket.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\views\\ticket.html"
     }
   ]
 }

@@ -1,4 +1,5 @@
 using GestionTickets.Models.Usuario;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -17,23 +18,42 @@ using System.Text;
 [ApiController]
 public class AuthController : ControllerBase
 {
+    private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly RoleManager<IdentityRole> _rolManager;
     private readonly IConfiguration _configuration;
 
     public AuthController(
+        ApplicationDbContext context,
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
+        RoleManager<IdentityRole> rolManager,
         IConfiguration configuration)
     {
-        _userManager = userManager;
-        _signInManager = signInManager;
+        _context = context; //CONEXION A LA BASE DE DATOS
+        _userManager = userManager; //GESTION DE USUARIOS (METODOS DE REGISTRO, LOGIN, ETC.)
+        _signInManager = signInManager; //GESTION DE INICIO DE SESIÓN (METODOS DE LOGIN, LOGOUT, ETC.)
+        _rolManager = rolManager; //GESTION DE ROLES (METODOS DE CREACIÓN, ASIGNACIÓN, ETC.)
         _configuration = configuration;
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterModel model)
     {
+        //CREAR ROLES SI NO EXISTEN
+        var nombreRolCrearExiste = _context.Roles.Where(r => r.Name == "ADMINISTRADOR").SingleOrDefault(); //UNO O NULO
+        if (nombreRolCrearExiste == null)
+        {
+            var roleResult = await _rolManager.CreateAsync(new IdentityRole("ADMINISTRADOR"));
+        }
+
+        var clienteRolCrearExiste = _context.Roles.Where(r => r.Name == "CLIENTE").SingleOrDefault();
+        if (clienteRolCrearExiste == null)
+        {
+            var roleResult = await _rolManager.CreateAsync(new IdentityRole("CLIENTE"));
+        }
+
         //ARMAMOS EL OBJETO COMPLETANDO LOS ATRIBUTOS COMPLETADOS POR EL USUARIO
         var user = new ApplicationUser
         {
@@ -46,7 +66,10 @@ public class AuthController : ControllerBase
         var result = await _userManager.CreateAsync(user, model.Password);
 
         if (result.Succeeded)
+        {
+            await _userManager.AddToRoleAsync(user, "ADMINISTRADOR"); // ASIGNAMOS UN ROL POR DEFECTO AL USUARIO
             return Ok("Usuario registrado");
+        }
 
         return BadRequest(result.Errors);
     }
@@ -58,13 +81,24 @@ public class AuthController : ControllerBase
         var user = await _userManager.FindByEmailAsync(model.Email);
         if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
         {
+            string rolNombre = "CLIENTE";
+            //BUSCAR ROL QUE TIENE
+            var rolUsuario = _context.UserRoles.Where(r => r.UserId == user.Id).SingleOrDefault();
+            if (rolUsuario != null)
+            {
+                var rol = _context.Roles.Where(r => r.Id == rolUsuario.RoleId).SingleOrDefault();
+                rolNombre = rol.Name; // OBTENEMOS EL NOMBRE DEL ROL ASIGNADO AL USUARIO
+            }
             //SI EL USUARIO ES ENCONTRADO Y LA CONTRASEÑA ES CORRECTA
             var claims = new[]
             {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.UserName),
+            new Claim("NombreCompleto", user.NombreCompleto),
+            new Claim (ClaimTypes.Role, rolNombre), // ASIGNAMOS EL ROL AL USUARIO
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
-
+         
             //RECUPERAMOS LA KEY SETEADA EN EL APPSETTING
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -74,7 +108,7 @@ public class AuthController : ControllerBase
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Issuer"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(15),
+                expires: DateTime.Now.AddMinutes(15), //TIEMPO DE EXPIRACIÓN DEL TOKEN
                 signingCredentials: creds
             );
 
@@ -88,7 +122,9 @@ public class AuthController : ControllerBase
             return Ok(new
             {
                 token = jwt,
-                refreshToken = refreshToken
+                refreshToken = refreshToken,
+                // email = user.Email,
+                nombreCompleto = user.NombreCompleto,
             });
         }
 

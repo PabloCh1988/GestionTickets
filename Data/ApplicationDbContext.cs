@@ -26,4 +26,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<ComentariosTicket> ComentariosTickets { get; set; }
 
 public DbSet<GestionTickets.Models.HistorialTicket> HistorialTicket { get; set; } = default!;
+
+public DbSet<GestionTickets.Models.Cliente> Cliente { get; set; } = default!;
 }

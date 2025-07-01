@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GestionTickets.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace GestionTickets.Controllers
 {
@@ -26,7 +27,12 @@ namespace GestionTickets.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Categoria>>> GetCategorias()
         {
-            return await _context.Categorias.ToListAsync();
+            var usuarioLogueadoID = HttpContext.User.Identity?.Name;
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var rol = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+            return await _context.Categorias
+           .OrderBy(c => c.Descripcion)
+           .ToListAsync();
         }
 
         // GET: api/Categorias/5
@@ -47,19 +53,19 @@ namespace GestionTickets.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategoria(int id, Categoria categoria)
-        { 
+        {
             var existeCategoria = await _context.Categorias.Where(c => c.Descripcion == categoria.Descripcion && c.CategoriaId != id).CountAsync(); // Verifica si ya existe una categoría con la misma descripción
             if (existeCategoria > 0) // Si existe una categoría con la misma descripción y un id diferente al que se está actualizando
             // se retorna un mensaje de error
             {
-                return BadRequest("Ya existe una categoría con la misma descripción."); 
+                return BadRequest("Ya existe una categoría con la misma descripción.");
             }
 
             if (id != categoria.CategoriaId)
             {
                 return BadRequest();
             }
-            
+
             _context.Entry(categoria).State = EntityState.Modified;
 
             try
@@ -78,7 +84,7 @@ namespace GestionTickets.Controllers
                 }
             }
 
-            return Ok(new {codigo = 1, mensaje = "Categoría actualizada correctamente."}); // Retorna un mensaje de éxito
+            return Ok(new { codigo = 1, mensaje = "Categoría actualizada correctamente." }); // Retorna un mensaje de éxito
         }
 
         // POST: api/Categorias
@@ -110,7 +116,7 @@ namespace GestionTickets.Controllers
             }
 
             categoria.Eliminado = true; // Marca la categoría como eliminada
-            await _context.SaveChangesAsync(); 
+            await _context.SaveChangesAsync();
 
 
             return NoContent();
