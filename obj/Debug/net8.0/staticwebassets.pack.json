@@ -3901,6 +3901,10 @@
       "PackagePath": "staticwebassets\\views\\home.html"
     },
     {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\puestolaboral.html",
+      "PackagePath": "staticwebassets\\views\\puestolaboral.html"
+    },
+    {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\ticket.html",
       "PackagePath": "staticwebassets\\views\\ticket.html"
     },

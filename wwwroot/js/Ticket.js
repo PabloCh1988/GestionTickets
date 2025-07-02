@@ -119,7 +119,6 @@ async function ObtenerTickets() {
                 <td>${item.categoriaString || ''}</td>
                 <td><button class='btn btn-inverse-primary  mdi mdi-account-card-details' onclick='MostrarTicketId(${item.ticketId})'></button>
                 <button class='btn btn-inverse-success mdi mdi-border-color' onclick='BuscarTicketId(${item.ticketId})'></button>
-                <button class='btn btn-inverse-danger mdi mdi-close' onclick='EliminarTicket(${item.ticketId})'></button>
                 <button class='btn btn-inverse-warning  mdi mdi-file-find ' onclick='MostrarHistorial(${item.ticketId})'></button></td>
             `;
             tabla.appendChild(fila);
@@ -233,34 +232,6 @@ async function comboCategoriasEditar(selectedId) {
     });
 }
 
-// function BuscarTicketId(ticketId) {
-//     authFetch(`tickets/` + ticketId, {
-//         method: "GET",
-//     })
-//     .then(response => response.json())
-//     .then(async data => {
-//         // Llenar los campos del modal de edición
-//         document.getElementById("ticketId").value = data.id ?? data.ticketId; // <-- ¡AQUÍ!
-//         document.getElementById("TituloEditar").value = data.titulo;
-//         document.getElementById("DescripcionEditar").value = data.descripcion;
-//         document.getElementById("PrioridadEditar").value = data.prioridad;
-//         // document.getElementById("CategoriaIdEditar").value = data.categoriaId;
-//         await comboCategorias(data.categoriaId); // Asegurarse de que las categorías estén cargadas
-//         $('#modalEditarTickets').modal('show');
-//     })
-//     .catch(error => {
-//         Swal.fire({
-//             icon: 'error',
-//             title: 'Error',
-//             text: 'No se pudo cargar el ticket para editar.',
-//             background: '#000000',
-//             color: '#f1f1f1',
-//             confirmButtonColor: '#8f5fe8',
-//         });
-//         console.error("Error al buscar el ticket para editar:", error);
-//     });
-// }
-
 function BuscarTicketId(ticketId) {
     authFetch(`tickets/` + ticketId, {
         method: "GET",
@@ -336,49 +307,6 @@ function MostrarTicketId(ticketId) {
         });
 }
 
-// function MostrarTicketId(ticketId) {
-//     authFetch(`tickets/` + ticketId, {
-//         method: "GET",
-//     })
-//         .then(response => {
-//             if (!response.ok) {
-//                 Swal.fire({
-//                     icon: 'info',
-//                     title: 'Sin datos',
-//                     text: 'No se encontró el ticket seleccionado.',
-//                     background: '#000000',
-//                     color: '#f1f1f1',
-//                     confirmButtonColor: '#8f5fe8',
-//                 });
-//                 return null;
-//             }
-//             return response.json();
-//         })
-//         .then(data => {
-//             if (!data) return;
-//             // Llenar los campos del modal con los datos del ticket
-//             document.getElementById("ticketId").value = data.id ?? data.ticketId;
-//             document.getElementById("TituloMostrar").value = data.titulo;
-//             document.getElementById("DescripcionMostrar").value = data.descripcion;
-//             document.getElementById("PrioridadMostrar").value = data.prioridad;
-//             document.getElementById("CategoriaIdMostrar").value = data.categoriaId;
-//             document.getElementById("MostrarNombreUsuario").value = data.usuarioNombre ?? data.usuario ?? "";
-//             document.getElementById("EmailUsuario").value = data.usuarioClienteId ?? data.email ?? "";
-//             $('#modalMostrarTickets').modal('show');
-//         })
-//         .catch(error => {
-//             Swal.fire({
-//                 icon: 'error',
-//                 title: 'Error',
-//                 text: 'No se pudo cargar el ticket.',
-//                 background: '#000000',
-//                 color: '#f1f1f1',
-//                 confirmButtonColor: '#8f5fe8',
-//             });
-//             console.error("Error al buscar el ticket:", error);
-//         });
-// }
-
 async function EditarTicket() {
 
     const ticketId = document.getElementById("ticketId").value; // Obtener el ID del ticket a editar
@@ -399,7 +327,7 @@ async function EditarTicket() {
         prioridad: prioridad,
         categoriaId: categoriaId,
     };
-    console.log("ticketId:", ticketId, "editarTicket:", editarTicket);
+    // console.log("ticketId:", ticketId, "editarTicket:", editarTicket);
 
     try {
         const res = await authFetch(`tickets/` + ticketId, {
@@ -434,45 +362,45 @@ async function EditarTicket() {
 }
 
 
-function EliminarTicket(ticketId) {
-    Swal.fire({
-        title: "Estas seguro de eliminar este ticket?",
-        text: "¡No podrás revertir esto!",
-        icon: 'warning',
-        background: '#000000',
-        color: '#f1f1f1',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminarlo'
+// function EliminarTicket(ticketId) {
+//     Swal.fire({
+//         title: "Estas seguro de eliminar este ticket?",
+//         text: "¡No podrás revertir esto!",
+//         icon: 'warning',
+//         background: '#000000',
+//         color: '#f1f1f1',
+//         showCancelButton: true,
+//         confirmButtonColor: '#3085d6',
+//         cancelButtonColor: '#d33',
+//         confirmButtonText: 'Sí, eliminarlo'
 
-    }).then((result) => {
-        if (result.isConfirmed) {
-            EliminarTicketSi(ticketId);
-        }
-    });
-}
+//     }).then((result) => {
+//         if (result.isConfirmed) {
+//             EliminarTicketSi(ticketId);
+//         }
+//     });
+// }
 
-function EliminarTicketSi(ticketId) {
+// function EliminarTicketSi(ticketId) {
 
-    authFetch(`tickets/` + ticketId, {
-        method: "DELETE",
-    })
-        .then(() => {
-            // Mostrar mensaje de éxito
-            Swal.fire({
-                title: "Eliminado!",
-                text: "El ticket ha sido eliminado.",
-                icon: 'success',
-                background: '#000000',
-                color: '#f1f1f1',
-                showConfirmButton: false,
-                timer: 1500
-            });
-            ObtenerTickets(); // Actualiza la lista de tickets
-        })
-        .catch(error => console.error("No se pudo acceder a la api, verifique el mensaje de error: ", error))
-}
+//     authFetch(`tickets/` + ticketId, {
+//         method: "DELETE",
+//     })
+//         .then(() => {
+//             // Mostrar mensaje de éxito
+//             Swal.fire({
+//                 title: "Eliminado!",
+//                 text: "El ticket ha sido eliminado.",
+//                 icon: 'success',
+//                 background: '#000000',
+//                 color: '#f1f1f1',
+//                 showConfirmButton: false,
+//                 timer: 1500
+//             });
+//             ObtenerTickets(); // Actualiza la lista de tickets
+//         })
+//         .catch(error => console.error("No se pudo acceder a la api, verifique el mensaje de error: ", error))
+// }
 
 
 function mensajesError(id, data, mensaje) {

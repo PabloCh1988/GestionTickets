@@ -33,14 +33,29 @@ namespace GestionTickets.Controllers
         [HttpGet("{ticketId}")]
         public async Task<ActionResult<IEnumerable<HistorialTicket>>> GetHistorialTicket(int ticketId)
         {
-            var historialTicket = await _context.HistorialTicket.Where(h => h.TicketId == ticketId)
-            .OrderByDescending(h => h.FechaCambio).ToListAsync();
+            // var ticket = await _context.HistorialTicket.FindAsync(ticketId);
+            // var usuario = await _context.Users.Where(u => u.Id == ticket.UsuarioNombre).Select(u => new
+            // {
+            //     u.Id,
+            //     u.NombreCompleto
+            // }).FirstOrDefaultAsync();
+
+            var historialTicket = await _context.HistorialTicket.Where(h => h.TicketId == ticketId).OrderByDescending(h => h.FechaCambio).Select(h => new
+            {
+                h.HistorialTicketId,
+                h.TicketId,
+                h.CampoModificado,
+                h.ValorAnterior,
+                h.ValorNuevo,
+                h.FechaCambio,
+                UsuarioNombre = _context.Users.Where(u => u.Id == h.UsuarioNombre).Select(u => u.NombreCompleto).FirstOrDefault()
+            })
+            .ToListAsync();
 
             if (historialTicket == null || historialTicket.Count == 0)
                  return NotFound();
  
-
-            return historialTicket;
+            return Ok(historialTicket);
         }
 
         // PUT: api/HistorialTickets/5

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "zBeBhy5JbAwz5J9af/4EJFECfItUKuEomuINV2lGVxg=",
+  "Hash": "9awQ/czAFcJ2qeunN9dRjwDjCIG8J0umYdmiWQNxAbY=",
   "Source": "GestionTickets",
   "BasePath": "_content/GestionTickets",
   "Mode": "Default",
@@ -18540,6 +18540,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\views\\home.html"
+    },
+    {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\puestolaboral.html",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "views/puestolaboral.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\views\\puestolaboral.html"
     },
     {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\ticket.html",

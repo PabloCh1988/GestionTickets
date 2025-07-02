@@ -67,6 +67,11 @@ namespace GestionTickets.Controllers
             // var usuario = await _context.Users.FindAsync(userId);
             // var nombreCompleto = usuario?.NombreCompleto ?? "Desconocido";
             var ticket = await _context.Tickets.FindAsync(id);
+            var usuario = await _context.Users.Where(u => u.Id == ticket.UsuarioClienteId).Select(u => new
+            {
+                u.NombreCompleto,
+                u.Email
+            }).FirstOrDefaultAsync();
 
             if (ticket == null)
             {
@@ -75,8 +80,8 @@ namespace GestionTickets.Controllers
 
             return Ok(new
             {
-                usuario = ticket.UsuarioNombre,
-                email = ticket.UsuarioClienteId,
+                usuario = usuario?.NombreCompleto,
+                email = usuario?.Email,
                 id = ticket.TicketId,
                 titulo = ticket.Titulo,
                 descripcion = ticket.Descripcion,
@@ -142,7 +147,7 @@ namespace GestionTickets.Controllers
                         ValorAnterior = originalTitulo,
                         ValorNuevo = ticket.Titulo,
                         FechaCambio = DateTime.Now,
-                        UsuarioNombre = nombreCompleto // Asignar el ID del usuario que realizó el cambio
+                        UsuarioNombre = userId // Asignar el ID del usuario que realizó el cambio
                     };
                     _context.HistorialTicket.Add(historialTicket);
                     await _context.SaveChangesAsync();
@@ -156,7 +161,7 @@ namespace GestionTickets.Controllers
                         ValorAnterior = originalDescripcion,
                         ValorNuevo = ticket.Descripcion,
                         FechaCambio = DateTime.Now,
-                        UsuarioNombre = nombreCompleto // Asignar el ID del usuario que realizó el cambio
+                        UsuarioNombre = userId // Asignar el ID del usuario que realizó el cambio
                     };
                     _context.HistorialTicket.Add(historialTicket);
                     await _context.SaveChangesAsync();
@@ -170,7 +175,7 @@ namespace GestionTickets.Controllers
                         ValorAnterior = originalPrioridad.ToString(),
                         ValorNuevo = ticket.Prioridad.ToString(),
                         FechaCambio = DateTime.Now,
-                        UsuarioNombre = nombreCompleto // Asignar el ID del usuario que realizó el cambio
+                        UsuarioNombre = userId // Asignar el ID del usuario que realizó el cambio
                     };
                     _context.HistorialTicket.Add(historialTicket);
                     await _context.SaveChangesAsync();
@@ -184,7 +189,7 @@ namespace GestionTickets.Controllers
                         ValorAnterior = originalCategoriaId.ToString(),
                         ValorNuevo = ticket.CategoriaId.ToString(),
                         FechaCambio = DateTime.Now,
-                        UsuarioNombre = nombreCompleto // Asignar el ID del usuario que realizó el cambio
+                        UsuarioNombre = userId // Asignar el ID del usuario que realizó el cambio
                     };
                     _context.HistorialTicket.Add(historialTicket);
                     await _context.SaveChangesAsync();
@@ -220,10 +225,10 @@ namespace GestionTickets.Controllers
             // Si el rol del usuario es CLIENTE, se filtran los tickets por el ID del cliente
             // Esto asegura que los clientes solo vean sus propios tickets
 
-            // if (rol == "CLIENTE")
-            // {
-            //     tickets = tickets.Where(t => t.UsuarioClienteId == userId);
-            // }
+            if (rol == "CLIENTE")
+            {
+                tickets = tickets.Where(t => t.UsuarioClienteId == userId);
+            }
 
 
             if (filtro.CategoriaId > 0)
@@ -289,8 +294,8 @@ namespace GestionTickets.Controllers
             ticket.FechaCreacion = DateTime.Now; // Asignar la fecha de creación al crear un nuevo ticket
             ticket.FechaCierre = Convert.ToDateTime("01/01/2025"); // Asignar una fecha de cierre por defecto
             ticket.Estado = EstadoTicket.Abierto; // Asignar el estado por defecto al crear un nuevo ticket
-            ticket.UsuarioClienteId = usuarioLogueadoID; // Asignar el usuario logueado como cliente del ticket
-            ticket.UsuarioNombre = nombreCompleto; // Asignar el nombre completo del usuario que crea el ticket
+            ticket.UsuarioClienteId = userId; // Asignar el usuario logueado como cliente del ticket
+            // ticket.UsuarioNombre = nombreCompleto; // Asignar el nombre completo del usuario que crea el ticket
 
             _context.Tickets.Add(ticket);
             await _context.SaveChangesAsync();
