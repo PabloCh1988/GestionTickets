@@ -14,7 +14,7 @@ async function ObtenerDesarrolladores() {
             "<td>" + desarrollador.email + "</td>" +
             "<td>" + desarrollador.telefono + "</td>" +
             "<td>" + desarrollador.observaciones + "</td>" +
-            "<td>" + desarrollador.puestoLaboralId + "</td>" +
+            "<td>" + (desarrollador.puestoLaboralDescripcion ?? "") + "</td>" +
             "<td>" +
             // Botón de edición
             "<button class='btn btn-inverse-success mdi mdi-border-color' data-action='edit' style='" + botonEditarDesVisible + "' onclick=\"BuscarDesarrolladorId(" + desarrollador.desarrolladorId + ")\">" + "</button>" + 
@@ -46,22 +46,7 @@ function VaciarModalDesarrollo() {
 
 }
 
-// async function comboPuestosCrear(selectedId = null) {
-//     const res = await authFetch("puestoslaborales");
-//     const puestos = await res.json();
-//     console.log("Puestos laborales recibidos:", puestos); // <-- Agrega esto
-//     const combo = document.getElementById("PuestoLaboral");
-//     if (!combo) {
-//         console.log("No se encontró el select PuestoLaboral");
-//         return;
-//     }
-//     combo.innerHTML = "<option value=''>Seleccione un puesto</option>";
-//     puestos.forEach(puesto => {
-//         const id = puesto.id || puesto.puestoLaboralId;
-//         const desc = puesto.descripcion;
-//         combo.innerHTML += `<option value="${id}" ${id == selectedId ? "selected" : ""}>${desc}</option>`;
-//     });
-// }
+
 async function comboPuestosCrear(selectedId = null) {
     console.log("Llenando combo de puestos laborales...");
     try {
@@ -92,21 +77,6 @@ async function comboPuestosCrear(selectedId = null) {
         console.error("Error en comboPuestosCrear:", error);
     }
 }
-
-// comboPuestosCrear(); // Llenás el combo ANTES de abrir el modal
-// $('#modalCrearDesarrollador').modal('show');
-
-
-// $('#modalCrearDesarrollador').on('shown.bs.modal', function () {
-//     comboPuestosCrear();
-// });
-
-// const puestos = [
-//     { id: 1, descripcion: "Analista" },
-//     { id: 2, descripcion: "Desarrollador" }
-// ];
-// console.log("Ejemplo de puesto:", puestos[0]);
-
 
 async function CrearDesarrollador() {
 const puestoLaboralId = document.getElementById("PuestoLaboral").value;
@@ -166,36 +136,35 @@ const crearDesarrollador = {
     }
 }
 
-// async function comboPuestosEditar(selectedId) {
-//     const res = await authFetch("puestoslaborales");
-//     const puestos = await res.json();
-//     const combo = document.getElementById("PuestoLaboralEditar");
-//     if (!combo) return;
-//     combo.innerHTML = "";
-//     puestos.forEach(puestos => {
-//         const id = puestos.id || puestos.puestoLaboralId;
-//         const desc = puestos.descripcion;
-//         combo.innerHTML += `<option value="${id}" ${id == selectedId ? "selected" : ""}>${desc}</option>`;
-//     });
-// }
+async function comboPuestosEditar(selectedId = null) {
+    const res = await authFetch("puestoslaborales");
+    const puestos = await res.json();
+    const combo = document.getElementById("PuestoLaboralEditar");
+    if (!combo) return;
+    combo.innerHTML = "<option value=''>Seleccione un puesto</option>";
+    puestos.forEach(puesto => {
+        const id = puesto.puestoLaboralId;
+        const desc = puesto.descripcion;
+        combo.innerHTML += `<option value="${id}" ${id == selectedId ? "selected" : ""}>${desc}</option>`;
+    });
+}
 
 function BuscarDesarrolladorId(desarrolladorId) {
-
     authFetch(`desarrolladores/` + desarrolladorId, {
         method: "GET",
     })
         .then(response => response.json())
         .then(async data => {
             if (data) {
-                // Llenar los campos del modal de edición con los datos del cliente
                 document.getElementById("DesarrolladorId").value = data.desarrolladorId;
                 document.getElementById("NombreEditarDesarrollador").value = data.nombre;
                 document.getElementById("DniEditarDesarrollador").value = data.dni;
                 document.getElementById("EmailEditarDesarrollador").value = data.email;
                 document.getElementById("TelefonoEditarDesarrollador").value = data.telefono;
                 document.getElementById("ObservacionesEditarDesarrollador").value = data.observaciones;
-                // await comboPuestosEditar(data.puestoLaboralId); // Llenar el combo de puestos laborales
-                $('#modalEditarDesarrollador').modal('show'); // Mostrar el modal de edición
+                await comboPuestosEditar(data.puestoLaboralId); // <-- Llenar el combo y seleccionar el valor
+                var modal = new bootstrap.Modal(document.getElementById('modalEditarDesarrollador'));
+                modal.show();
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -219,6 +188,7 @@ function BuscarDesarrolladorId(desarrolladorId) {
             });
         });
 }
+
 async function EditarDesarrollador() {
     const desarrolladorId = document.getElementById("DesarrolladorId").value; // Obtener el ID del cliente desde el input
     const nombre = document.getElementById("NombreEditarDesarrollador").value.trim();

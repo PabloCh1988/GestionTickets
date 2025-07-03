@@ -31,7 +31,24 @@ namespace GestionTickets.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Desarrollador>>> GetDesarrollador()
         {
-            return await _context.Desarrollador.OrderBy(d => d.Nombre).ToListAsync();
+            // 
+            var desarrolladores = await _context.Desarrollador.OrderBy(d => d.Nombre).Include(d => d.PuestoLaboral)
+                .Select(d => new
+                {
+                    d.DesarrolladorId,
+                    d.Nombre,
+                    d.Dni,
+                    d.Email,
+                    d.Telefono,
+                    d.Observaciones,
+                    d.Eliminado,
+                    d.PuestoLaboralId,
+                    PuestoLaboralDescripcion = d.PuestoLaboral.Descripcion
+                })
+                .ToListAsync();
+
+            return Ok(desarrolladores);
+            // return await _context.Desarrollador.OrderBy(d => d.Nombre).ToListAsync();
         }
 
         // GET: api/Desarrolladores/5
