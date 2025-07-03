@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GestionTickets.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace GestionTickets.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PuestosLaboralesController : ControllerBase
@@ -24,7 +27,7 @@ namespace GestionTickets.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PuestoLaboral>>> GetPuestoLaboral()
         {
-            return await _context.PuestoLaboral.ToListAsync();
+            return await _context.PuestoLaboral.OrderBy(p => p.Descripcion).ToListAsync(); // Ordenar por descripción
         }
 
         // GET: api/PuestosLaborales/5
@@ -46,6 +49,15 @@ namespace GestionTickets.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPuestoLaboral(int id, PuestoLaboral puestoLaboral)
         {
+            // Verificar si ya existe un puesto laboral con la misma descripción
+            // y un ID diferente al que se está actualizando
+            var existePuesto = await _context.PuestoLaboral
+                .Where(p => p.Descripcion == puestoLaboral.Descripcion && p.PuestoLaboralId != id)
+                .CountAsync();
+            if (existePuesto > 0)
+            {
+                return BadRequest("Ya existe un puesto laboral con el mismo nombre.");
+            }
             if (id != puestoLaboral.PuestoLaboralId)
             {
                 return BadRequest();
@@ -77,6 +89,13 @@ namespace GestionTickets.Controllers
         [HttpPost]
         public async Task<ActionResult<PuestoLaboral>> PostPuestoLaboral(PuestoLaboral puestoLaboral)
         {
+            var existePuesto = await _context.PuestoLaboral
+                .Where(p => p.Descripcion == puestoLaboral.Descripcion)
+                .CountAsync(); // Verifica si ya existe un puesto laboral con la misma descripción
+                if (existePuesto > 0) // Si existe un puesto laboral con la misma descripción
+                {
+                    return BadRequest("Ya existe un puesto laboral con el mismo nombre.");
+                }
             _context.PuestoLaboral.Add(puestoLaboral);
             await _context.SaveChangesAsync();
 
@@ -92,8 +111,7 @@ namespace GestionTickets.Controllers
             {
                 return NotFound();
             }
-
-            _context.PuestoLaboral.Remove(puestoLaboral);
+            puestoLaboral.Eliminado = true; // Marcar como eliminado en lugar de eliminar físicamente
             await _context.SaveChangesAsync();
 
             return NoContent();

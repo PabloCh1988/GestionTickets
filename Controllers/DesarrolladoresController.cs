@@ -6,25 +6,31 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GestionTickets.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace GestionTickets.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DesarrolladoresController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public DesarrolladoresController(ApplicationDbContext context)
+        public DesarrolladoresController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: api/Desarrolladores
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Desarrollador>>> GetDesarrollador()
         {
-            return await _context.Desarrollador.ToListAsync();
+            return await _context.Desarrollador.OrderBy(d => d.Nombre).ToListAsync();
         }
 
         // GET: api/Desarrolladores/5
@@ -46,6 +52,20 @@ namespace GestionTickets.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDesarrollador(int id, Desarrollador desarrollador)
         {
+            var existeDesarrollador = await _context.Desarrollador
+                .Where(d => d.Email == desarrollador.Email && d.DesarrolladorId != id)
+                .CountAsync();
+            var existeDni = await _context.Desarrollador
+            .Where(d => d.Dni == desarrollador.Dni && d.DesarrolladorId != id)
+            .CountAsync();
+            if (existeDesarrollador > 0)
+            {
+                return BadRequest("Ya existe un desarrollador con el mismo email.");
+            }
+            if (existeDni > 0)
+            {
+                return BadRequest("Ya existe un desarrollador con el mismo DNI.");
+            }
             if (id != desarrollador.DesarrolladorId)
             {
                 return BadRequest();
@@ -77,10 +97,34 @@ namespace GestionTickets.Controllers
         [HttpPost]
         public async Task<ActionResult<Desarrollador>> PostDesarrollador(Desarrollador desarrollador)
         {
-            _context.Desarrollador.Add(desarrollador);
-            await _context.SaveChangesAsync();
+            if (!String.IsNullOrEmpty(desarrollador.Nombre) && desarrollador.Dni != 0 && !String.IsNullOrEmpty(desarrollador.Email))
+            {
+                if (!_context.Desarrollador.Any(d => d.Dni == desarrollador.Dni || d.Email == desarrollador.Email))
+                {
+                    _context.Desarrollador.Add(desarrollador);
+                    await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetDesarrollador", new { id = desarrollador.DesarrolladorId }, desarrollador);
+                    //Crear un usuario Identity
+                    var user = new ApplicationUser
+                    {
+                        UserName = desarrollador.Email,
+                        Email = desarrollador.Email,
+                        NombreCompleto = desarrollador.Nombre,
+                    };
+
+                    var result = await _userManager.CreateAsync(user, "Desarrollador2025."); // Contraseña por defecto
+                    if (result.Succeeded)
+                    {
+                        // Asignar el rol de Desarrollador al usuario
+                        await _userManager.AddToRoleAsync(user, "DESARROLLADOR");
+                    }
+                    return CreatedAtAction("GetDesarrollador", new { id = desarrollador.DesarrolladorId }, desarrollador);
+                }
+            }
+
+            return BadRequest("No se puede crear el desarrollador, verifique los datos ingresados.");
+
+
         }
 
         // DELETE: api/Desarrolladores/5
@@ -93,7 +137,7 @@ namespace GestionTickets.Controllers
                 return NotFound();
             }
 
-            _context.Desarrollador.Remove(desarrollador);
+            desarrollador.Eliminado = true;
             await _context.SaveChangesAsync();
 
             return NoContent();

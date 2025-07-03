@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "9awQ/czAFcJ2qeunN9dRjwDjCIG8J0umYdmiWQNxAbY=",
+  "Hash": "cNfyIJpzz5kQzYAnAKVegXmTu1HPjEXe504mcI1X18M=",
   "Source": "GestionTickets",
   "BasePath": "_content/GestionTickets",
   "Mode": "Default",
@@ -17231,6 +17231,25 @@
       "OriginalItemSpec": "wwwroot\\js\\common\\ObtenerCategoriasDropdown.js"
     },
     {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\common\\ObtenerPuestosDropdown.js",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "js/common/ObtenerPuestosDropdown.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\common\\ObtenerPuestosDropdown.js"
+    },
+    {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\config.js",
       "SourceId": "GestionTickets",
       "SourceType": "Discovered",
@@ -17248,6 +17267,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\config.js"
+    },
+    {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\desarrollador.js",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "js/desarrollador.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\desarrollador.js"
     },
     {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\index.js",
@@ -17286,6 +17324,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\main.js"
+    },
+    {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\puestoLaboral.js",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "js/puestoLaboral.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\puestoLaboral.js"
     },
     {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\Ticket.js",
@@ -18521,6 +18578,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\views\\cliente.html"
+    },
+    {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\desarrollador.html",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "views/desarrollador.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\views\\desarrollador.html"
     },
     {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\home.html",

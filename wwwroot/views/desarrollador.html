@@ -1,0 +1,150 @@
+<!-- Tablas Desarrolladores -->
+<div class="row">
+  <div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">Desarrolladores</h2>
+        <div class="grid-margin">
+          <button id="btnNuevoDesarrollador" class="btn-lg btn-inverse-success" data-bs-toggle="modal" data-bs-target="#modalCrearDesarrollador">
+            <span><i class=" mdi mdi-plus"></i></span> Agregar
+            Desarrollador</button>
+          <button class="btn-lg btn-inverse-info" onclick="ImprimirInformePdf()">
+            <span><i class="mdi mdi-fax"></i></span> Generar Informe</button>
+        </div>
+        <div class="table-responsive">
+          <table id="clientes" class="table table-hover">
+            <thead>
+              <tr>
+                <th class="text-light">Nombre</th>
+                <th class="text-light">D.N.I.</th>
+                <th class="text-light">Email</th>
+                <th class="text-light">Telefono</th>
+                <th class="text-light">Observaciones</th>
+                <th class="text-light">Puesto Laboral</th>
+                <th class="text-light">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="todosLosDesarrolladores">
+              <!-- Aquí se llenará la tabla con JavaScript -->
+            </tbody>
+          </table>
+
+          <!-- MODAL -->
+          <div id="modalCrearDesarrollador" class="modal fade" tabindex="-1" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title text-primary">Agregar Desarrollador</h5>
+                </div>
+                <div class="modal-body">
+                  <div>
+
+                    <!-- <input type="hidden" id="ClienteId"> -->
+
+                    <label for="NombreDesarrollador" class="form-label">Nombre</label>
+                    <input type="text" id="NombreDesarrollador" class="form-control text-light" placeholder="Nombre">
+
+                    <label for="DniDesarrollador" class="form-label">DNI</label>
+                    <input type="number" id="DniDesarrollador" class="form-control text-light" placeholder="DNI">
+
+                    <label for="EmailDesarrollador" class="form-label">Email</label>
+                    <input type="email" id="EmailDesarrollador" class="form-control text-light" placeholder="Email">
+
+                    <label for="TelefonoDesarrollador" class="form-label">Telefono</label>
+                    <input type="tel" id="TelefonoDesarrollador" class="form-control text-light" placeholder="Telefono">
+
+                    <label for="ObservacionesDesarrollador" class="form-label">Observaciones</label>
+                    <textarea id="ObservacionesDesarrollador" class="form-control text-light"
+                      placeholder="Observaciones"></textarea>
+
+                    <label for="PuestoLaboral" class="form-label">Puesto Laboral</label>
+                    <select id="PuestoLaboral" class="form-control form-select text-light">
+                      <option value="">Seleccione un puesto</option>
+                    </select>
+
+
+                    <span id="errorDesarrollador" class="text-danger"></span>
+
+
+                    <p id="errorCrearDesarrollador" hidden style="color:red"></p>
+
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-inverse-warning"
+                    onclick="VaciarModalDesarrollo()">Cancelar</button>
+                  <button type="button" class="btn btn-inverse-primary" onclick="CrearDesarrollador();">Guardar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- MODAL editar -->
+          <div id="modalEditarDesarrollador" class="modal fade" tabindex="-1" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title text-primary">Editar Desarrollador</h5>
+                </div>
+                <div class="modal-body">
+                  <div>
+
+                    <input type="hidden" id="DesarrolladorId">
+
+                    <label for="NombreEditarDesarrollador" class="form-label">Nombre</label>
+                    <input type="text" id="NombreEditarDesarrollador" class="form-control text-light">
+
+                    <label for="DniEditarDesarrollador" class="form-label">DNI</label>
+                    <input type="number" id="DniEditarDesarrollador" class="form-control text-light">
+
+                    <label for="EmailEditarDesarrollador" class="form-label">Email</label>
+                    <input type="email" id="EmailEditarDesarrollador" class="form-control text-light">
+
+                    <label for="TelefonoEditarDesarrollador" class="form-label">Telefono</label>
+                    <input type="tel" id="TelefonoEditarDesarrollador" class="form-control text-light">
+
+                    <label for="ObservacionesEditarDesarrollador" class="form-label">Observaciones</label>
+                    <textarea id="ObservacionesEditarDesarrollador" class="form-control text-light"></textarea>
+
+                    <label for="PuestoLaboralEditar" class="form-label">Puesto Laboral</label>
+                    <select id="PuestoLaboralEditar" class="form-control form-select text-light"></select>
+
+                    <span id="errorCliente" class="text-danger"></span>
+
+
+                    <p id="errorEditarDesarrollador" hidden style="color:red"></p>
+
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-inverse-warning"
+                    onclick="VaciarModalDesarrollo()">Cancelar</button>
+                  <button type="button" class="btn btn-inverse-primary"
+                    onclick="EditarDesarrollador();">Guardar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // window.addEventListener('DOMContentLoaded', function () {
+  //   // Llenar el combo de puestos laborales al cargar la página
+  //   ObtenerPuestosDropdown();
+
+  //   // Llenar la tabla de desarrolladores
+  //   // ObtenerDesarrolladores();
+  // });
+</script>

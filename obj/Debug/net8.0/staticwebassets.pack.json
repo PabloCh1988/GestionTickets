@@ -3629,8 +3629,16 @@
       "PackagePath": "staticwebassets\\js\\common\\ObtenerCategoriasDropdown.js"
     },
     {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\common\\ObtenerPuestosDropdown.js",
+      "PackagePath": "staticwebassets\\js\\common\\ObtenerPuestosDropdown.js"
+    },
+    {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\config.js",
       "PackagePath": "staticwebassets\\js\\config.js"
+    },
+    {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\desarrollador.js",
+      "PackagePath": "staticwebassets\\js\\desarrollador.js"
     },
     {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\index.js",
@@ -3639,6 +3647,10 @@
     {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\main.js",
       "PackagePath": "staticwebassets\\js\\main.js"
+    },
+    {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\puestoLaboral.js",
+      "PackagePath": "staticwebassets\\js\\puestoLaboral.js"
     },
     {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\lib\\bootstrap\\css\\bootstrap-grid.css",
@@ -3895,6 +3907,10 @@
     {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\cliente.html",
       "PackagePath": "staticwebassets\\views\\cliente.html"
+    },
+    {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\desarrollador.html",
+      "PackagePath": "staticwebassets\\views\\desarrollador.html"
     },
     {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\views\\home.html",

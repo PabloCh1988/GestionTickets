@@ -242,7 +242,7 @@ function BuscarTicketId(ticketId) {
         document.getElementById("TituloEditar").value = data.titulo;
         document.getElementById("DescripcionEditar").value = data.descripcion;
         document.getElementById("PrioridadEditar").value = data.prioridad;
-        await comboCategoriasEditar(data.categoriaId); // <-- Aquí
+        await comboCategoriasEditar(data.categoriaId); 
         $('#modalEditarTickets').modal('show');
     })
     .catch(error => {

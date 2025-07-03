@@ -1,6 +1,3 @@
-// const API_URLCliente = "https://localhost:7065/api/clientess";
-
-
 async function ObtenerClientes() {
     const res = await authFetch("clientess");
     const clientes = await res.json();
@@ -29,12 +26,6 @@ async function ObtenerClientes() {
         );
     });
 }
-
-
-// document.addEventListener("DOMContentLoaded", function () {
-//     ObtenerClientes(); // Cargar los clientes al iniciar la página
-// });
-
 
 
 function VaciarModalClientes() {
