@@ -97,11 +97,11 @@ public class AuthController : ControllerBase
             //SI EL USUARIO ES ENCONTRADO Y LA CONTRASEÑA ES CORRECTA
             var claims = new[]
             {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim("NombreCompleto", user.NombreCompleto),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), // ID DEL USUARIO
+            new Claim(ClaimTypes.Name, user.UserName), // USUARIO
+            new Claim("NombreCompleto", user.NombreCompleto),// NOMBRE COMPLETO DEL USUARIO
             new Claim (ClaimTypes.Role, rolNombre), // ASIGNAMOS EL ROL AL USUARIO
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // JTI (JWT ID) - IDENTIFICADOR ÚNICO DEL TOKEN
             };
          
             //RECUPERAMOS LA KEY SETEADA EN EL APPSETTING
@@ -128,7 +128,7 @@ public class AuthController : ControllerBase
             {
                 token = jwt,
                 refreshToken = refreshToken,
-                // email = user.Email,
+                
                 nombreCompleto = user.NombreCompleto,
             });
         }
@@ -145,51 +145,107 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("refresh-token")]
-    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest model)
+public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest model)
+{
+    var user = await _userManager.FindByEmailAsync(model.Email);
+    if (user == null)
+        return Unauthorized();
+
+    var savedToken = await _userManager.GetAuthenticationTokenAsync(user, "MyApp", "RefreshToken");
+    if (savedToken != model.RefreshToken)
+        return Unauthorized("Refresh token inválido");
+
+    // BUSCAR ROL QUE TIENE
+    string rolNombre = "CLIENTE";
+    var rolUsuario = _context.UserRoles.Where(r => r.UserId == user.Id).SingleOrDefault();
+    if (rolUsuario != null)
     {
-        //BUSCAMOS EL USUARIO POR EMAIL EN BASE DE DATOS
-        var user = await _userManager.FindByEmailAsync(model.Email);
-        if (user == null)
-            return Unauthorized();
+        var rol = _context.Roles.Where(r => r.Id == rolUsuario.RoleId).SingleOrDefault();
+        rolNombre = rol.Name;
+    }
 
-        //BUSCAMOS EL TOKENREFRESH GUARDADO
-        var savedToken = await _userManager.GetAuthenticationTokenAsync(user, "MyApp", "RefreshToken");
-
-        //COMPARAMOS EL REFRESH TOKEN DE BD CON EL GUARDADO EN EL DISPOSITIVO DEL USUARIO PARA UNA MAYOR SEGURIDAD
-        if (savedToken != model.RefreshToken)
-            return Unauthorized("Refresh token inválido");
-
-        //GENERAMOS EL NUEVO TOKEN DE ACCESO PRINCIPAL
-        var claims = new[]
-        {
+    var claims = new[]
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
         new Claim(ClaimTypes.Name, user.UserName),
+        new Claim("NombreCompleto", user.NombreCompleto),
+        new Claim(ClaimTypes.Role, rolNombre),
         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var newToken = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Issuer"],
-            claims: claims,
-            expires: DateTime.Now.AddMinutes(15),
-            signingCredentials: creds
-        );
+    var newToken = new JwtSecurityToken(
+        issuer: _configuration["Jwt:Issuer"],
+        audience: _configuration["Jwt:Issuer"],
+        claims: claims,
+        expires: DateTime.Now.AddMinutes(15),
+        signingCredentials: creds
+    );
 
-        var jwt = new JwtSecurityTokenHandler().WriteToken(newToken);
+    var jwt = new JwtSecurityTokenHandler().WriteToken(newToken);
 
-        //GENERAMOS UN NUEVO REFRESH TOCKEN
-        var newRefreshToken = GenerarRefreshToken();
-        //VOLVEMOS A GUARDAR ESE REGISTRO
-        await _userManager.SetAuthenticationTokenAsync(user, "MyApp", "RefreshToken", newRefreshToken);
+    var newRefreshToken = GenerarRefreshToken();
+    await _userManager.SetAuthenticationTokenAsync(user, "MyApp", "RefreshToken", newRefreshToken);
 
-        return Ok(new
-        {
-            token = jwt,
-            refreshToken = newRefreshToken
-        });
-    }
+    return Ok(new
+    {
+        token = jwt,
+        refreshToken = newRefreshToken,
+        nombreCompleto = user.NombreCompleto,
+    });
+}
+
+    // [HttpPost("refresh-token")]
+    // public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest model)
+    // {
+    //     //BUSCAMOS EL USUARIO POR EMAIL EN BASE DE DATOS
+    //     var user = await _userManager.FindByEmailAsync(model.Email);
+    //     if (user == null)
+    //         return Unauthorized();
+
+            
+
+    //     //BUSCAMOS EL TOKENREFRESH GUARDADO
+    //     var savedToken = await _userManager.GetAuthenticationTokenAsync(user, "MyApp", "RefreshToken");
+
+    //     //COMPARAMOS EL REFRESH TOKEN DE BD CON EL GUARDADO EN EL DISPOSITIVO DEL USUARIO PARA UNA MAYOR SEGURIDAD
+    //     if (savedToken != model.RefreshToken)
+    //         return Unauthorized("Refresh token inválido");
+
+    //     //GENERAMOS EL NUEVO TOKEN DE ACCESO PRINCIPAL
+    //     var claims = new[]
+    //     {
+    //     new Claim(ClaimTypes.Name, user.UserName),
+    //     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+    // };
+
+    //     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+    //     var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+    //     var newToken = new JwtSecurityToken(
+    //         issuer: _configuration["Jwt:Issuer"],
+    //         audience: _configuration["Jwt:Issuer"],
+    //         claims: claims,
+    //         expires: DateTime.Now.AddMinutes(15), //
+    //         signingCredentials: creds
+    //     );
+
+    //     var jwt = new JwtSecurityTokenHandler().WriteToken(newToken);
+
+    //     //GENERAMOS UN NUEVO REFRESH TOCKEN
+    //     var newRefreshToken = GenerarRefreshToken();
+    //     //VOLVEMOS A GUARDAR ESE REGISTRO
+    //     await _userManager.SetAuthenticationTokenAsync(user, "MyApp", "RefreshToken", newRefreshToken);
+
+    //     return Ok(new
+    //     {
+    //         token = jwt,
+    //         refreshToken = newRefreshToken,
+    //         nombreCompleto = user.NombreCompleto,
+    //     });
+    // }
 
     [HttpPost("logout")]
     public async Task<IActionResult> Logout([FromBody] LogoutRequest model)

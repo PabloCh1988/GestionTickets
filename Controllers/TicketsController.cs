@@ -213,18 +213,22 @@ namespace GestionTickets.Controllers
         // POST: api/Tickets/filtro
         // Este método permite filtrar los tickets según diferentes criterios
         [HttpPost("filtro")]
+
+        // Recibe en el cuerpo del request([FromBody]) un objeto llamado filtro de tipo FiltroTicket.
+        // Devuelve una lista de VistaTickets(una vista resumida del modelo Ticket).
         public async Task<ActionResult<IEnumerable<VistaTickets>>> FiltroTicket([FromBody] FiltroTicket filtro)
         {
             List<VistaTickets> vista = new List<VistaTickets>();
 
             var tickets = _context.Tickets.Include(t => t.Categoria).AsQueryable();
 
-            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // Obtiene el ID del usuario logueado
+            // Obtiene el ID del usuario logueado
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value; 
             // Obtiene el rol del usuario logueado
             var rol = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+
             // Si el rol del usuario es CLIENTE, se filtran los tickets por el ID del cliente
             // Esto asegura que los clientes solo vean sus propios tickets
-
             if (rol == "CLIENTE")
             {
                 tickets = tickets.Where(t => t.UsuarioClienteId == userId);
@@ -251,7 +255,6 @@ namespace GestionTickets.Controllers
                 tickets = tickets.Where(t => t.FechaCreacion >= FechaInicio && t.FechaCreacion <= FechaFin);
             }
 
-
             foreach (var ticket in tickets.OrderByDescending(t => t.FechaCreacion))
             {
                 var ticketMostrar = new VistaTickets
@@ -267,7 +270,6 @@ namespace GestionTickets.Controllers
                 };
                 vista.Add(ticketMostrar); // Agrega el ticket a la lista de vista
             }
-
             return vista.ToList(); // Retorna la lista de tickets filtrados
         }
 
@@ -276,17 +278,25 @@ namespace GestionTickets.Controllers
         [HttpPost]
         public async Task<ActionResult<Ticket>> PostTicket(Ticket ticket)
         {
+            // Obtiene el ID del usuario logueado
+            // Esto se usa para asignar el ticket al usuario que lo crea
             var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var usuarioLogueadoID = HttpContext.User.Identity?.Name;
             // Obtener el nombre completo del usuario autenticado
             var usuario = await _context.Users.FindAsync(userId);
             var nombreCompleto = usuario?.NombreCompleto ?? "Desconocido";
+            var rol = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
             // Verifica si ya existe un Ticket con la misma descripción
             var yaExisteTicket = await _context.Tickets.Where(t => t.Titulo == ticket.Titulo).CountAsync();
             if (yaExisteTicket > 0) // Si existe un ticket con la misma descripción
             // se retorna un mensaje de error
             {
                 return BadRequest("Ya existe un ticket con la misma descripción.");
+            }
+            // Verifica si el usuario logueado es un desarrollador
+            if (rol == "DESARROLLADOR")
+            {
+                return BadRequest("Los desarrolladores no pueden crear Tickets.");
             }
 
             // Al crear un nuevo ticket, se asignan valores por defecto a los campos
@@ -295,7 +305,7 @@ namespace GestionTickets.Controllers
             ticket.FechaCierre = Convert.ToDateTime("01/01/2025"); // Asignar una fecha de cierre por defecto
             ticket.Estado = EstadoTicket.Abierto; // Asignar el estado por defecto al crear un nuevo ticket
             ticket.UsuarioClienteId = userId; // Asignar el usuario logueado como cliente del ticket
-            // ticket.UsuarioNombre = nombreCompleto; // Asignar el nombre completo del usuario que crea el ticket
+
 
             _context.Tickets.Add(ticket);
             await _context.SaveChangesAsync();

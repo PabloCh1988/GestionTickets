@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using GestionTickets.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace GestionTickets.Controllers
 {
@@ -17,13 +18,16 @@ namespace GestionTickets.Controllers
     public class PuestosLaboralesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public PuestosLaboralesController(ApplicationDbContext context)
+        public PuestosLaboralesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager; // Inyecta UserManager para manejar usuarios de Identity
         }
 
         // GET: api/PuestosLaborales
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PuestoLaboral>>> GetPuestoLaboral()
         {

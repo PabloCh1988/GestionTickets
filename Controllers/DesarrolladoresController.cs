@@ -27,6 +27,7 @@ namespace GestionTickets.Controllers
         }
 
         // GET: api/Desarrolladores
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Desarrollador>>> GetDesarrollador()
         {
@@ -97,11 +98,13 @@ namespace GestionTickets.Controllers
         [HttpPost]
         public async Task<ActionResult<Desarrollador>> PostDesarrollador(Desarrollador desarrollador)
         {
+            // VALIDAR QUE LOS CAMPOS NO ESTÉN VACÍOS Y QUE EL DNI Y EMAIL NO EXISTAN
             if (!String.IsNullOrEmpty(desarrollador.Nombre) && desarrollador.Dni != 0 && !String.IsNullOrEmpty(desarrollador.Email))
             {
+                // Verificar si ya existe un desarrollador con el mismo email o DNI
                 if (!_context.Desarrollador.Any(d => d.Dni == desarrollador.Dni || d.Email == desarrollador.Email))
                 {
-                    _context.Desarrollador.Add(desarrollador);
+                    _context.Desarrollador.Add(desarrollador);// Agregar el desarrollador a la base de datos
                     await _context.SaveChangesAsync();
 
                     //Crear un usuario Identity

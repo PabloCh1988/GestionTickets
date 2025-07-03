@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "cNfyIJpzz5kQzYAnAKVegXmTu1HPjEXe504mcI1X18M=",
+  "Hash": "mYVHdNTX1ddn+xWJv/5G6fuv827dQBsibsLo7BxFj/0=",
   "Source": "GestionTickets",
   "BasePath": "_content/GestionTickets",
   "Mode": "Default",
@@ -17229,25 +17229,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\common\\ObtenerCategoriasDropdown.js"
-    },
-    {
-      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\common\\ObtenerPuestosDropdown.js",
-      "SourceId": "GestionTickets",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\",
-      "BasePath": "_content/GestionTickets",
-      "RelativePath": "js/common/ObtenerPuestosDropdown.js",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\js\\common\\ObtenerPuestosDropdown.js"
     },
     {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets\\wwwroot\\js\\config.js",

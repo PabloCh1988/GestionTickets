@@ -19,15 +19,15 @@ namespace GestionTickets.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager; // UserManager para manejar usuarios de Identity
         public ClientessController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
-            _userManager = userManager;
+            _userManager = userManager; // Inyecta UserManager para manejar usuarios de Identity
         }
 
         // GET: api/Clientess
-        //[Authorize(Roles = "ADMINISTRADOR")]
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Cliente>>> GetCliente()
         {
@@ -99,8 +99,7 @@ namespace GestionTickets.Controllers
         [HttpPost]
         public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
         { 
-            // Val idar que los campos requeridos no estén vacíos
-            // y que el DNI y Email sean válidos
+            // Validar que los campos requeridos no estén vacíos y que el DNI y Email sean válidos
             if (!String.IsNullOrEmpty(cliente.Nombre) && cliente.Dni != 0 && !String.IsNullOrEmpty(cliente.Email))
             {
                 //VALIDAR QUE NO EXISTA CON EL MISMO NUMERO DE DOCUMENTO y EMAIL
