@@ -250,3 +250,17 @@ footer a {
     text-decoration: none;
 }
 
+/* Todas las tablas con acciones al final */
+.tabla-con-acciones {
+  table-layout: fixed;  /* Columnas con ancho proporcional */
+  width: 100%;          /* Ocupar todo el ancho */
+}
+
+/* Última columna (Acciones) más angosta y a la derecha */
+.tabla-con-acciones th:last-child,
+.tabla-con-acciones td:last-child {
+  width: 1%;        /* ancho mínimo necesario */
+  white-space: nowrap; /* evita que se rompa el contenido en varias líneas */
+  text-align: right;   /* contenido alineado a la derecha */
+  vertical-align: middle;
+}

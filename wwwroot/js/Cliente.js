@@ -16,7 +16,7 @@ async function ObtenerClientes() {
             "<td>" + cliente.observaciones + "</td>" +
             "<td>" +
             // Botón de edición
-            "<button class='btn btn-inverse-success mdi mdi-border-color' data-action='edit' style='" + botonEditarVisible + "' onclick=\"BuscarClientesId(" + cliente.clienteId + ")\">" + "</button>" + 
+            "<button class='btn btn-inverse-success mdi mdi-border-color' title='Editar' data-action='edit' style='" + botonEditarVisible + "' onclick=\"BuscarClientesId(" + cliente.clienteId + ")\">" + "</button>" + 
             // Botón de activación/desactivación
             "<button class='' data-action='delete' style='background: none; border: none;' onclick=\"EliminarCliente(" + cliente.clienteId + ", " + cliente.eliminado + ")\" title='" + (cliente.eliminado ? "Activar cliente" : "Desactivar cliente") + "'>" +
             "<i class='btn btn-inverse-danger " + iconoHabilitado + "'></i>" +

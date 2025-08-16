@@ -27,4 +27,12 @@ function CompletarDropdown(data) {
             "<option value='"+ item.categoriaId + "'>" + item.descripcion + "</option>"            
         )
     })
+
+    $("#CategoriasPorPuesto").empty();
+    $.each(activo, function(index, item) {
+        $('#CategoriasPorPuesto').append(
+            "<option value='"+ item.categoriaId + "'>" + item.descripcion + "</option>"            
+        )
+    })
+
 }

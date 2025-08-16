@@ -70,7 +70,7 @@ function renderizarCategoriasJQuery(data) {
                 "<td>" + item.descripcion + "</td>" +
                 "<td>" +
                     // Botón de edición
-                    "<button class='btn btn-inverse-success mdi mdi-border-color' data-action='edit' style='" + botonEditarVisible + "' onclick=\"AbrirModalEditar(" + item.categoriaId + ", '" + item.descripcion.replace(/'/g, "\\'") + "')\">" +
+                    "<button class='btn btn-inverse-success mdi mdi-border-color' title='Editar' data-action='edit' style='" + botonEditarVisible + "' onclick=\"AbrirModalEditar(" + item.categoriaId + ", '" + item.descripcion.replace(/'/g, "\\'") + "')\">" +
                     "</button>" +
                 
                     // Botón de activación/desactivación

@@ -32,4 +32,6 @@ public DbSet<GestionTickets.Models.Cliente> Cliente { get; set; } = default!;
 public DbSet<GestionTickets.Models.Desarrollador> Desarrollador { get; set; } = default!;
 
 public DbSet<GestionTickets.Models.PuestoLaboral> PuestoLaboral { get; set; } = default!;
+
+public DbSet<GestionTickets.Models.CategoriaPorPuesto> CategoriaPorPuesto { get; set; } = default!;
 }

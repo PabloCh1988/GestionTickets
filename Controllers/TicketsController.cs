@@ -223,18 +223,77 @@ namespace GestionTickets.Controllers
             var tickets = _context.Tickets.Include(t => t.Categoria).AsQueryable();
 
             // Obtiene el ID del usuario logueado
-            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value; 
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             // Obtiene el rol del usuario logueado
             var rol = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+            // Obtener el email del usuario logueado
+            var usuarioLogueadoID = HttpContext.User.Identity?.Name;
+
+            if (rol == "DESARROLLADOR")
+            {
+                var desarrollador = await _context.Desarrollador.Where(d => d.Email == usuarioLogueadoID).FirstOrDefaultAsync();// busca al desarrollador por su email
+
+                var puestoDesarrollador = desarrollador?.PuestoLaboralId; // Obtiene el puesto del desarrollador
+
+                var categoriasPorPuesto = await _context.CategoriaPorPuesto
+                    .Where(c => c.PuestoLaboralId == puestoDesarrollador)
+                    .Select(c => c.CategoriaId)
+                    .ToListAsync(); // Obtiene las categorías asociadas al puesto del desarrollador
+
+                // Filtra los tickets por las categorías asociadas al puesto del desarrollador
+                tickets = tickets.Where(t => categoriasPorPuesto.Contains(t.CategoriaId)); // contains devuelve un booleano si el elemento está en la lista
+
+                // Aplica los filtros adicionales del objeto FiltroTicket
+                // estos filtros funcionan igual que para el rol de CLIENTE
+                if (filtro.CategoriaId > 0)
+                    tickets = tickets.Where(t => t.CategoriaId == filtro.CategoriaId);
+
+                if (filtro.Estado > 0)
+                    tickets = tickets.Where(t => t.Estado == (EstadoTicket)filtro.Estado);
+
+                if (filtro.Prioridad > 0)
+                    tickets = tickets.Where(t => t.Prioridad == (PrioridadTicket)filtro.Prioridad);
+
+                if (filtro.FechaInicio.HasValue && filtro.FechaFin.HasValue)
+                {
+                    DateTime FechaInicio = filtro.FechaInicio.Value;
+                    DateTime FechaFin = filtro.FechaFin.Value
+                        .AddHours(23)
+                        .AddMinutes(59)
+                        .AddSeconds(59);
+
+                    tickets = tickets.Where(t => t.FechaCreacion >= FechaInicio && t.FechaCreacion <= FechaFin);
+                }
+
+                // Si el rol del usuario es DESARROLLADOR, se filtran los tickets por el ID del desarrollador
+                // Esto asegura que los desarrolladores solo vean los tickets asignados a ellos
+                foreach (var ticket in tickets.OrderByDescending(t => t.FechaCreacion))
+                {
+                    var ticketMostrar = new VistaTickets
+                    // Crea una nueva instancia de VistaTickets y asigna los valores del ticket                
+                    {
+                        TicketId = ticket.TicketId,
+                        Titulo = ticket.Titulo,
+                        FechaCreacionString = ticket.FechaCreacionString,
+                        // UsuarioClienteId = ticket.UsuarioClienteId ?? usuarioLogueadoID, // Si el ticket no tiene un usuario asignado, se usa el usuario logueado
+                        Prioridad = ticket.Prioridad,
+                        EstadoString = ticket.EstadoString,
+                        CategoriaString = ticket.CategoriaString,
+                        PrioridadString = ticket.PrioridadString
+                    };
+                    vista.Add(ticketMostrar); // Agrega el ticket a la lista de vista
+                }
+                return vista.ToList(); // Retorna la lista de tickets filtrados
+            }
 
             // Si el rol del usuario es CLIENTE, se filtran los tickets por el ID del cliente
             // Esto asegura que los clientes solo vean sus propios tickets
-            if (rol == "CLIENTE")
+            else if (rol == "CLIENTE")
             {
                 tickets = tickets.Where(t => t.UsuarioClienteId == userId);
             }
 
-
+            // Aplica los filtros según los criterios proporcionados en el objeto FiltroTicket            
             if (filtro.CategoriaId > 0)
                 tickets = tickets.Where(t => t.CategoriaId == filtro.CategoriaId);
 

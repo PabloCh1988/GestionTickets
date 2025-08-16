@@ -17,7 +17,7 @@ async function ObtenerDesarrolladores() {
             "<td>" + (desarrollador.puestoLaboralDescripcion ?? "") + "</td>" +
             "<td>" +
             // Botón de edición
-            "<button class='btn btn-inverse-success mdi mdi-border-color' data-action='edit' style='" + botonEditarDesVisible + "' onclick=\"BuscarDesarrolladorId(" + desarrollador.desarrolladorId + ")\">" + "</button>" + 
+            "<button class='btn btn-inverse-success mdi mdi-border-color' title='Editar' data-action='edit' style='" + botonEditarDesVisible + "' onclick=\"BuscarDesarrolladorId(" + desarrollador.desarrolladorId + ")\">" + "</button>" + 
             // Botón de activación/desactivación
             "<button class='' data-action='delete' style='background: none; border: none;' onclick=\"EliminarDesarrollador(" + desarrollador.desarrolladorId + ", " + desarrollador.eliminado + ")\" title='" + (desarrollador.eliminado ? "Activar desarrollador" : "Desactivar desarrollador") + "'>" +
             "<i class='btn btn-inverse-danger " + iconoDesHabilitado + "'></i>" +
@@ -48,7 +48,6 @@ function VaciarModalDesarrollo() {
 
 
 async function comboPuestosCrear(selectedId = null) {
-    console.log("Llenando combo de puestos laborales...");
     try {
         const res = await authFetch("puestoslaborales");
         if (!res.ok) {
@@ -57,7 +56,6 @@ async function comboPuestosCrear(selectedId = null) {
         }
 
         const puestos = await res.json();
-        console.log("Puestos laborales recibidos:", puestos);
 
         const combo = document.getElementById("PuestoLaboral");
         if (!combo) {
@@ -69,7 +67,6 @@ async function comboPuestosCrear(selectedId = null) {
         puestos.forEach(puesto => {
             const id = puesto.puestoLaboralId; // Ajustá esta línea según el nombre real
             const desc = puesto.descripcion;
-            console.log(`Agregando opción: ${desc} con ID: ${id}`);
             combo.innerHTML += `<option value="${id}" ${id == selectedId ? "selected" : ""}>${desc}</option>`;
         });
 

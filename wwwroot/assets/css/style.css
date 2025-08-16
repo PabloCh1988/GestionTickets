@@ -21147,3 +21147,18 @@ div.tagsinput {
 }
 
 /*# sourceMappingURL=maps/style.css.map */
+
+/* Todas las tablas con acciones al final */
+.tabla-con-acciones {
+  width: 100%;
+  border-collapse: collapse; /* ayuda a ajustar bordes sin extra espacio */
+}
+
+/* Última columna (Acciones) */
+.tabla-con-acciones th:last-child,
+.tabla-con-acciones td:last-child {
+  text-align: right;   /* contenido alineado a la derecha */
+  vertical-align: middle;
+  white-space: nowrap; /* botones en una sola línea */
+  width: auto;         /* deja que tome el ancho necesario */
+}

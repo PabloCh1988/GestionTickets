@@ -8,4 +8,5 @@ public class Categoria
     
     // Relación con los tickets
     public virtual ICollection<Ticket>? Tickets { get; set; }
+    public virtual ICollection<CategoriaPorPuesto>? CategoriasPorPuesto { get; set; }
 }

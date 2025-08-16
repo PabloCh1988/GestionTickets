@@ -117,9 +117,9 @@ async function ObtenerTickets() {
                 <td>${item.prioridadString || ''}</td>
                 <td>${item.fechaCreacionString || ''}</td>
                 <td>${item.categoriaString || ''}</td>
-                <td><button class='btn btn-inverse-primary  mdi mdi-account-card-details' onclick='MostrarTicketId(${item.ticketId})'></button>
-                <button class='btn btn-inverse-success mdi mdi-border-color' onclick='BuscarTicketId(${item.ticketId})'></button>
-                <button class='btn btn-inverse-warning  mdi mdi-file-find ' onclick='MostrarHistorial(${item.ticketId})'></button></td>
+                <td><button class='btn btn-inverse-primary  mdi mdi-account-card-details' title='Datos' onclick='MostrarTicketId(${item.ticketId})'></button>
+                <button class='btn btn-inverse-success mdi mdi-border-color' title='Editar' onclick='BuscarTicketId(${item.ticketId})'></button>
+                <button class='btn btn-inverse-warning  mdi mdi-file-find' title='Historial' onclick='MostrarHistorial(${item.ticketId})'></button></td>
             `;
             tabla.appendChild(fila);
         });
@@ -463,7 +463,6 @@ function MostrarHistorial(ticketId) {
                     );
                 });
                 $("#modalHistorialTickets").modal("show"); // Muestra el modal
-                console.log(listado, "Historial de cambios del ticket:", ticketId);
                 // Mostrar el modal con el historial
             } else {
                 // Si el array está vacío, mostrar Swal

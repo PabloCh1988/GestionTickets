@@ -8,4 +8,5 @@ public class PuestoLaboral
 
     // Relación con los desarrolladores
     public virtual ICollection<Desarrollador>? Desarrolladores { get; set; }
+    public virtual ICollection<CategoriaPorPuesto>? CategoriasPorPuesto { get; set; }
 }

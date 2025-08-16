@@ -5,7 +5,7 @@ async function ObtenerPuestos() {
 }
 
 // Función para eliminar una categoría y mostrar un mensaje de confirmación
-async function ToggleEliminado(puestoLaboralId, estadoActual) {
+async function ToggleEliminadoPuesto(puestoLaboralId, estadoActual2) {
     try {
         // Obtener la categoría completa antes de actualizar
         const resGet = await authFetch(`puestoslaborales/` + puestoLaboralId);
@@ -13,7 +13,7 @@ async function ToggleEliminado(puestoLaboralId, estadoActual) {
             throw new Error("No se pudo obtener el puesto actual");
         }
         const puesto = await resGet.json();
-        puesto.eliminado = !estadoActual; // Cambiar el estado de eliminado
+        puesto.eliminado = !estadoActual2; // Cambiar el estado de eliminado
 
         // Enviar el objeto completo actualizado
         const res = await authFetch(`puestoslaborales/` + puestoLaboralId, {
@@ -64,30 +64,37 @@ function renderizarPuestosJQuery(data) {
         let puestoDesactivado = item.eliminado ? "fila-desactivada" : ""; // Clase para categorías eliminadas
         let iconoPuestoHabilitado = item.eliminado ? "mdi mdi-close-box" : "mdi mdi-close"; // Ícono de habilitar/deshabilitar
         let botonEditarPuestoVisible = item.eliminado ? "display: none;" : "";
+        let botonActivarPuestoVisible = item.eliminado ? "display: none;" : "";
 
         $('#todosLosPuestos').append(
             "<tr class='" + puestoDesactivado + "'>" +
-                "<td>" + item.descripcion + "</td>" +
-                "<td>" +
-                    // Botón de edición
-                    "<button class='btn btn-inverse-success mdi mdi-border-color' data-action='edit' style='" + botonEditarPuestoVisible + "' onclick=\"AbrirModalEditar(" + item.puestoLaboralId + ", '" + item.descripcion.replace(/'/g, "\\'") + "')\">" +
-                    "</button>" +
-                
-                    // Botón de activación/desactivación
-                    "<button class='' data-action='delete' style='background: none; border: none;' onclick=\"ToggleEliminado(" + item.puestoLaboralId + ", " + item.eliminado + ")\" title='" + (item.eliminado ? "Activar Puesto laboral" : "Desactivar Puesto laboral") + "'>" +
-                        "<i class='btn btn-inverse-danger " + iconoPuestoHabilitado + "'></i>" +
-                    "</button>" +
-                "</td>" +
+            "<td>" + item.descripcion + "</td>" +
+            "<td>" +
+            // Botón de edición
+            "<button class='btn btn-inverse-success mdi mdi-border-color mx-1' title='Editar' data-action='edit' style='" + botonEditarPuestoVisible + "' onclick=\"AbrirModalEditarPuesto(" + item.puestoLaboralId + ", '" + item.descripcion.replace(/'/g, "\\'") + "')\">" +
+            "</button>" +
+
+            // Botón de activar/desactivar
+            "<button class='btn btn-inverse-primary mdi mdi-account-card-details mx-1' title='Categorias' data-action='edit' style='" + botonActivarPuestoVisible + "' onclick=\"AbrirModalCrearPuestoCat(" + item.puestoLaboralId + ", '" + item.descripcion.replace(/'/g, "\\'") + "')\">" +
+            "</button>" +
+
+            // Botón de activación/desactivación
+            "<button class='mx-1' data-action='delete' style='background: none; border: none;' onclick=\"ToggleEliminadoPuesto(" + item.puestoLaboralId + ", " + item.eliminado + ")\" title='" + (item.eliminado ? "Activar Puesto Laboral" : "Desactivar Puesto Laboral") + "'>" +
+            "<i class='btn btn-inverse-danger " + iconoPuestoHabilitado + "'></i>" +
+            "</button>" +
+            "</td>" +
             "</tr>"
         );
     });
-}
+};
 
 
-function AbrirModalEditar(puestoLaboralId, descripcion) {
+
+
+function AbrirModalEditarPuesto(puestoLaboralId, descripcion) {
     $('#modalCrearPuestos').modal('hide');
     limpiarBackdropBootstrap();
-    setTimeout(function() {
+    setTimeout(function () {
         $("#DescripcionLaboral").val(descripcion);
         $("#PuestoLaboralId").val(puestoLaboralId);
         $('#modalCrearPuestos').modal('show');
@@ -95,12 +102,14 @@ function AbrirModalEditar(puestoLaboralId, descripcion) {
 }
 
 
-function VaciarModal() {
+function VaciarModalPuesto() {
     $("#DescripcionLaboral").val("");
     $("#PuestoLaboralId").val("");
     $('#modalCrearPuestos').modal('hide');
     $('#errorCrearPuesto').empty();
     limpiarBackdropBootstrap();
+    $('#modalCrearCatPorPuestos').modal('hide');
+    $('#errorCrearPuestoCat').empty();
 }
 
 function GuardarPuesto() {
@@ -132,7 +141,7 @@ async function CrearPuestos() {
     if (crearPuesto.descripcion == "") {
         mensajesError('#errorCrearPuesto', null, "El campo Nombre es requerido.")
         return;
-    } 
+    }
 
     const res = await authFetch(`puestoslaborales`, {
         method: "POST",
@@ -144,7 +153,7 @@ async function CrearPuestos() {
         document.getElementById("PuestoLaboralId").value = 0;
         $('#errorCrearPuesto').empty(); // Limpiar los mensajes de error
         ObtenerPuestos();
-        VaciarModal();
+        VaciarModalPuesto();
 
         Swal.fire({
             position: "top-end",
@@ -154,10 +163,10 @@ async function CrearPuestos() {
             color: '#f1f1f1',
             showConfirmButton: false,
             timer: 1500
-          });
+        });
     } else {
         const errorText = await res.text();
-            mensajesError('#errorCrearPuesto', null, `Error al crear: ${errorText}`);
+        mensajesError('#errorCrearPuesto', null, `Error al crear: ${errorText}`);
     }
 }
 
@@ -186,7 +195,7 @@ async function EditarPuesto(puestoLaboralId) {
 
         if (res.ok) {
             // Si la solicitud fue exitosa, limpiar el modal y actualizar la lista
-            VaciarModal();
+            VaciarModalPuesto();
             ObtenerPuestos();
         } else {
             // Si la solicitud falla, mostrar el mensaje de error devuelto por el servidor
@@ -198,6 +207,125 @@ async function EditarPuesto(puestoLaboralId) {
         console.error("Error al actualizar el Puesto:", error);
         mensajesError('#errorCrearPuesto', null, "Ocurrió un error al intentar actualizar el Puesto.");
     }
+}
+
+function MostrarCatPorPuesto(data) {
+    $("#CatSeleccionadas").empty();
+    $.each(data, function (index, cat) {
+        var descripcion = cat.categoria && cat.categoria.descripcion ? cat.categoria.descripcion : "Sin descripción";
+        var fila = "<tr>" +
+            "<td>" + descripcion + "</td>" +
+            "<td><button class='btn btn-inverse-danger mdi mdi-close' onclick='EliminarCatPorPuesto(" + cat.categoriaPorPuestoId + ")'></button></td>" +
+            "</tr>";
+        $("#CatSeleccionadas").append(fila);
+    });
+}
+
+
+async function AbrirModalCrearPuestoCat(puestoLaboralId) {
+    $('#modalCrearCatPorPuestos').modal('hide');
+    limpiarBackdropBootstrap();
+
+    $("#PuestoLaboralId").val(puestoLaboralId);
+
+    try {
+        const res = await authFetch(`puestoslaborales/${puestoLaboralId}`);
+        if (res.ok) {
+            const puesto = await res.json();
+            $("#NombrePuestoLaboral").text(puesto.descripcion || "");
+        } else {
+            $("#NombrePuestoLaboral").text("");
+        }
+    } catch (error) {
+        $("#NombrePuestoLaboral").text("");
+    }
+    $('#modalCrearCatPorPuestos').modal('show');
+    $('#errorCrearPuestoCat').empty();
+
+    // 1. Obtener las categorías asociadas al puesto laboral
+    try {
+        const res = await authFetch(`categoriasporpuestos/${puestoLaboralId}`);
+        if (res.ok) {
+            const data = await res.json();
+            // 2. Mostrar las categorías asociadas en el modal
+            MostrarCatPorPuesto(data);
+        } else {
+            $("#CatSeleccionadas").empty();
+            $("#CatSeleccionadas").append("<tr><td colspan='2'>No hay categorías asociadas.</td></tr>");
+        }
+    } catch (error) {
+        console.error("Error al obtener categorías por puesto:", error);
+        $("#CatSeleccionadas").empty();
+        $("#CatSeleccionadas").append("<tr><td colspan='2'>Error al cargar categorías.</td></tr>");
+    }
+}
+
+async function GuardarCatPorPuesto() {
+    const pLaboralId = document.getElementById("PuestoLaboralId").value; // Obtener el ID del puesto laboral
+    const categoriasSeleccionadas = document.getElementById("CategoriasPorPuesto").value; // Obtener las categorías seleccionadas
+    const categoriasPorPuesto = {
+        puestoLaboralId: pLaboralId, // ID del puesto laboral
+        categoriaId: categoriasSeleccionadas // Array de IDs de categorías seleccionadas
+    };
+
+    // Validar que se hayan seleccionado categorías
+    if (categoriasSeleccionadas.length === 0) {
+        mensajesError('#errorCrearPuestoCat', null, "Debe seleccionar al menos una categoría.");
+        return;
+    }
+    try {
+        // Realizar la solicitud POST a la API
+        const res = await authFetch(`categoriasporpuestos`, {
+            method: "POST",
+            body: JSON.stringify(categoriasPorPuesto)
+        });
+
+        if (res.ok) {
+            // Si la solicitud fue exitosa, limpiar el modal y actualizar la lista
+            VaciarModalPuesto();
+            ObtenerPuestos();
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Categorías asignadas al puesto laboral",
+                background: '#000000',
+                color: '#f1f1f1',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        } else {
+            // Si la solicitud falla, mostrar el mensaje de error devuelto por el servidor
+            const errorText = await res.text();
+            mensajesError('#errorCrearPuestoCat', null, `Error al asignar categorías: ${errorText}`);
+        }
+    } catch (error) {
+        // Manejar errores de red u otros problemas
+        console.error("Error al asignar categorías al puesto laboral:", error);
+        mensajesError('#errorCrearPuestoCat', null, "Ocurrió un error al intentar asignar las categorías al puesto laboral.");
+    }
+}
+function EliminarCatPorPuesto(categoriaPorPuestoId) {
+    const res = authFetch(`categoriasporpuestos/${categoriaPorPuestoId}`, {
+        method: "DELETE"
+    });
+    res.then(response => {
+        if (response.ok) {
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Categoría eliminada del puesto laboral",
+                background: '#000000',
+                color: '#f1f1f1',
+                showConfirmButton: false,
+                timer: 1500
+            });
+            // Actualizar la lista de categorías asociadas al puesto laboral
+            $('#modalCrearCatPorPuestos').modal('hide');
+            ObtenerPuestos();
+        }
+    }).catch(error => {
+        console.error("Error al eliminar la categoría del puesto laboral:", error);
+    });
 }
 
 async function imprimirPuestos() {
