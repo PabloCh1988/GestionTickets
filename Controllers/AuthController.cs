@@ -103,7 +103,7 @@ public class AuthController : ControllerBase
             new Claim (ClaimTypes.Role, rolNombre), // ASIGNAMOS EL ROL AL USUARIO
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // JTI (JWT ID) - IDENTIFICADOR ÚNICO DEL TOKEN
             };
-         
+
             //RECUPERAMOS LA KEY SETEADA EN EL APPSETTING
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -122,13 +122,17 @@ public class AuthController : ControllerBase
             // GENERAMOS EL REFRESH TOKEN
             var refreshToken = GenerarRefreshToken();
             //GUARDAMOS EN BASE DE DATOS EL REFRESH TOKEN
-            await _userManager.SetAuthenticationTokenAsync(user, "MyApp", "RefreshToken", refreshToken);
+            var setTokenResult = await _userManager.SetAuthenticationTokenAsync(user, "MyApp", "RefreshToken", refreshToken);
+            if (!setTokenResult.Succeeded)
+            {
+                return StatusCode(500, "No se pudo guardar el refresh token");
+            }
 
             return Ok(new
             {
                 token = jwt,
                 refreshToken = refreshToken,
-                
+
                 nombreCompleto = user.NombreCompleto,
             });
         }
@@ -145,27 +149,30 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("refresh-token")]
-public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest model)
-{
-    var user = await _userManager.FindByEmailAsync(model.Email);
-    if (user == null)
-        return Unauthorized();
-
-    var savedToken = await _userManager.GetAuthenticationTokenAsync(user, "MyApp", "RefreshToken");
-    if (savedToken != model.RefreshToken)
-        return Unauthorized("Refresh token inválido");
-
-    // BUSCAR ROL QUE TIENE
-    string rolNombre = "CLIENTE";
-    var rolUsuario = _context.UserRoles.Where(r => r.UserId == user.Id).SingleOrDefault();
-    if (rolUsuario != null)
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest model)
     {
-        var rol = _context.Roles.Where(r => r.Id == rolUsuario.RoleId).SingleOrDefault();
-        rolNombre = rol.Name;
-    }
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null)
+            return Unauthorized("Usuario no encontrado");
 
-    var claims = new[]
-    {
+        var savedToken = await _userManager.GetAuthenticationTokenAsync(user, "MyApp", "RefreshToken");
+        if (string.IsNullOrEmpty(savedToken))
+            return Unauthorized("No hay refresh token guardado para este usuario");
+
+        if (savedToken != model.RefreshToken)
+            return Unauthorized("Refresh token inválido");
+
+        // BUSCAR ROL QUE TIENE
+        string rolNombre = "CLIENTE";
+        var rolUsuario = _context.UserRoles.Where(r => r.UserId == user.Id).SingleOrDefault();
+        if (rolUsuario != null)
+        {
+            var rol = _context.Roles.Where(r => r.Id == rolUsuario.RoleId).SingleOrDefault();
+            rolNombre = rol.Name;
+        }
+
+        var claims = new[]
+        {
         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
         new Claim(ClaimTypes.Name, user.UserName),
         new Claim("NombreCompleto", user.NombreCompleto),
@@ -173,29 +180,33 @@ public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest mod
         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
 
-    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-    var newToken = new JwtSecurityToken(
-        issuer: _configuration["Jwt:Issuer"],
-        audience: _configuration["Jwt:Issuer"],
-        claims: claims,
-        expires: DateTime.Now.AddMinutes(15),
-        signingCredentials: creds
-    );
+        var newToken = new JwtSecurityToken(
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Issuer"],
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(15),
+            signingCredentials: creds
+        );
 
-    var jwt = new JwtSecurityTokenHandler().WriteToken(newToken);
+        var jwt = new JwtSecurityTokenHandler().WriteToken(newToken);
 
-    var newRefreshToken = GenerarRefreshToken();
-    await _userManager.SetAuthenticationTokenAsync(user, "MyApp", "RefreshToken", newRefreshToken);
+        var newRefreshToken = GenerarRefreshToken();
+        var setTokenResult = await _userManager.SetAuthenticationTokenAsync(user, "MyApp", "RefreshToken", newRefreshToken);
+        if (!setTokenResult.Succeeded)
+        {
+            return StatusCode(500, "No se pudo guardar el nuevo refresh token");
+        }
 
-    return Ok(new
-    {
-        token = jwt,
-        refreshToken = newRefreshToken,
-        nombreCompleto = user.NombreCompleto,
-    });
-}
+        return Ok(new
+        {
+            token = jwt,
+            refreshToken = newRefreshToken,
+            nombreCompleto = user.NombreCompleto,
+        });
+    }
 
     // [HttpPost("refresh-token")]
     // public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest model)
@@ -205,7 +216,7 @@ public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest mod
     //     if (user == null)
     //         return Unauthorized();
 
-            
+
 
     //     //BUSCAMOS EL TOKENREFRESH GUARDADO
     //     var savedToken = await _userManager.GetAuthenticationTokenAsync(user, "MyApp", "RefreshToken");

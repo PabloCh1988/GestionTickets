@@ -30,9 +30,35 @@ namespace GestionTickets.Controllers
             var usuarioLogueadoID = HttpContext.User.Identity?.Name;
             var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var rol = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
-            return await _context.Categorias
-           .OrderBy(c => c.Descripcion)
-           .ToListAsync();
+
+            var categorias = new List<Categoria>(); // Lista para almacenar las categorías filtradas
+
+            if (rol == "DESARROLLADOR")
+            {
+                var desarrollador = await _context.Desarrollador.FirstOrDefaultAsync(d => d.Email == usuarioLogueadoID); // Busca el desarrollador por su email
+                var puestoDesarrollador = desarrollador?.PuestoLaboralId;// Obtiene el ID del puesto laboral del desarrollador
+
+                var categoriasPorPuesto = await _context.CategoriaPorPuesto
+                    .Where(c => c.PuestoLaboralId == puestoDesarrollador)
+                    .Select(c => c.CategoriaId)
+                    .ToListAsync();// Obtiene las categorías asociadas al puesto laboral del desarrollador
+
+                var categoriasFiltradas = await _context.Categorias
+                .Where(c => categoriasPorPuesto.Contains(c.CategoriaId)).OrderBy(c => c.Descripcion)
+                .ToListAsync(); // Obtiene las categorías que pertenecen a las categorías asociadas al puesto laboral del desarrollador
+
+                categorias.AddRange(categoriasFiltradas);// Agrega las categorías filtradas a la lista de categorías
+            }
+            else // ADMINISTRADOR y CLIENTE
+            {
+                var categoriasFiltradas = await _context.Categorias
+                    .Where(c => !c.Eliminado) // Solo categorías no eliminadas
+                    .OrderBy(c => c.Descripcion)
+                    .ToListAsync(); // Obtiene todas las categorías ordenadas por descripción
+
+                categorias.AddRange(categoriasFiltradas); // Agrega las categorías filtradas a la lista de categorías
+            }
+            return categorias;
         }
 
         // GET: api/Categorias/5

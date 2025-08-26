@@ -1,0 +1,113 @@
+<!-- Tablas Puesto Laboral -->
+
+<div class="row">
+  <div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">Puestos Laborales</h2>
+        <div class="grid-margin">
+          <button class="btn-lg btn-inverse-success" data-bs-toggle="modal" data-bs-target="#modalCrearPuestos">
+            <span><i class="mdi mdi-plus"></i></span> Agregar
+            Puesto Laboral</button>
+          <span></span>
+          <button class="btn-lg btn-inverse-info" onclick="imprimirPuestos()">
+              <span><i class="mdi mdi-fax"></i></span>    Generar Informe</button>
+        </div>
+        <div class="table-responsive">
+          <table id="puestos" class="table table-hover tabla-con-acciones">
+            <thead>
+              <tr>
+                <!-- <th> Id </th> -->
+                <th class="text-light"> Nombre </th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="todosLosPuestos">
+              <!-- Aquí se llenará la tabla con JavaScript -->
+            </tbody>
+          </table>
+
+          <!-- MODAL -->
+          <div id="modalCrearPuestos" class="modal fade" tabindex="-1" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title text-primary">Puestos Laborales</h5>
+                </div>
+                <div class="modal-body">
+                  <div>
+
+                    <input type="hidden" id="PuestoLaboralId">
+
+                    <label for="DescripcionLaboral" class="form-label">Nombre</label>
+                    <input type="text" id="DescripcionLaboral" class="form-control text-light" placeholder="Nombre">
+
+                    <span id="errorPuesto" class="text-danger"></span>
+
+
+                    <p id="errorCrearPuesto" hidden style="color:red"></p>
+
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-inverse-warning" onclick="VaciarModalPuesto()">Cancelar</button>
+                  <button type="button" class="btn btn-inverse-primary" onclick="GuardarPuesto();">Guardar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MODAL -->
+          <div id="modalCrearCatPorPuestos" class="modal fade" tabindex="-1" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title text-primary">Categorias para el Puesto Laboral</h5>
+
+                </div>
+                <div class="modal-header">
+                  <span id="NombrePuestoLaboral" class="table text-success"></span>
+                  <input type="hidden" id="CategoriaPorPuestoId">
+                </div>
+                <div class="modal-body">
+                  <div>
+                    <label for="CategoriasPorPuesto" class="form-label"></label>
+                    <select id="CategoriasPorPuesto" class="form-control form-select text-light"></select>
+
+                    <table class="table tabla-con-acciones">
+                      <tr>
+                        <th>Categoria Asociada</th>
+                        <th></th>
+                      </tr>
+                      <tbody id="CatSeleccionadas"></tbody>
+                    </table>
+
+                    <span id="errorPuesto" class="text-danger"></span>
+
+
+                    <p id="errorCrearPuestoCat" hidden style="color:red"></p>
+
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-inverse-warning" onclick="VaciarModalPuesto()">Cancelar</button>
+                  <button type="button" class="btn btn-inverse-primary"
+                    onclick="GuardarCatPorPuesto();">Guardar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+  window.onload = ObtenerCategoriasDropdown();
+
+</script>

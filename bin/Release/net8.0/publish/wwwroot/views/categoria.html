@@ -1,0 +1,69 @@
+<!-- Tablas Categorias -->
+
+
+
+<div class="row">
+  <div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">Categorías</h2>
+        <div class="grid-margin">
+          <button class="btn-lg btn-inverse-success" data-bs-toggle="modal" data-bs-target="#modalCrearCategorias">
+            <span><i class="mdi mdi-plus"></i></span> Agregar
+            Categoría</button>
+            <span></span>
+            <button class="btn-lg btn-inverse-info" onclick="imprimirCategorias()">
+              <span><i class="mdi mdi-fax"></i></span>    Generar Informe</button>
+        </div>
+        <div class="table-responsive">
+          <table id="categorias" class="table table-hover tabla-con-acciones">
+            <thead>
+              <tr>
+                <!-- <th> Id </th> -->
+                <th class="text-light"> Nombre </th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="todasLasCategorias">
+              <!-- Aquí se llenará la tabla con JavaScript -->
+            </tbody>
+          </table>
+
+          <!-- MODAL -->
+          <div id="modalCrearCategorias" class="modal fade" tabindex="-1" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title text-primary">Categorías</h5>
+                </div>
+                <div class="modal-body">
+                  <div>
+
+                    <input type="hidden" id="CategoriaId">
+
+                    <label for="Descripcion" class="form-label">Nombre</label>
+                    <input type="text" id="Descripcion" class="form-control text-light" placeholder="Nombre">
+
+                    <span id="errorCategoria" class="text-danger"></span>
+
+
+                    <p id="errorCrear" hidden style="color:red"></p>
+
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-inverse-warning" onclick="VaciarModal()">Cancelar</button>
+                  <button type="button" class="btn btn-inverse-primary" onclick="GuardarCategoria();">Guardar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

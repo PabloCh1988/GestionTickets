@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "AGaFY4ADGbz/AZ/kpxqjNy7MCysPvt3gSgiLC0qUucv3WJ6ilkUVlSpWqJlXdgve3du+qdO3oFXN4u1J8qMTgQ==",
+  "dgSpecHash": "u32XWNubNnzp5Dl8YdBwyXCssvlvHJPc/KVMXl0Rj7NOjaZEdpc3mo3662NsCvesbfh+MCSgTocBxdp9KtoInw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\pablo\\Desktop\\GestionTickets\\GestionTickets.csproj",
+  "projectFilePath": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\GestionTickets.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\pablo\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\pablo\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

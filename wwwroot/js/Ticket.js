@@ -1,10 +1,11 @@
-// Flag para evitar llamadas múltiples simultáneas
+// evita que la función ObtenerTickets se ejecute más de una vez al mismo tiempo
 let enEjecucion = false;
-
+// Cuando la página termina de cargar el DOM, llama a comboCategorias().
 document.addEventListener("DOMContentLoaded", () => {
-    comboCategorias(); // Solo esto
+    comboCategorias();
+    cargarCategorias(); // Carga el maps de categorías para el historial
 });
-
+// Define qué filtros disparan la búsqueda de tickets.
 function configurarFiltros() {
     const campos = [
         "CategoriaIdBuscar",
@@ -17,7 +18,7 @@ function configurarFiltros() {
     campos.forEach(id => {
         const elemento = document.getElementById(id);
         if (elemento) {
-            elemento.addEventListener("change", () => {
+            elemento.addEventListener("change", () => { //A cada campo le agrega un evento change, para que cuando el usuario cambie algo se recarguen los tickets filtrados.
                 ObtenerTickets(); // Filtrar al cambiar
             });
         }
@@ -26,24 +27,25 @@ function configurarFiltros() {
 
 
 async function comboCategorias() {
-    const res = await authFetch("categorias");
+    const res = await authFetch("categorias"); //Llama al endpoint "categorias" para traer todas las categorías en formato JSON.
     const categorias = await res.json();
-
+    // Busca los combos de categoría (uno para búsqueda y otro para creación/edición).
+    // Si existen, primero los vacía.
     const comboSelectBuscar = document.querySelector("#CategoriaIdBuscar");
     const comboSelect = document.querySelector("#CategoriaId");
     if (comboSelectBuscar) comboSelectBuscar.innerHTML = "";
     if (comboSelect) comboSelect.innerHTML = "";
-
+    // Prepara el HTML de las opciones: una para "todas las categorías" en el combo de búsqueda, y otra vacía para el combo de creación/edición.
     let opcionesBuscar = `<option value="0">[Todas las categorías]</option>`;
     let opciones = '';
-
+    // Recorre las categorías obtenidas y crea las opciones para ambos combos.
     categorias.forEach(cat => {
-        const id = cat.id || cat.categoriaId;
+        const id = cat.categoriaId;
         const desc = cat.descripcion;
         opciones += `<option value="${id}">${desc}</option>`;
         opcionesBuscar += `<option value="${id}">${desc}</option>`;
     });
-
+    // Inserta las opciones en los combos si existen.
     if (comboSelect) comboSelect.innerHTML = opciones;
     if (comboSelectBuscar) comboSelectBuscar.innerHTML = opcionesBuscar;
 
@@ -52,25 +54,27 @@ async function comboCategorias() {
     // Y ahora sí, asignamos los eventos de filtrado
     configurarFiltros();
 }
-
+// Función para obtener y mostrar los tickets según los filtros seleccionados.
 async function ObtenerTickets() {
-    if (enEjecucion) return;
-    enEjecucion = true;
+    if (enEjecucion) return; // Si ya está en ejecución, no hacer nada
+    enEjecucion = true; // Marca que está en ejecución
 
     try {
+        // Obtiene los valores de los filtros
         const catVal = document.getElementById("CategoriaIdBuscar")?.value;
         const estVal = document.getElementById("EstadoIdBuscar")?.value;
         const priVal = document.getElementById("PrioridadIdBuscar")?.value;
         let fechaDesde = document.getElementById("FechaInicioBuscar")?.value;
         let fechaHasta = document.getElementById("FechaFinBuscar")?.value;
 
-        // Validación: si fechaDesde > fechaHasta, igualarlas
+        // Si la fecha de inicio es mayor que la de fin, fuerza a que la fecha fin sea igual a la de inicio.
+        // Esto evita errores en el filtro
         if (fechaDesde && fechaHasta && new Date(fechaDesde) > new Date(fechaHasta)) {
             fechaHasta = fechaDesde;
-            const campoHasta = document.getElementById("FechaFinBuscar");
+            const campoHasta = document.getElementById("FechaFinBuscar");// Actualiza el campo en el formulario
             if (campoHasta) campoHasta.value = fechaHasta;
         }
-
+        // Prepara el objeto de filtros para enviar a la API
         const filtros = {
             CategoriaId: parseInt(catVal || "0"),
             Estado: parseInt(estVal || "0"),
@@ -78,20 +82,20 @@ async function ObtenerTickets() {
             FechaInicio: fechaDesde || null,
             FechaFin: fechaHasta || null
         };
-
+        // Llama al endpoint "tickets/filtro" con los filtros en el cuerpo de la solicitud
         const res = await authFetch("tickets/filtro", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(filtros)
         });
-
+        // Intenta convertir la respuesta a JSON
         let tickets;
         try {
             tickets = await res.json();
         } catch (e) {
             tickets = null;
         }
-
+        // Si no es un array, muestra un error con Swal
         if (!Array.isArray(tickets)) {
             Swal.fire({
                 title: "Error",
@@ -104,11 +108,12 @@ async function ObtenerTickets() {
             if (tickets?.errors) console.error("Errores de validación:", tickets.errors);
             return;
         }
-
+        // Limpia la tabla antes de llenarla con los tickets obtenidos
+        // Si no hay tickets, la tabla quedará vacía
         const tabla = document.getElementById("todosLosTickets");
         if (!tabla) return;
         tabla.innerHTML = "";
-
+        // Recorre los tickets y crea una fila por cada uno
         tickets.forEach(item => {
             const fila = document.createElement("tr");
             fila.innerHTML = `
@@ -125,7 +130,7 @@ async function ObtenerTickets() {
         });
 
     } finally {
-        enEjecucion = false;
+        enEjecucion = false; // Marca que ya no está en ejecución
     }
 }
 
@@ -184,7 +189,7 @@ async function CrearTicket() {
         titulo: titulo,
         descripcion: descripcion,
         prioridad: prioridad,
-        categoriaId: parseInt(categoriaId),
+        categoriaId: parseInt(categoriaId),// Asegura que sea un número
     };
 
     // Enviar la solicitud a la API
@@ -220,13 +225,14 @@ async function CrearTicket() {
 }
 
 async function comboCategoriasEditar(selectedId) {
-    const res = await authFetch("categorias");
+    const res = await authFetch("categorias");//Llama al endpoint "categorias" para traer todas las categorías en formato JSON.
     const categorias = await res.json();
-    const combo = document.getElementById("CategoriaIdEditar");
-    if (!combo) return;
-    combo.innerHTML = "";
+    const combo = document.getElementById("CategoriaIdEditar");// Busca el combo de categoría para edición.
+    if (!combo) return; // Si no existe, sale de la función.
+    combo.innerHTML = ""; // Vacía el combo.
+    // Recorre las categorías obtenidas y crea las opciones para el combo de edición.
     categorias.forEach(cat => {
-        const id = cat.id || cat.categoriaId;
+        const id = cat.categoriaId;
         const desc = cat.descripcion;
         combo.innerHTML += `<option value="${id}" ${id == selectedId ? "selected" : ""}>${desc}</option>`;
     });
@@ -236,26 +242,27 @@ function BuscarTicketId(ticketId) {
     authFetch(`tickets/` + ticketId, {
         method: "GET",
     })
-    .then(response => response.json())
-    .then(async data => {
-        document.getElementById("ticketId").value = data.id ?? data.ticketId;
-        document.getElementById("TituloEditar").value = data.titulo;
-        document.getElementById("DescripcionEditar").value = data.descripcion;
-        document.getElementById("PrioridadEditar").value = data.prioridad;
-        await comboCategoriasEditar(data.categoriaId); 
-        $('#modalEditarTickets').modal('show');
-    })
-    .catch(error => {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudo cargar el ticket para editar.',
-            background: '#000000',
-            color: '#f1f1f1',
-            confirmButtonColor: '#8f5fe8',
+        .then(response => response.json()) // Convierte la respuesta en JSON y la guarda en data
+        .then(async data => {
+            // Rellena los campos del formulario de edición con los datos del ticket que vino del backend
+            document.getElementById("ticketId").value = data.id ?? data.ticketId;
+            document.getElementById("TituloEditar").value = data.titulo;
+            document.getElementById("DescripcionEditar").value = data.descripcion;
+            document.getElementById("PrioridadEditar").value = data.prioridad;
+            await comboCategoriasEditar(data.categoriaId); // Carga las categorías en el dropdown y selecciona la del ticket
+            $('#modalEditarTickets').modal('show'); // Muestra el modal de edición
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo cargar el ticket para editar.',
+                background: '#000000',
+                color: '#f1f1f1',
+                confirmButtonColor: '#8f5fe8',
+            });
+            console.error("Error al buscar el ticket para editar:", error);
         });
-        console.error("Error al buscar el ticket para editar:", error);
-    });
 }
 
 function MostrarTicketId(ticketId) {
@@ -278,6 +285,8 @@ function MostrarTicketId(ticketId) {
         })
         .then(data => {
             if (!data) return;
+
+             let categoriaDesc = categoriasMap[data.categoriaId] || data.categoriaId;
             // Limpiar la tabla antes de llenarla
             $("#MostrarTicket").empty();
             // Mostrar los datos del ticket en una fila
@@ -287,7 +296,7 @@ function MostrarTicketId(ticketId) {
                 "<td>" + (data.titulo ?? "") + "</td>" +
                 "<td>" + (data.descripcion ?? "") + "</td>" +
                 "<td>" + (data.prioridad ?? "") + "</td>" +
-                "<td>" + (data.categoriaId ?? "") + "</td>" +
+                "<td>" + categoriaDesc + "</td>" +
                 "<td>" + (data.usuario ?? "") + "</td>" +
                 "<td>" + (data.email ?? "") + "</td>" +
                 "</tr>"
@@ -424,6 +433,21 @@ function mensajesError(id, data, mensaje) {
 
     $(id).attr("hidden", false);
 }
+// Hacemos un map global de categorías para acceder rápido al nombre de la
+// categoría desde su ID en el historial tickets
+let categoriasMap = {};
+
+async function cargarCategorias() {
+    const res = await authFetch("categorias");
+    const categorias = await res.json();
+    categoriasMap = {};
+    categorias.forEach(cat => {
+        const id = cat.categoriaId;
+        categoriasMap[id] = cat.descripcion;
+    });
+}
+
+
 
 function MostrarHistorial(ticketId) {
 
@@ -455,12 +479,22 @@ function MostrarHistorial(ticketId) {
                     $("#historialTickets").append(
                         "<tr>" +
                         "<td>" + item.campoModificado + "</td>" +
-                        "<td>" + item.valorAnterior + "</td>" +
-                        "<td>" + item.valorNuevo + "</td>" +
+                        "<td>" + (item.campoModificado === "Categoria" ? categoriasMap[item.valorAnterior] || item.valorAnterior : item.valorAnterior) + "</td>" +
+                        "<td>" + (item.campoModificado === "Categoria" ? categoriasMap[item.valorNuevo] || item.valorNuevo : item.valorNuevo) + "</td>" +
                         "<td>" + formatearFecha(item.fechaCambio) + "</td>" +
                         "<td>" + (item.usuarioNombre) + "</td>" +
                         "</tr>"
                     );
+
+                    // $("#historialTickets").append(
+                    //     "<tr>" +
+                    //     "<td>" + item.campoModificado + "</td>" +
+                    //     "<td>" + item.valorAnterior + "</td>" +
+                    //     "<td>" + item.valorNuevo + "</td>" +
+                    //     "<td>" + formatearFecha(item.fechaCambio) + "</td>" +
+                    //     "<td>" + (item.usuarioNombre) + "</td>" +
+                    //     "</tr>"
+                    // );
                 });
                 $("#modalHistorialTickets").modal("show"); // Muestra el modal
                 // Mostrar el modal con el historial
@@ -492,7 +526,6 @@ function MostrarHistorial(ticketId) {
 // Inicialización normal al cargar la página
 
 document.addEventListener("DOMContentLoaded", () => {
-    comboCategorias(); // Llena los combos y llama a ObtenerTickets
     configurarFiltros(); // Asigna los eventos de filtrado
 });
 
@@ -502,128 +535,6 @@ window.addEventListener("hashchange", () => {
         comboCategorias(); // Vuelve a cargar combos y tickets al volver a la vista de tickets
     }
 });
-
-// function ImprimirInforme() {
-//     const jsPDF = window.jspdf.jsPDF;
-//     const doc = new jsPDF();
-
-    
-
-//     // var doc = new jsPDF();
-//     // //var doc = new jsPDF('l', 'mm', [297, 210]);
-
-//     var totalPagesExp = "{total_pages_count_string}"; 
-//     var pageContent = function (data) {
-//         doc.setFontSize(18);
-//     doc.text("Gestión de Tickets", 14, 20);
-//     doc.setFontSize(14);
-//     doc.text("Listado de Categorías", 14, 30);
-//     doc.setFontSize(10);
-//     doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 14, 36);
-
-//     //     doc.setDrawColor(78, 115, 223); 
-//     //     doc.setLineWidth(0.7);
-//     //     doc.rect(14, 10, 30, 20, 'S');
-//     //     doc.rect(44, 10, 151, 20, 'S');
-
-//     //     doc.setFontSize(12);
-//     //     doc.text("Listado de Tickets", 46, 15);
-//         // doc.text("Con métodos de búsqueda", 46, 22);
-//         //  doc.text("Version del sistema: 1.0.0", 46, 28.5);
-        
-        
-//         doc.setLineWidth(0.5);
-//         doc.line(44, 17, 195, 17, 'S');
-
-//          doc.line(44, 24, 195, 24, 'S');
-      
-
-//         var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-//         var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-
-//         // FOOTER
-//         var str = "Pagina " + data.pageCount;
-//         // Total page number plugin only available in jspdf v1.0+
-//         if (typeof doc.putTotalPages == 'function') {
-//             str = str + " de " + totalPagesExp;
-//         }
-
-//         doc.setLineWidth(8);
-//         doc.setDrawColor(78, 115, 223);
-//         doc.setTextColor(255, 255, 255);
-//         doc.line(14, pageHeight - 11, 196, pageHeight - 11);
-
-//         doc.setFontSize(10);
-
-//         doc.setFontStyle('bold');
-
-//         doc.text(str, 17, pageHeight - 10);
-//     };
-
-
-//     var elem = document.getElementById("todosLosTickets");
-//     var res = doc.autoTableHtmlToJson(elem);
-
-//     // Eliminar la columna 5 (índice 5)
-//     res.columns.splice(5, 1); // Elimina la columna de encabezado
-//     res.data = res.data.map(row => {
-//         row.splice(5, 1); // Elimina la celda correspondiente de cada fila
-//         return row;
-//     });
-
-//     doc.autoTable(res.columns, res.data,
-//         {
-//             addPageContent: pageContent,
-//             margin: { top: 32 },
-//             styles: {
-//                 fillStyle: 'DF',
-//                 overflow: 'linebreak',
-//                 columnWidth: 110,
-//                 lineWidth: 0.1,
-//                 lineColor: [238, 238, 238]
-//             },
-//             headerStyles: {
-//                 fillColor: [78, 115, 223],
-//                 textColor: [255, 255, 255]
-//             },
-//             columnStyles: {
-//                 0: { columnWidth: 28 },//FECHA
-//                 1: { columnWidth: 62 },//TITULO
-//                 2: { columnWidth: 50 },//CATEGORIA
-//                 3: { columnWidth: 20 },//PRIORIDAD
-//                 4: { columnWidth: 20 }//ESTADO
-//             },
-//             createdHeaderCell: function (cell, opts) {
-//                 if (opts.column.index == 0 || opts.column.index == 3 || opts.column.index == 4) {
-//                     cell.styles.halign = 'center';
-//                 }
-//                 cell.styles.fontSize = 8;
-//             },
-//             createdCell: function (cell, opts) {
-//                 cell.styles.fontSize = 7;
-//                 if (opts.column.index == 0 || opts.column.index == 3 || opts.column.index == 4) {
-//                     cell.styles.halign = 'center';
-//                 }
-//             }
-//         }
-//     );
-
-//     // ESTO SE LLAMA ANTES DE ABRIR EL PDF PARA QUE MUESTRE EN EL PDF EL NRO TOTAL DE PAGINAS. ACA CALCULA EL TOTAL DE PAGINAS.
-//     if (typeof doc.putTotalPages === 'function') {
-//         doc.putTotalPages(totalPagesExp);
-//     }
-
-//     //doc.save('Listado de Tickets.pdf')
-
-//     var string = doc.output('datauristring'); // Obtiene el string del PDF generado
-//     var iframe = "<iframe width='100%' height='100%' src='" + string + "'></iframe>" 
-    
-//     // Abrir el PDF en una nueva ventana
-//     var x = window.open(); // Abrir una nueva ventana
-//     x.document.open(); // Abrir el documento
-//     x.document.write(iframe); // Escribir el contenido del iframe en la nueva ventana
-//     x.document.close(); // Cerrar el documento para que se renderice
-// }
 
 function ImprimirInforme() {
     const jsPDF = window.jspdf.jsPDF;
@@ -657,7 +568,7 @@ function ImprimirInforme() {
     // doc.setFontSize(10);
     // doc.text(`Fecha: ${new Date().toLocaleString()}`, 14, 25);
 
-     doc.setFontSize(18);
+    doc.setFontSize(18);
     doc.text("Gestión de Tickets", 14, 20);
     doc.setFontSize(14);
     doc.text("Listado filtrado", 14, 30);

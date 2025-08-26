@@ -8029,11 +8029,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\pablo\\Desktop\\GestionTickets\\GestionTickets.csproj",
+      "projectUniqueName": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\GestionTickets.csproj",
       "projectName": "GestionTickets",
-      "projectPath": "C:\\Users\\pablo\\Desktop\\GestionTickets\\GestionTickets.csproj",
+      "projectPath": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\GestionTickets.csproj",
       "packagesPath": "C:\\Users\\pablo\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\pablo\\Desktop\\GestionTickets\\obj\\",
+      "outputPath": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\pablo\\AppData\\Roaming\\NuGet\\NuGet.Config"

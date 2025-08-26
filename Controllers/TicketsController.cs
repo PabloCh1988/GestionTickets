@@ -66,10 +66,10 @@ namespace GestionTickets.Controllers
             // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             // var usuario = await _context.Users.FindAsync(userId);
             // var nombreCompleto = usuario?.NombreCompleto ?? "Desconocido";
-            var ticket = await _context.Tickets.FindAsync(id);
-            var usuario = await _context.Users.Where(u => u.Id == ticket.UsuarioClienteId).Select(u => new
+            var ticket = await _context.Tickets.FindAsync(id); // Busca el ticket por su ID
+            var usuario = await _context.Users.Where(u => u.Id == ticket.UsuarioClienteId).Select(u => new // Busca el usuario asociado al ticket
             {
-                u.NombreCompleto,
+                u.NombreCompleto,// Selecciona solo el nombre completo y el correo del usuario
                 u.Email
             }).FirstOrDefaultAsync();
 
@@ -78,7 +78,7 @@ namespace GestionTickets.Controllers
                 return NotFound();
             }
 
-            return Ok(new
+            return Ok(new // Retorna el ticket junto con el nombre y correo del usuario asociado
             {
                 usuario = usuario?.NombreCompleto,
                 email = usuario?.Email,
@@ -113,9 +113,9 @@ namespace GestionTickets.Controllers
                 // Se busca el ticket por su ID
                 var ticketEditar = await _context.Tickets.FindAsync(id);
 
-                var userId = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                var usuario = await _context.Users.FindAsync(userId);
-                var nombreCompleto = usuario?.NombreCompleto ?? "Desconocido";
+                var userId = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value; // Obtiene el ID del usuario logueado
+                var usuario = await _context.Users.FindAsync(userId); // Busca el usuario por su ID
+                var nombreCompleto = usuario?.NombreCompleto ?? "Desconocido"; // Obtiene el nombre completo del usuario o "Desconocido" si no se encuentra
 
                 // Guardar valores originales antes de editar
                 string originalTitulo = ticketEditar.Titulo;
@@ -137,8 +137,8 @@ namespace GestionTickets.Controllers
 
                 await _context.SaveChangesAsync();
 
-                // Guardar historial solo si hubo cambios
-                if (originalTitulo != ticket.Titulo)
+                // Guardar historial solo si hubo cambios en los campos relevantes
+                if (originalTitulo != ticket.Titulo)// Si el título ha cambiado
                 {
                     var historialTicket = new HistorialTicket
                     {
@@ -152,7 +152,7 @@ namespace GestionTickets.Controllers
                     _context.HistorialTicket.Add(historialTicket);
                     await _context.SaveChangesAsync();
                 }
-                if (originalDescripcion != ticket.Descripcion)
+                if (originalDescripcion != ticket.Descripcion)// Si la descripción ha cambiado
                 {
                     var historialTicket = new HistorialTicket
                     {
@@ -166,7 +166,20 @@ namespace GestionTickets.Controllers
                     _context.HistorialTicket.Add(historialTicket);
                     await _context.SaveChangesAsync();
                 }
-                if (originalPrioridad != ticket.Prioridad)
+                // {
+                //     var historialTicket = new HistorialTicket
+                //     {
+                //         TicketId = ticket.TicketId,
+                //         CampoModificado = "Descripcion",
+                //         ValorAnterior = originalDescripcion,
+                //         ValorNuevo = ticket.Descripcion,
+                //         FechaCambio = DateTime.Now,
+                //         UsuarioNombre = userId // Asignar el ID del usuario que realizó el cambio
+                //     };
+                //     _context.HistorialTicket.Add(historialTicket);
+                //     await _context.SaveChangesAsync();
+                // }
+                if (originalPrioridad != ticket.Prioridad) // Si la prioridad ha cambiado
                 {
                     var historialTicket = new HistorialTicket
                     {
@@ -180,7 +193,7 @@ namespace GestionTickets.Controllers
                     _context.HistorialTicket.Add(historialTicket);
                     await _context.SaveChangesAsync();
                 }
-                if (originalCategoriaId != ticket.CategoriaId)
+                if (originalCategoriaId != ticket.CategoriaId) // Si la categoría ha cambiado
                 {
                     var historialTicket = new HistorialTicket
                     {
@@ -218,90 +231,54 @@ namespace GestionTickets.Controllers
         // Devuelve una lista de VistaTickets(una vista resumida del modelo Ticket).
         public async Task<ActionResult<IEnumerable<VistaTickets>>> FiltroTicket([FromBody] FiltroTicket filtro)
         {
-            List<VistaTickets> vista = new List<VistaTickets>();
+            List<VistaTickets> vista = new List<VistaTickets>(); // Lista para almacenar los tickets filtrados
+            var tickets = new List<Ticket>(); // Lista para almacenar los tickets obtenidos de la base de datos
 
-            var tickets = _context.Tickets.Include(t => t.Categoria).AsQueryable();
-
-            // Obtiene el ID del usuario logueado
             var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            // Obtiene el rol del usuario logueado
             var rol = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
-            // Obtener el email del usuario logueado
             var usuarioLogueadoID = HttpContext.User.Identity?.Name;
 
             if (rol == "DESARROLLADOR")
             {
-                var desarrollador = await _context.Desarrollador.Where(d => d.Email == usuarioLogueadoID).FirstOrDefaultAsync();// busca al desarrollador por su email
-
-                var puestoDesarrollador = desarrollador?.PuestoLaboralId; // Obtiene el puesto del desarrollador
+                var desarrollador = await _context.Desarrollador.FirstOrDefaultAsync(d => d.Email == usuarioLogueadoID); // Busca el desarrollador por su email
+                var puestoDesarrollador = desarrollador?.PuestoLaboralId;// Obtiene el ID del puesto laboral del desarrollador
 
                 var categoriasPorPuesto = await _context.CategoriaPorPuesto
                     .Where(c => c.PuestoLaboralId == puestoDesarrollador)
                     .Select(c => c.CategoriaId)
-                    .ToListAsync(); // Obtiene las categorías asociadas al puesto del desarrollador
+                    .ToListAsync();// Obtiene las categorías asociadas al puesto laboral del desarrollador
 
-                // Filtra los tickets por las categorías asociadas al puesto del desarrollador
-                tickets = tickets.Where(t => categoriasPorPuesto.Contains(t.CategoriaId)); // contains devuelve un booleano si el elemento está en la lista
+                var ticketsFiltrados = await _context.Tickets
+                    .Where(t => categoriasPorPuesto.Contains(t.CategoriaId))
+                    .Include(t => t.Categoria) // Incluye la categoría relacionada
+                    .ToListAsync(); // Obtiene los tickets que pertenecen a las categorías asociadas al puesto laboral del desarrollador
 
-                // Aplica los filtros adicionales del objeto FiltroTicket
-                // estos filtros funcionan igual que para el rol de CLIENTE
-                if (filtro.CategoriaId > 0)
-                    tickets = tickets.Where(t => t.CategoriaId == filtro.CategoriaId);
-
-                if (filtro.Estado > 0)
-                    tickets = tickets.Where(t => t.Estado == (EstadoTicket)filtro.Estado);
-
-                if (filtro.Prioridad > 0)
-                    tickets = tickets.Where(t => t.Prioridad == (PrioridadTicket)filtro.Prioridad);
-
-                if (filtro.FechaInicio.HasValue && filtro.FechaFin.HasValue)
-                {
-                    DateTime FechaInicio = filtro.FechaInicio.Value;
-                    DateTime FechaFin = filtro.FechaFin.Value
-                        .AddHours(23)
-                        .AddMinutes(59)
-                        .AddSeconds(59);
-
-                    tickets = tickets.Where(t => t.FechaCreacion >= FechaInicio && t.FechaCreacion <= FechaFin);
-                }
-
-                // Si el rol del usuario es DESARROLLADOR, se filtran los tickets por el ID del desarrollador
-                // Esto asegura que los desarrolladores solo vean los tickets asignados a ellos
-                foreach (var ticket in tickets.OrderByDescending(t => t.FechaCreacion))
-                {
-                    var ticketMostrar = new VistaTickets
-                    // Crea una nueva instancia de VistaTickets y asigna los valores del ticket                
-                    {
-                        TicketId = ticket.TicketId,
-                        Titulo = ticket.Titulo,
-                        FechaCreacionString = ticket.FechaCreacionString,
-                        // UsuarioClienteId = ticket.UsuarioClienteId ?? usuarioLogueadoID, // Si el ticket no tiene un usuario asignado, se usa el usuario logueado
-                        Prioridad = ticket.Prioridad,
-                        EstadoString = ticket.EstadoString,
-                        CategoriaString = ticket.CategoriaString,
-                        PrioridadString = ticket.PrioridadString
-                    };
-                    vista.Add(ticketMostrar); // Agrega el ticket a la lista de vista
-                }
-                return vista.ToList(); // Retorna la lista de tickets filtrados
+                tickets.AddRange(ticketsFiltrados);// Agrega los tickets filtrados a la lista de tickets
             }
-
-            // Si el rol del usuario es CLIENTE, se filtran los tickets por el ID del cliente
-            // Esto asegura que los clientes solo vean sus propios tickets
-            else if (rol == "CLIENTE")
+            else if (rol == "CLIENTE") // si el rol es CLIENTE
             {
-                tickets = tickets.Where(t => t.UsuarioClienteId == userId);
+                var ticketsFiltrados = await _context.Tickets
+                .Include(t => t.Categoria) // Incluye la categoría relacionada
+                    .Where(t => t.UsuarioClienteId == userId)
+                    .ToListAsync(); // Obtiene los tickets que pertenecen al usuario logueado
+
+                tickets.AddRange(ticketsFiltrados); // Agrega los tickets filtrados a la lista de tickets
+            }
+            else // ADMINISTRADOR
+            {
+                var ticketsFiltrados = await _context.Tickets.Include(t => t.Categoria).ToListAsync();
+                tickets.AddRange(ticketsFiltrados); // Agrega todos los tickets a la lista de tickets
             }
 
-            // Aplica los filtros según los criterios proporcionados en el objeto FiltroTicket            
-            if (filtro.CategoriaId > 0)
-                tickets = tickets.Where(t => t.CategoriaId == filtro.CategoriaId);
+            // Aplica los filtros adicionales sobre la lista en memoria
+            if (filtro.CategoriaId > 0) // si se especifica una categoría
+                tickets = tickets.Where(t => t.CategoriaId == filtro.CategoriaId).ToList();// Filtra por categoría
 
-            if (filtro.Estado > 0)
-                tickets = tickets.Where(t => t.Estado == (EstadoTicket)filtro.Estado);
+            if (filtro.Estado > 0) // si se especifica un estado
+                tickets = tickets.Where(t => t.Estado == (EstadoTicket)filtro.Estado).ToList();// Filtra por estado
 
-            if (filtro.Prioridad > 0)
-                tickets = tickets.Where(t => t.Prioridad == (PrioridadTicket)filtro.Prioridad);
+            if (filtro.Prioridad > 0) // si se especifica una prioridad
+                tickets = tickets.Where(t => t.Prioridad == (PrioridadTicket)filtro.Prioridad).ToList();// Filtra por prioridad
 
             if (filtro.FechaInicio.HasValue && filtro.FechaFin.HasValue)
             {
@@ -311,20 +288,19 @@ namespace GestionTickets.Controllers
                     .AddMinutes(59)
                     .AddSeconds(59);
 
-                tickets = tickets.Where(t => t.FechaCreacion >= FechaInicio && t.FechaCreacion <= FechaFin);
+                tickets = tickets.Where(t => t.FechaCreacion >= FechaInicio && t.FechaCreacion <= FechaFin).ToList();// Filtra por rango de fechas
             }
 
-            foreach (var ticket in tickets.OrderByDescending(t => t.FechaCreacion))
+            foreach (var ticket in tickets.OrderByDescending(t => t.FechaCreacion)) // Recorre cada ticket y crea una instancia de VistaTickets para mostrar los datos
             {
-                var ticketMostrar = new VistaTickets
-                // Crea una nueva instancia de VistaTickets y asigna los valores del ticket                
+                var ticketMostrar = new VistaTickets // Crea una nueva instancia de VistaTickets y asigna los valores del ticket
                 {
                     TicketId = ticket.TicketId,
                     Titulo = ticket.Titulo,
                     FechaCreacionString = ticket.FechaCreacionString,
                     Prioridad = ticket.Prioridad,
                     EstadoString = ticket.EstadoString,
-                    CategoriaString = ticket.CategoriaString,
+                    CategoriaString = ticket.Categoria?.Descripcion,
                     PrioridadString = ticket.PrioridadString
                 };
                 vista.Add(ticketMostrar); // Agrega el ticket a la lista de vista
