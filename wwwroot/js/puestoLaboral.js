@@ -226,13 +226,13 @@ async function AbrirModalCrearPuestoCat(puestoLaboralId) {
     $('#modalCrearCatPorPuestos').modal('hide');
     limpiarBackdropBootstrap();
 
-    $("#PuestoLaboralId").val(puestoLaboralId);
+    $("#PuestoLaboralId").val(puestoLaboralId); // Guardar el ID del puesto laboral en un campo oculto
 
     try {
-        const res = await authFetch(`puestoslaborales/${puestoLaboralId}`);
-        if (res.ok) {
-            const puesto = await res.json();
-            $("#NombrePuestoLaboral").text(puesto.descripcion || "");
+        const res = await authFetch(`puestoslaborales/${puestoLaboralId}`); // Obtener el nombre del puesto laboral
+        if (res.ok) { // Si la respuesta es exitosa
+            const puesto = await res.json();// Obtener los datos del puesto laboral
+            $("#NombrePuestoLaboral").text(puesto.descripcion || "");// Mostrar el nombre del puesto laboral en el modal
         } else {
             $("#NombrePuestoLaboral").text("");
         }

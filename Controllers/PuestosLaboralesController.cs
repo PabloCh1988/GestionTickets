@@ -58,11 +58,12 @@ namespace GestionTickets.Controllers
             var existePuesto = await _context.PuestoLaboral
                 .Where(p => p.Descripcion == puestoLaboral.Descripcion && p.PuestoLaboralId != id)
                 .CountAsync();
-            if (existePuesto > 0)
+
+            if (existePuesto > 0) // Si existe un puesto laboral con la misma descripción
             {
                 return BadRequest("Ya existe un puesto laboral con el mismo nombre.");
             }
-            if (id != puestoLaboral.PuestoLaboralId)
+            if (id != puestoLaboral.PuestoLaboralId) // Verifica que el ID en la URL coincida con el ID del puesto laboral en el cuerpo de la solicitud
             {
                 return BadRequest();
             }
@@ -96,10 +97,11 @@ namespace GestionTickets.Controllers
             var existePuesto = await _context.PuestoLaboral
                 .Where(p => p.Descripcion == puestoLaboral.Descripcion)
                 .CountAsync(); // Verifica si ya existe un puesto laboral con la misma descripción
+                
                 if (existePuesto > 0) // Si existe un puesto laboral con la misma descripción
-                {
-                    return BadRequest("Ya existe un puesto laboral con el mismo nombre.");
-                }
+            {
+                return BadRequest("Ya existe un puesto laboral con el mismo nombre.");
+            }
             _context.PuestoLaboral.Add(puestoLaboral);
             await _context.SaveChangesAsync();
 

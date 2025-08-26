@@ -45,18 +45,18 @@ public class AuthController : ControllerBase
         var nombreRolCrearExiste = _context.Roles.Where(r => r.Name == "ADMINISTRADOR").SingleOrDefault(); //UNO O NULO
         if (nombreRolCrearExiste == null)
         {
-            var roleResult = await _rolManager.CreateAsync(new IdentityRole("ADMINISTRADOR"));
+            var roleResult = await _rolManager.CreateAsync(new IdentityRole("ADMINISTRADOR")); //CREAMOS EL ROL SI NO EXISTE
         }
-
+        
         var clienteRolCrearExiste = _context.Roles.Where(r => r.Name == "CLIENTE").SingleOrDefault();
         if (clienteRolCrearExiste == null)
         {
-            var roleResult = await _rolManager.CreateAsync(new IdentityRole("CLIENTE"));
+            var roleResult = await _rolManager.CreateAsync(new IdentityRole("CLIENTE"));//CREAMOS EL ROL SI NO EXISTE
         }
         var desarrolladorRolCrearExiste = _context.Roles.Where(r => r.Name == "DESARROLLADOR").SingleOrDefault();
         if (desarrolladorRolCrearExiste == null)
         {
-            var roleResult = await _rolManager.CreateAsync(new IdentityRole("DESARROLLADOR"));
+            var roleResult = await _rolManager.CreateAsync(new IdentityRole("DESARROLLADOR")); //CREAMOS EL ROL SI NO EXISTE
         }
 
         //ARMAMOS EL OBJETO COMPLETANDO LOS ATRIBUTOS COMPLETADOS POR EL USUARIO
@@ -68,9 +68,9 @@ public class AuthController : ControllerBase
         };
 
         //HACEMOS USO DEL MÉTODO REGISTRAR USUARIO
-        var result = await _userManager.CreateAsync(user, model.Password);
+        var result = await _userManager.CreateAsync(user, model.Password); //REGISTRAMOS EL USUARIO
 
-        if (result.Succeeded)
+        if (result.Succeeded) //SI SE REGISTRA CORRECTAMENTE
         {
             await _userManager.AddToRoleAsync(user, "ADMINISTRADOR"); // ASIGNAMOS UN ROL POR DEFECTO AL USUARIO
             return Ok("Usuario registrado");
@@ -89,9 +89,9 @@ public class AuthController : ControllerBase
             string rolNombre = "CLIENTE";
             //BUSCAR ROL QUE TIENE
             var rolUsuario = _context.UserRoles.Where(r => r.UserId == user.Id).SingleOrDefault();
-            if (rolUsuario != null)
+            if (rolUsuario != null) //SI TIENE UN ROL ASIGNADO
             {
-                var rol = _context.Roles.Where(r => r.Id == rolUsuario.RoleId).SingleOrDefault();
+                var rol = _context.Roles.Where(r => r.Id == rolUsuario.RoleId).SingleOrDefault(); //BUSCAMOS EL ROL EN LA TABLA ROLES
                 rolNombre = rol.Name; // OBTENEMOS EL NOMBRE DEL ROL ASIGNADO AL USUARIO
             }
             //SI EL USUARIO ES ENCONTRADO Y LA CONTRASEÑA ES CORRECTA

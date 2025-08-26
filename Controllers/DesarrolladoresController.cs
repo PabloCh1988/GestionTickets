@@ -31,9 +31,9 @@ namespace GestionTickets.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Desarrollador>>> GetDesarrollador()
         {
-            // 
+            // Incluir la descripción del PuestoLaboral en la respuesta
             var desarrolladores = await _context.Desarrollador.OrderBy(d => d.Nombre).Include(d => d.PuestoLaboral)
-                .Select(d => new
+                .Select(d => new // Proyección para incluir solo los campos necesarios
                 {
                     d.DesarrolladorId,
                     d.Nombre,
@@ -47,8 +47,7 @@ namespace GestionTickets.Controllers
                 })
                 .ToListAsync();
 
-            return Ok(desarrolladores);
-            // return await _context.Desarrollador.OrderBy(d => d.Nombre).ToListAsync();
+            return Ok(desarrolladores); // Retorna la lista de desarrolladores con la descripción del puesto laboral
         }
 
         // GET: api/Desarrolladores/5
@@ -72,10 +71,12 @@ namespace GestionTickets.Controllers
         {
             var existeDesarrollador = await _context.Desarrollador
                 .Where(d => d.Email == desarrollador.Email && d.DesarrolladorId != id)
-                .CountAsync();
+                .CountAsync();// Verifica si ya existe un desarrollador con el mismo email
+
             var existeDni = await _context.Desarrollador
             .Where(d => d.Dni == desarrollador.Dni && d.DesarrolladorId != id)
-            .CountAsync();
+            .CountAsync();// Verifica si ya existe un desarrollador con el mismo DNI
+
             if (existeDesarrollador > 0)
             {
                 return BadRequest("Ya existe un desarrollador con el mismo email.");
@@ -84,7 +85,7 @@ namespace GestionTickets.Controllers
             {
                 return BadRequest("Ya existe un desarrollador con el mismo DNI.");
             }
-            if (id != desarrollador.DesarrolladorId)
+            if (id != desarrollador.DesarrolladorId) // Verifica que el ID en la URL coincida con el ID del desarrollador en el cuerpo de la solicitud
             {
                 return BadRequest();
             }

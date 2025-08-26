@@ -31,9 +31,6 @@ namespace GestionTickets.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Cliente>>> GetCliente()
         {
-            //  var usuarioLogueadoID = HttpContext.User.Identity.Name;
-            //  var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            //  var rol = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
             return await _context.Cliente.OrderBy(c => c.Nombre).ToListAsync();
         }
 
@@ -125,7 +122,7 @@ namespace GestionTickets.Controllers
                     }
 
 
-                    return CreatedAtAction("GetCliente", new { id = cliente.ClienteId }, cliente);
+                    return CreatedAtAction("GetCliente", new { id = cliente.ClienteId }, cliente); // Retorna el cliente creado
                 }
             }
             return BadRequest("No se pudo crear el cliente. Verifique los datos ingresados.");
@@ -136,7 +133,7 @@ namespace GestionTickets.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCliente(int id)
         {
-            var cliente = await _context.Cliente.FindAsync(id);
+            var cliente = await _context.Cliente.FindAsync(id); // Busca el cliente por ID
             if (cliente == null)
             {
                 return NotFound();

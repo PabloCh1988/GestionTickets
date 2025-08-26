@@ -184,6 +184,15 @@ async function EditarCategorias(categoriaId) {
             // Si la solicitud fue exitosa, limpiar el modal y actualizar la lista
             VaciarModal();
             ObtenerCategorias();
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Categoría actualizada",
+                background: '#000000',
+                color: '#f1f1f1',
+                showConfirmButton: false,
+                timer: 1500
+                });
         } else {
             // Si la solicitud falla, mostrar el mensaje de error devuelto por el servidor
             const errorText = await res.text();

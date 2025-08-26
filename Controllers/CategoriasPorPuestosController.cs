@@ -35,12 +35,12 @@ namespace GestionTickets.Controllers
             var categorias = await _context.CategoriaPorPuesto
             .Include(x => x.Categoria)
             .Where(x => x.PuestoLaboralId == id)
-            .ToListAsync();
+            .ToListAsync(); // Obtener todas las categorías asociadas al puesto laboral
 
-        if (categorias == null || categorias.Count == 0)
+        if (categorias == null || categorias.Count == 0)// Si no se encuentran categorías para el puesto laboral
             return NotFound();
 
-        return Ok(categorias);
+        return Ok(categorias); // Retorna la lista de categorías asociadas al puesto laboral
         }
 
         // PUT: api/CategoriasPorPuestos/5
@@ -81,14 +81,17 @@ namespace GestionTickets.Controllers
         {
             var categoriaporpuesto = await _context.CategoriaPorPuesto.Include(c => c.Categoria)
                 .Include(p => p.PuestoLaboral)
-                .ToListAsync();
+                .ToListAsync(); // Obtener todas las categorías por puesto laboral
+
+            // Verifica si ya existe una categoría con el mismo ID para este puesto laboral
             var existingEntry = await _context.CategoriaPorPuesto
-                .FirstOrDefaultAsync(c => c.CategoriaId == categoriaPorPuesto.CategoriaId && c.PuestoLaboralId == categoriaPorPuesto.PuestoLaboralId);
+                .FirstOrDefaultAsync(c => c.CategoriaId == categoriaPorPuesto.CategoriaId && c.PuestoLaboralId == categoriaPorPuesto.PuestoLaboralId); 
+
             if (existingEntry != null)
             {
                 return Conflict("Ya existe una categoría con el mismo ID para este puesto laboral.");
             }
-            _context.CategoriaPorPuesto.Add(categoriaPorPuesto);
+            _context.CategoriaPorPuesto.Add(categoriaPorPuesto); // Agrega la nueva categoría por puesto laboral
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCategoriaPorPuesto", new { id = categoriaPorPuesto.CategoriaPorPuestoId }, categoriaPorPuesto);
