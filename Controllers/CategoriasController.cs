@@ -52,7 +52,6 @@ namespace GestionTickets.Controllers
             else // ADMINISTRADOR y CLIENTE
             {
                 var categoriasFiltradas = await _context.Categorias
-                    .Where(c => !c.Eliminado) // Solo categorías no eliminadas
                     .OrderBy(c => c.Descripcion)
                     .ToListAsync(); // Obtiene todas las categorías ordenadas por descripción
 
