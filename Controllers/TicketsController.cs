@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using GestionTickets.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using GestionTickets.Models.ModelsVistas;
 
 namespace GestionTickets.Controllers
 {
@@ -27,45 +28,18 @@ namespace GestionTickets.Controllers
 
         // GET: api/Tickets
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<VistaTickets>>> GetTickets() // Método para obtener todos los tickets
+        public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets() // Método para obtener todos los tickets
         // Devuelve una lista de tickets en formato VistaTickets, que es una clase que contiene los datos que se mostrarán
         {
-            List<VistaTickets> vista = new List<VistaTickets>();
-
-            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var usuarioLogueadoID = HttpContext.User.Identity?.Name;
-
-
-            var tickets = await _context.Tickets.Include(t => t.Categoria).ToListAsync(); // Incluye la categoría relacionada
-
-            foreach (var ticket in tickets.OrderByDescending(t => t.FechaCreacion))
-            { // Recorre cada ticket y crea una instancia de VistaTickets para mostrar los datos
-                // Crea una nueva instancia de VistaTickets y asigna los valores del ticket
-                var ticketMostrar = new VistaTickets
-                {
-                    TicketId = ticket.TicketId,
-                    Titulo = ticket.Titulo,
-                    FechaCreacionString = ticket.FechaCreacionString,
-                    UsuarioClienteId = ticket.UsuarioClienteId ?? usuarioLogueadoID, // Si el ticket no tiene un usuario asignado, se usa el usuario logueado
-                    Prioridad = ticket.Prioridad,
-                    EstadoString = ticket.EstadoString,
-                    CategoriaString = ticket.CategoriaString,
-                    PrioridadString = ticket.PrioridadString
-                };
-                vista.Add(ticketMostrar); // Agrega el ticket a la lista de vista
-            }
-            return vista.ToList(); // Retorna la lista de tickets
-
+            var tickets = await _context.Tickets.Include(x => x.Categoria).ToListAsync();
+            return tickets;
         }
 
         // GET: api/Tickets/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Ticket>> GetTicket(int id)
         {
-            // var mail = User.Identity?.Name; // Obtiene el correo del usuario logueado
-            // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            // var usuario = await _context.Users.FindAsync(userId);
-            // var nombreCompleto = usuario?.NombreCompleto ?? "Desconocido";
+
             var ticket = await _context.Tickets.FindAsync(id); // Busca el ticket por su ID
             var usuario = await _context.Users.Where(u => u.Id == ticket.UsuarioClienteId).Select(u => new // Busca el usuario asociado al ticket
             {
@@ -236,38 +210,35 @@ namespace GestionTickets.Controllers
 
             var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var rol = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
-            var usuarioLogueadoID = HttpContext.User.Identity?.Name;
+            var desId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
 
             if (rol == "DESARROLLADOR")
             {
-                var desarrollador = await _context.Desarrollador.FirstOrDefaultAsync(d => d.Email == usuarioLogueadoID); // Busca el desarrollador por su email
-                var puestoDesarrollador = desarrollador?.PuestoLaboralId;// Obtiene el ID del puesto laboral del desarrollador
+                // Se busca que Desarrollador es
+                var puestoLaboralId = await _context.Desarrollador
+                .Where(d => d.Email == desId)
+                .Select(d => d.PuestoLaboralId)
+                .FirstOrDefaultAsync();
+                // DEL PUESTOLABROLA DEL DESARRLLADOR BUSCAMOS LAS CATEGORIAS ASIGNADAS AL PUESTO
+                var categPorPuesto = await _context.CategoriaPorPuesto
+                .Where(p => p.PuestoLaboralId == puestoLaboralId)
+                .Select(p => p.CategoriaId)
+                .ToListAsync();
 
-                var categoriasPorPuesto = await _context.CategoriaPorPuesto
-                    .Where(c => c.PuestoLaboralId == puestoDesarrollador)
-                    .Select(c => c.CategoriaId)
-                    .ToListAsync();// Obtiene las categorías asociadas al puesto laboral del desarrollador
-
-                var ticketsFiltrados = await _context.Tickets
-                    .Where(t => categoriasPorPuesto.Contains(t.CategoriaId))
-                    .Include(t => t.Categoria) // Incluye la categoría relacionada
-                    .ToListAsync(); // Obtiene los tickets que pertenecen a las categorías asociadas al puesto laboral del desarrollador
-
-                tickets.AddRange(ticketsFiltrados);// Agrega los tickets filtrados a la lista de tickets
+                foreach (var catId in categPorPuesto)
+                {
+                    var ticketsFiltrados = _context.Tickets.Include(t => t.Categoria).Where(t => t.CategoriaId == catId).ToList();
+                    tickets.AddRange(ticketsFiltrados);// Agrega los tickets filtrados a la lista de tickets
+                }
             }
             else if (rol == "CLIENTE") // si el rol es CLIENTE
             {
-                var ticketsFiltrados = await _context.Tickets
-                .Include(t => t.Categoria) // Incluye la categoría relacionada
-                    .Where(t => t.UsuarioClienteId == userId)
-                    .ToListAsync(); // Obtiene los tickets que pertenecen al usuario logueado
-
-                tickets.AddRange(ticketsFiltrados); // Agrega los tickets filtrados a la lista de tickets
+                // Filtramos los tickets por usuario
+                tickets.AddRange(_context.Tickets.Include(t => t.Categoria).Where(t => t.UsuarioClienteId == userId).ToList());
             }
             else // ADMINISTRADOR
             {
-                var ticketsFiltrados = await _context.Tickets.Include(t => t.Categoria).ToListAsync();
-                tickets.AddRange(ticketsFiltrados); // Agrega todos los tickets a la lista de tickets
+                tickets.AddRange(_context.Tickets.Include(t => t.Categoria).ToList()); // Agrega los tickets filtrados a la lista de tickets
             }
 
             // Aplica los filtros adicionales sobre la lista en memoria
@@ -280,15 +251,18 @@ namespace GestionTickets.Controllers
             if (filtro.Prioridad > 0) // si se especifica una prioridad
                 tickets = tickets.Where(t => t.Prioridad == (PrioridadTicket)filtro.Prioridad).ToList();// Filtra por prioridad
 
-            if (filtro.FechaInicio.HasValue && filtro.FechaFin.HasValue)
-            {
-                DateTime FechaInicio = filtro.FechaInicio.Value;
-                DateTime FechaFin = filtro.FechaFin.Value
-                    .AddHours(23)
-                    .AddMinutes(59)
-                    .AddSeconds(59);
+            DateTime fechaInicio = new DateTime();
+            bool fechaInicioValida = DateTime.TryParse(filtro.FechaInicio, out fechaInicio);
 
-                tickets = tickets.Where(t => t.FechaCreacion >= FechaInicio && t.FechaCreacion <= FechaFin).ToList();// Filtra por rango de fechas
+            DateTime fechaFin = new DateTime();
+            bool fechaFinValida = DateTime.TryParse(filtro.FechaFin, out fechaFin);
+
+            if (fechaInicioValida && fechaFinValida)
+            {
+                fechaFin = fechaFin.AddHours(23);
+                fechaFin = fechaFin.AddMinutes(59);
+                fechaFin = fechaFin.AddSeconds(59);
+                tickets = (List<Ticket>)tickets.Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFin);
             }
 
             foreach (var ticket in tickets.OrderByDescending(t => t.FechaCreacion)) // Recorre cada ticket y crea una instancia de VistaTickets para mostrar los datos
@@ -301,12 +275,222 @@ namespace GestionTickets.Controllers
                     Prioridad = ticket.Prioridad,
                     EstadoString = ticket.EstadoString,
                     CategoriaString = ticket.Categoria?.Descripcion,
-                    PrioridadString = ticket.PrioridadString
+                    PrioridadString = ticket.PrioridadString,
+                    UsuarioClienteId = ticket.UsuarioClienteId
                 };
                 vista.Add(ticketMostrar); // Agrega el ticket a la lista de vista
             }
             return vista.ToList(); // Retorna la lista de tickets filtrados
         }
+
+        [Authorize(Roles = "ADMINISTRADOR")]
+        [HttpPost("buscar")]
+        public async Task<ActionResult<IEnumerable<VistaTickets>>> BuscarTicket([FromBody] BuscarTicket filtro)
+        {
+            List<VistaTickets> vistaCliente = new List<VistaTickets>();
+            var tickets = new List<Ticket>();
+
+            // 1. Obtener el usuario del cliente
+            var emailUsuario = await _context.Cliente.Where(c => c.ClienteId == filtro.ClienteId).Select(c => c.Email).FirstOrDefaultAsync();
+
+            var clienteUserId = await _context.Users.Where(u => u.Email == emailUsuario).Select(u => u.Id).FirstOrDefaultAsync();
+
+            if (filtro.ClienteId > 0)
+                tickets.AddRange(_context.Tickets.Include(t => t.Categoria).Where(t => t.UsuarioClienteId == clienteUserId).ToList());
+
+            DateTime fechaInicio = new DateTime();
+            bool fechaInicioValida = DateTime.TryParse(filtro.FechaInicio, out fechaInicio);
+
+            DateTime fechaFin = new DateTime();
+            bool fechaFinValida = DateTime.TryParse(filtro.FechaFin, out fechaFin);
+
+
+            if (fechaInicioValida && fechaFinValida)
+            {
+                fechaFin = fechaFin.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+                tickets = [.. tickets.Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFin)];// Filtra por rango de fechas
+            }
+
+            foreach (var ticket in tickets.OrderByDescending(t => t.FechaCreacion))
+            {
+                var ticketMostrar = new VistaTickets
+                {
+                    TicketId = ticket.TicketId,
+                    Titulo = ticket.Titulo,
+                    FechaCreacionString = ticket.FechaCreacionString,
+                    Prioridad = ticket.Prioridad,
+                    EstadoString = ticket.EstadoString,
+                    CategoriaString = ticket.Categoria?.Descripcion,
+                    PrioridadString = ticket.PrioridadString,
+                    UsuarioClienteId = ticket.UsuarioClienteId
+                };
+                vistaCliente.Add(ticketMostrar);
+            }
+
+            return vistaCliente.ToList();
+        }
+
+
+
+        [HttpPost("grafico")]
+        //TicketsPorCategoria se obtiene del Model Categorias
+        // y FiltroTicket del Models Tickets
+        public async Task<ActionResult<IEnumerable<TicketsPorCategoria>>> TicketsPorCategoria([FromBody] FiltroTicket filtro)
+        {
+            // Lista que se irá llenando con el resultado (por categoría).
+            List<TicketsPorCategoria> listadoCategoriasMostrar = new List<TicketsPorCategoria>();
+
+            // Empiezo con todos los tickets y traigo la navegación a Categoria.
+            // AsQueryable permite agregar filtros dinámicamente.
+            var tickets = _context.Tickets.Include(t => t.Categoria).AsQueryable();
+
+            // Variables para parsear las fechas que vienen en filtro (suponiendo strings).
+            DateTime fechaInicio = new DateTime();
+            bool fechaInicioValida = DateTime.TryParse(filtro.FechaInicio, out fechaInicio);
+
+            DateTime fechaFin = new DateTime();
+            bool fechaFinValida = DateTime.TryParse(filtro.FechaFin, out fechaFin);
+
+            // Si las dos fechas son válidas, armo un filtro por rango de fechas.
+            if (fechaInicioValida && fechaFinValida)
+            {
+                // Ajusta la fecha fin al final del día (23:59:59) para incluir ese día completo.
+                fechaFin = fechaFin.AddHours(23);
+                fechaFin = fechaFin.AddMinutes(59);
+                fechaFin = fechaFin.AddSeconds(59);
+
+                // Aplico el filtro de fecha a la consulta.
+                tickets = tickets.Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFin);
+            }
+
+            // Si se especificó prioridad (>0), filtro por ella (se castea a la enum PrioridadTicket).
+            if (filtro.Prioridad > 0)
+            {
+                tickets = tickets.Where(t => t.Prioridad == (PrioridadTicket)filtro.Prioridad);
+            }
+
+            // Si se especificó estado (>0), filtro por él (se castea a la enum EstadoTicket).
+            if (filtro.Estado > 0)
+            {
+                tickets = tickets.Where(t => t.Estado == (EstadoTicket)filtro.Estado);
+            }
+
+            // Recorro los tickets ordenados por fecha de creación descendente.
+            // IMPORTANTE: hasta acá 'tickets' es un IQueryable; al iterarlo EF ejecutará la consulta.
+            foreach (var ticket in tickets.OrderByDescending(t => t.FechaCreacion))
+            {
+                // Busco si ya existe un elemento en la lista para la categoría del ticket actual.
+                var categoriaMostrar = listadoCategoriasMostrar
+                                           .Where(c => c.CategoriaID == ticket.CategoriaId)
+                                           .SingleOrDefault();
+
+                if (categoriaMostrar == null)
+                {
+                    // Si no existe, creo uno nuevo con Cantidad = 1
+                    categoriaMostrar = new TicketsPorCategoria
+                    {
+                        CategoriaID = ticket.CategoriaId,
+                        Nombre = ticket.CategoriaString, // aquí usan una propiedad string del ticket
+                        Cantidad = 1
+                    };
+                    listadoCategoriasMostrar.Add(categoriaMostrar);
+                }
+                else
+                {
+                    // Si ya existe, incremento la cantidad.
+                    categoriaMostrar.Cantidad += 1;
+                }
+            }
+
+            // Devuelvo la lista (será serializada a JSON).
+            return listadoCategoriasMostrar.ToList();
+        }
+
+
+        [HttpPost("ticketsporcategoria")]
+        public async Task<ActionResult<IEnumerable<CategoriaTickets>>> TicketsPorCliente([FromBody] FiltroTicket filtro)
+        {
+            List<CategoriaTickets> categoriasMostrar = new List<CategoriaTickets>();
+
+            var tickets = _context.Tickets.Include(t => t.Categoria).AsQueryable();
+
+            //VER DE ACUERDO AL ROL QUE TIENE SI DEBE FILTRAR POR USUARIO O NO
+            //var usuarioLogueadoID = HttpContext.User.Identity.Name;
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var rol = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (rol == "CLIENTE")
+            {
+                tickets = tickets.Where(t => t.UsuarioClienteId == userId);
+            }
+
+             // Variables para parsear las fechas que vienen en filtro (suponiendo strings).
+            DateTime fechaInicio = new DateTime();
+            bool fechaInicioValida = DateTime.TryParse(filtro.FechaInicio, out fechaInicio);
+
+            DateTime fechaFin = new DateTime();
+            bool fechaFinValida = DateTime.TryParse(filtro.FechaFin, out fechaFin);
+
+            // Si las dos fechas son válidas, armo un filtro por rango de fechas.
+            if (fechaInicioValida && fechaFinValida)
+            {
+                // Ajusta la fecha fin al final del día (23:59:59) para incluir ese día completo.
+                fechaFin = fechaFin.AddHours(23);
+                fechaFin = fechaFin.AddMinutes(59);
+                fechaFin = fechaFin.AddSeconds(59);
+
+                // Aplico el filtro de fecha a la consulta.
+                tickets = tickets.Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFin);
+            }
+
+            if (filtro.CategoriaId > 0)
+                tickets = tickets.Where(t => t.CategoriaId == filtro.CategoriaId);
+
+            if (filtro.Prioridad > 0)
+            {
+                tickets = tickets.Where(t => t.Prioridad == (PrioridadTicket)filtro.Prioridad);
+            }
+
+            if (filtro.Estado > 0)
+            {
+                tickets = tickets.Where(t => t.Estado == (EstadoTicket)filtro.Estado);
+            }
+
+            foreach (var ticket in tickets.OrderByDescending(t => t.FechaCreacion))
+            {
+                //POR CADA TICKETS VAMOS A BUSCAR EL CLIENTE  
+                var categoriaMostrar = categoriasMostrar.Where(c => c.CategoriaId == ticket.CategoriaId).SingleOrDefault();
+                if (categoriaMostrar == null)
+                {
+                    categoriaMostrar = new CategoriaTickets
+                    {
+                        CategoriaId = ticket.CategoriaId,
+                        Nombre = ticket.CategoriaString,
+                        Tickets = new List<VistaTickets>()
+                    };
+                    categoriasMostrar.Add(categoriaMostrar);
+                }
+
+                var ticketMostrar = new VistaTickets
+                {
+                    TicketId = ticket.TicketId,
+                    Titulo = ticket.Titulo,
+                    FechaCreacionString = ticket.FechaCreacionString,
+                    Prioridad = ticket.Prioridad,
+                    EstadoString = ticket.EstadoString,
+                    CategoriaString = ticket.Categoria?.Descripcion,
+                    PrioridadString = ticket.PrioridadString,
+                    UsuarioClienteId = ticket.UsuarioClienteId
+                };
+                categoriaMostrar.Tickets.Add(ticketMostrar);
+            }
+
+            return categoriasMostrar.ToList();
+        }
+
+
+
 
         // POST: api/Tickets
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

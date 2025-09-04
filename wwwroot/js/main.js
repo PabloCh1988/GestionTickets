@@ -45,36 +45,79 @@ function cargarVista(view) {
             tempDiv.innerHTML = html;
             const scripts = tempDiv.querySelectorAll('script');
 
+            let scriptsPendientes = scripts.length;
+            if (scriptsPendientes === 0) {
+                ejecutarInicializacion(view);
+            }
+
             scripts.forEach(script => {
                 const nuevoScript = document.createElement('script');
                 if (script.src) {
                     nuevoScript.src = script.src;
+                    nuevoScript.onload = () => {
+                        scriptsPendientes--;
+                        if (scriptsPendientes === 0) {
+                            ejecutarInicializacion(view);
+                        }
+                    };
                 } else {
                     nuevoScript.textContent = script.textContent;
+                    scriptsPendientes--;
                 }
                 document.body.appendChild(nuevoScript);
-            });
 
-            // Inicializar controladores y eventos después de insertar la vista
-            switch (view) {
-                case 'categoria':
-                    ObtenerCategorias();
-                    break;
-                case 'ticket':
-                    ObtenerTickets();
-                    break;
-                case 'cliente':
-                    ObtenerClientes();
-                    break;
-                case 'puestolaboral':
-                    ObtenerPuestos();
-                    break;
-                case 'desarrollador':
-                    ObtenerDesarrolladores();
-                    inicializarEventosDesarrollador(); // 👈
-                    break;
-            }
+                // Si es inline, ya podemos verificar si todos cargaron
+                if (scriptsPendientes === 0) {
+                    ejecutarInicializacion(view);
+                }
+            });
         });
+}
+
+function ejecutarInicializacion(view) {
+    switch (view) {
+        case 'categoria':
+            if (typeof ObtenerCategorias === "function") {
+                ObtenerCategorias();
+            }
+            break;
+        case 'ticket':
+            if (typeof ObtenerTickets === "function") {
+                ObtenerTickets();
+            }
+            break;
+        case 'cliente':
+            if (typeof ObtenerClientes === "function") {
+                ObtenerClientes();
+            }
+            break;
+        case 'puestolaboral':
+            if (typeof ObtenerPuestos === "function") {
+                ObtenerPuestos();
+            }
+            break;
+        case 'desarrollador':
+            if (typeof ObtenerDesarrolladores === "function") {
+                ObtenerDesarrolladores();
+                inicializarEventosDesarrollador();
+            }
+            break;
+        case 'ticketsPorClientes':
+            if (typeof ObtenerClientesDropdown === "function") {
+                ObtenerClientesDropdown();
+            }
+            break;
+        case 'graficosTickets':
+            if (typeof armarGrafico === "function") {
+                armarGrafico();
+            }
+            break;
+        case 'clienteTickets':
+            if (typeof getTickets === "function") {
+                getTickets();
+            }
+            break;
+    }
 }
 
 

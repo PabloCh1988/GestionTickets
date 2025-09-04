@@ -31,7 +31,8 @@ namespace GestionTickets.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Cliente>>> GetCliente()
         {
-            return await _context.Cliente.OrderBy(c => c.Nombre).ToListAsync();
+            var clientes = await _context.Cliente.OrderBy(c => c.Nombre).ToListAsync();
+            return clientes;
         }
 
         // GET: api/Clientess/5

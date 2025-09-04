@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using GestionTickets.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using NuGet.Packaging;
 
 namespace GestionTickets.Controllers
 {
@@ -27,40 +28,34 @@ namespace GestionTickets.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Categoria>>> GetCategorias()
         {
-            var usuarioLogueadoID = HttpContext.User.Identity?.Name;
-            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var rol = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
-
             var categorias = new List<Categoria>(); // Lista para almacenar las categorías filtradas
+
+            var rol = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+            var desId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
 
             if (rol == "DESARROLLADOR")
             {
-                var desarrollador = await _context.Desarrollador.FirstOrDefaultAsync(d => d.Email == usuarioLogueadoID); // Busca el desarrollador por su email
-                var puestoDesarrollador = desarrollador?.PuestoLaboralId;// Obtiene el ID del puesto laboral del desarrollador
+                var puestoLaboralId = await _context.Desarrollador
+                .Where(d => d.Email == desId)
+                .Select(d => d.PuestoLaboralId)
+                .FirstOrDefaultAsync();
 
-                var categoriasPorPuesto = await _context.CategoriaPorPuesto
-                    .Where(c => c.PuestoLaboralId == puestoDesarrollador)
-                    .Select(c => c.CategoriaId)
-                    .ToListAsync();// Obtiene las categorías asociadas al puesto laboral del desarrollador
+                var categPorPuesto = await _context.CategoriaPorPuesto
+                .Where(p => p.PuestoLaboralId == puestoLaboralId)
+                .Select(p => p.Categoria)
+                .ToListAsync();// Obtiene las categorías asociadas al puesto laboral del desarrollador
 
-                var categoriasFiltradas = await _context.Categorias
-                .Where(c => categoriasPorPuesto.Contains(c.CategoriaId)).OrderBy(c => c.Descripcion)
-                .ToListAsync(); // Obtiene las categorías que pertenecen a las categorías asociadas al puesto laboral del desarrollador
-
-                categorias.AddRange(categoriasFiltradas);// Agrega las categorías filtradas a la lista de categorías
+                categorias.AddRange(categPorPuesto);// Agrega las categorías filtradas a la lista de categorías
             }
             else // ADMINISTRADOR y CLIENTE
             {
-                var categoriasFiltradas = await _context.Categorias
-                    .OrderBy(c => c.Descripcion)
-                    .ToListAsync(); // Obtiene todas las categorías ordenadas por descripción
-
-                categorias.AddRange(categoriasFiltradas); // Agrega las categorías filtradas a la lista de categorías
+                categorias.AddRange(await _context.Categorias.OrderBy(c => c.Descripcion).ToListAsync()); // Agrega las categorías filtradas a la lista de categorías
             }
             return categorias;
         }
 
         // GET: api/Categorias/5
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Categoria>> GetCategoria(int id)
         {
@@ -76,6 +71,7 @@ namespace GestionTickets.Controllers
 
         // PUT: api/Categorias/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategoria(int id, Categoria categoria)
         {
@@ -114,6 +110,7 @@ namespace GestionTickets.Controllers
 
         // POST: api/Categorias
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpPost]
         public async Task<ActionResult<Categoria>> PostCategoria(Categoria categoria)
         {
@@ -131,6 +128,7 @@ namespace GestionTickets.Controllers
         }
 
         // DELETE: api/Categorias/5
+        [Authorize(Roles = "ADMINISTRADOR")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategoria(int id)
         {

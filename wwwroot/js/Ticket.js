@@ -1,137 +1,233 @@
-// evita que la función ObtenerTickets se ejecute más de una vez al mismo tiempo
-let enEjecucion = false;
-// Cuando la página termina de cargar el DOM, llama a comboCategorias().
-document.addEventListener("DOMContentLoaded", () => {
-    comboCategorias();
-    cargarCategorias(); // Carga el maps de categorías para el historial
-});
-// Define qué filtros disparan la búsqueda de tickets.
-function configurarFiltros() {
-    const campos = [
-        "CategoriaIdBuscar",
-        "EstadoIdBuscar",
-        "PrioridadIdBuscar",
-        "FechaInicioBuscar",
-        "FechaFinBuscar"
-    ];
 
-    campos.forEach(id => {
-        const elemento = document.getElementById(id);
-        if (elemento) {
-            elemento.addEventListener("change", () => { //A cada campo le agrega un evento change, para que cuando el usuario cambie algo se recarguen los tickets filtrados.
-                ObtenerTickets(); // Filtrar al cambiar
-            });
-        }
-    });
+
+// }
+function ObtenerCategoriaDropdown() {
+    authFetch(`categorias`, { method: 'GET' })
+        .then(response => {
+            console.log("Respuesta cruda:", response);
+            return response.json();
+        })
+        .then(data => {
+            console.log("Categorias recibidas:", data);
+            CompletarDropdown(data);
+        })
+        .catch(error => console.error("❌ No se pudo acceder al servicio:", error));
+}
+
+function CompletarDropdown(data) {
+    let bodySelect1 = document.getElementById("ticketCategoriaId");
+    let bodySelectFiltro = document.getElementById("CategoriaIdBuscar");
+
+    if (!bodySelect1 || !bodySelectFiltro) {
+        console.error("❌ Los selects no existen en el DOM todavía");
+        return;
+    }
+
+    bodySelect1.innerHTML = "";
+    bodySelectFiltro.innerHTML = "";
+
+    optFiltro1 = document.createElement("option");
+    optFiltro1.value = 0;
+    optFiltro1.text = "[Todas las Categorias]"
+
+    bodySelectFiltro.add(optFiltro1);
+    console.log("Categorias:", data)
+
+    data.forEach(element => {
+        optmodal = document.createElement("option");
+        optmodal.value = element.categoriaId;
+        optmodal.text = element.descripcion
+
+        bodySelect1.add(optmodal);
+
+        optFiltro1 = document.createElement("option");
+        optFiltro1.value = element.categoriaId;
+        optFiltro1.text = element.descripcion
+
+        bodySelectFiltro.add(optFiltro1);
+        //console.log(optFiltro);
+    })
+    ObtenerTickets();
+    //ObtenerPrioridadDropdown();
 }
 
 
-async function comboCategorias() {
-    const res = await authFetch("categorias"); //Llama al endpoint "categorias" para traer todas las categorías en formato JSON.
-    const categorias = await res.json();
-    // Busca los combos de categoría (uno para búsqueda y otro para creación/edición).
-    // Si existen, primero los vacía.
-    const comboSelectBuscar = document.querySelector("#CategoriaIdBuscar");
-    const comboSelect = document.querySelector("#CategoriaId");
-    if (comboSelectBuscar) comboSelectBuscar.innerHTML = "";
-    if (comboSelect) comboSelect.innerHTML = "";
-    // Prepara el HTML de las opciones: una para "todas las categorías" en el combo de búsqueda, y otra vacía para el combo de creación/edición.
-    let opcionesBuscar = `<option value="0">[Todas las categorías]</option>`;
-    let opciones = '';
-    // Recorre las categorías obtenidas y crea las opciones para ambos combos.
-    categorias.forEach(cat => {
-        const id = cat.categoriaId;
-        const desc = cat.descripcion;
-        opciones += `<option value="${id}">${desc}</option>`;
-        opcionesBuscar += `<option value="${id}">${desc}</option>`;
-    });
-    // Inserta las opciones en los combos si existen.
-    if (comboSelect) comboSelect.innerHTML = opciones;
-    if (comboSelectBuscar) comboSelectBuscar.innerHTML = opcionesBuscar;
+// document.addEventListener("DOMContentLoaded", async () => {
+//   // 1. Cargo las categorías en los combos
+//   await comboCategorias();
 
-    // Llamamos a ObtenerTickets solo después de preparar los combos
-    ObtenerTickets();
-    // Y ahora sí, asignamos los eventos de filtrado
-    configurarFiltros();
+//   // 2. Asigno los eventos *después* de que el DOM y el innerHTML ya están listos
+//   const inputCategoria   = document.getElementById("CategoriaIdBuscar");
+//   const inputEstado      = document.getElementById("EstadoIdBuscar");
+//   const inputPrioridad   = document.getElementById("PrioridadIdBuscar");
+//   const inputFechaInicio = document.getElementById("FechaInicioBuscar");
+//   const inputFechaFin    = document.getElementById("FechaFinBuscar");
+
+//   if (inputCategoria) {
+//     inputCategoria.addEventListener("change", () => {
+//       console.log("Filtrando por categoría:", inputCategoria.value);
+//       ObtenerTickets();
+//     });
+//   }
+
+//   if (inputEstado) {
+//     inputEstado.addEventListener("change", () => {
+//       console.log("Filtrando por estado:", inputEstado.value);
+//       ObtenerTickets();
+//     });
+//   }
+
+//   if (inputPrioridad) {
+//     inputPrioridad.addEventListener("change", () => {
+//       console.log("Filtrando por prioridad:", inputPrioridad.value);
+//       ObtenerTickets();
+//     });
+//   }
+
+//   if (inputFechaInicio) {
+//     inputFechaInicio.addEventListener("change", () => {
+//       console.log("Filtrando desde fecha:", inputFechaInicio.value);
+//       ObtenerTickets();
+//     });
+//   }
+
+//   if (inputFechaFin) {
+//     inputFechaFin.addEventListener("change", () => {
+//       console.log("Filtrando hasta fecha:", inputFechaFin.value);
+//       ObtenerTickets();
+//     });
+//   }
+// });
+
+
+// async function comboCategorias() {
+//     try {
+//         const res = await authFetch("categorias");
+//         const categorias = await res.json();
+//         console.log("Categorías recibidas:", categorias);
+
+//         const comboSelectBuscar = document.querySelector("#CategoriaIdBuscar");
+//         const comboSelect = document.querySelector("#ticketCategoriaId");
+
+//         if (!comboSelect || !comboSelectBuscar) {
+//             console.error("No se encontraron los combos en el DOM");
+//             return;
+//         }
+
+//         let opcionesBuscar = `<option value="0">[Todas las categorias]</option>`;
+//         let opciones = '';
+
+//         categorias.forEach(cat => {
+//             if (cat && cat.categoriaId && cat.descripcion) {
+//                 opciones += `<option value="${cat.categoriaId}">${cat.descripcion}</option>`;
+//                 opcionesBuscar += `<option value="${cat.categoriaId}">${cat.descripcion}</option>`;
+//             } else {
+//                 console.warn("Categoría inválida:", cat);
+//             }
+//         });
+
+//         comboSelect.innerHTML = opciones;
+//         comboSelectBuscar.innerHTML = opcionesBuscar;
+
+//         console.log("Opciones generadas:", opcionesBuscar);
+
+//         ObtenerTickets();
+//     } catch (error) {
+//         console.error("Error en comboCategorias:", error);
+//     }
+//     ObtenerTickets();
+// }
+
+
+// const inputCategoria = document.getElementById("CategoriaIdBuscar");
+// inputCategoria.onchange = function () {
+//     ObtenerTickets();
+// };
+
+// const inputEstado = document.getElementById("EstadoIdBuscar");
+// inputEstado.onchange = function () {
+//     ObtenerTickets();
+// };
+
+// const inputPrioridad = document.getElementById("PrioridadIdBuscar");
+// inputPrioridad.onchange = function () {
+//     ObtenerTickets();
+// };
+
+// const inputFechaInicio = document.getElementById("FechaInicioBuscar");
+// inputFechaInicio.onchange = function () {
+//     ObtenerTickets();
+// };
+
+// const inputFechaFin = document.getElementById("FechaFinBuscar");
+// inputFechaFin.onchange = function () {
+//     ObtenerTickets();
+// };
+
+function obtenerClasePrioridad(prioridad) {
+    switch (prioridad) {
+        case "Alta":
+            return "badge badge-outline-danger";
+        case "Media":
+            return "badge badge-outline-warning";
+        case "Baja":
+            return "badge badge-outline-success";
+        default:
+            return "badge badge-outline-secondary"; // por si viene nulo o desconocido
+    }
 }
 // Función para obtener y mostrar los tickets según los filtros seleccionados.
 async function ObtenerTickets() {
-    if (enEjecucion) return; // Si ya está en ejecución, no hacer nada
-    enEjecucion = true; // Marca que está en ejecución
+    let fechaDesde = document.getElementById("FechaInicioBuscar").value;
+    let fechaHasta = document.getElementById("FechaFinBuscar").value;
+    let categoriaIdBuscar = document.getElementById("CategoriaIdBuscar").value;
+    let estadoBuscar = document.getElementById("EstadoIdBuscar").value;
+    let prioridadBuscar = document.getElementById("PrioridadIdBuscar").value;
 
-    try {
-        // Obtiene los valores de los filtros
-        const catVal = document.getElementById("CategoriaIdBuscar")?.value;
-        const estVal = document.getElementById("EstadoIdBuscar")?.value;
-        const priVal = document.getElementById("PrioridadIdBuscar")?.value;
-        let fechaDesde = document.getElementById("FechaInicioBuscar")?.value;
-        let fechaHasta = document.getElementById("FechaFinBuscar")?.value;
+    const fecha1 = new Date(fechaDesde);
+    const fecha2 = new Date(fechaHasta);
 
-        // Si la fecha de inicio es mayor que la de fin, fuerza a que la fecha fin sea igual a la de inicio.
-        // Esto evita errores en el filtro
-        if (fechaDesde && fechaHasta && new Date(fechaDesde) > new Date(fechaHasta)) {
-            fechaHasta = fechaDesde;
-            const campoHasta = document.getElementById("FechaFinBuscar");// Actualiza el campo en el formulario
-            if (campoHasta) campoHasta.value = fechaHasta;
-        }
-        // Prepara el objeto de filtros para enviar a la API
-        const filtros = {
-            CategoriaId: parseInt(catVal || "0"),
-            Estado: parseInt(estVal || "0"),
-            Prioridad: parseInt(priVal || "0"),
-            FechaInicio: fechaDesde || null,
-            FechaFin: fechaHasta || null
-        };
-        // Llama al endpoint "tickets/filtro" con los filtros en el cuerpo de la solicitud
-        const res = await authFetch("tickets/filtro", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(filtros)
-        });
-        // Intenta convertir la respuesta a JSON
-        let tickets;
-        try {
-            tickets = await res.json();
-        } catch (e) {
-            tickets = null;
-        }
-        // Si no es un array, muestra un error con Swal
-        if (!Array.isArray(tickets)) {
-            Swal.fire({
-                title: "Error",
-                text: "No se pudieron obtener los tickets. " + (tickets?.title || tickets?.message || ""),
-                icon: "error",
-                background: '#000000',
-                color: '#f1f1f1',
-                confirmButtonText: "Aceptar"
-            });
-            if (tickets?.errors) console.error("Errores de validación:", tickets.errors);
-            return;
-        }
-        // Limpia la tabla antes de llenarla con los tickets obtenidos
-        // Si no hay tickets, la tabla quedará vacía
-        const tabla = document.getElementById("todosLosTickets");
-        if (!tabla) return;
-        tabla.innerHTML = "";
-        // Recorre los tickets y crea una fila por cada uno
-        tickets.forEach(item => {
-            const fila = document.createElement("tr");
-            fila.innerHTML = `
+    if (fecha1 > fecha2) {
+        fechaHasta = fechaDesde;
+        document.getElementById("FechaFinBuscar").value = fechaDesde;
+    }
+    // Prepara el objeto de filtros para enviar a la API
+    const filtro = {
+        CategoriaId: categoriaIdBuscar && categoriaIdBuscar !== "0" ? parseInt(categoriaIdBuscar) : null,
+        Estado: estadoBuscar && estadoBuscar !== "0" ? parseInt(estadoBuscar) : null,
+        Prioridad: prioridadBuscar && prioridadBuscar !== "0" ? parseInt(prioridadBuscar) : null,
+        FechaInicio: fechaDesde || null,
+        FechaFin: fechaHasta || null
+    };
+
+    const res = await authFetch("tickets/filtro", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(filtro)
+    });
+
+
+    const tickets = await res.json();
+    console.log("Tickets recibidos:", tickets);
+    const tabla = document.getElementById("todosLosTickets");
+    tabla.innerHTML = "";
+    // Recorre los tickets y crea una fila por cada uno
+    tickets.forEach(item => {
+        const clasePrioridad = obtenerClasePrioridad(item.prioridadString);
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
                 <td>${item.titulo || ''}</td>
                 <td>${item.estadoString || ''}</td>
-                <td>${item.prioridadString || ''}</td>
+                <td><span class="${clasePrioridad}">${item.prioridadString || ''}</td>
                 <td>${item.fechaCreacionString || ''}</td>
                 <td>${item.categoriaString || ''}</td>
                 <td><button class='btn btn-inverse-primary  mdi mdi-account-card-details' title='Datos' onclick='MostrarTicketId(${item.ticketId})'></button>
                 <button class='btn btn-inverse-success mdi mdi-border-color' title='Editar' onclick='BuscarTicketId(${item.ticketId})'></button>
                 <button class='btn btn-inverse-warning  mdi mdi-file-find' title='Historial' onclick='MostrarHistorial(${item.ticketId})'></button></td>
             `;
-            tabla.appendChild(fila);
-        });
-
-    } finally {
-        enEjecucion = false; // Marca que ya no está en ejecución
-    }
+        tabla.appendChild(fila);
+    });
+    // $("#modalCrearTickets").hide();
 }
 
 
@@ -286,7 +382,7 @@ function MostrarTicketId(ticketId) {
         .then(data => {
             if (!data) return;
 
-             let categoriaDesc = categoriasMap[data.categoriaId] || data.categoriaId;
+            let categoriaDesc = categoriasMap[data.categoriaId] || data.categoriaId;
             // Limpiar la tabla antes de llenarla
             $("#MostrarTicket").empty();
             // Mostrar los datos del ticket en una fila
@@ -524,17 +620,20 @@ function MostrarHistorial(ticketId) {
 };
 
 // Inicialización normal al cargar la página
-
-document.addEventListener("DOMContentLoaded", () => {
-    configurarFiltros(); // Asigna los eventos de filtrado
+window.addEventListener("DOMContentLoaded", () => {
+    ObtenerCategoriaDropdown();
+    cargarCategorias();
 });
+
+
 
 // Inicialización al navegar por hash (SPA)
 window.addEventListener("hashchange", () => {
     if (location.hash === "#ticket") {
-        comboCategorias(); // Vuelve a cargar combos y tickets al volver a la vista de tickets
+        ObtenerCategoriaDropdown(); // Vuelve a cargar combos y tickets al volver a la vista de tickets
     }
 });
+
 
 function ImprimirInforme() {
     const jsPDF = window.jspdf.jsPDF;
@@ -560,13 +659,6 @@ function ImprimirInforme() {
             tds[4]?.innerText || ""
         ];
     });
-
-    // doc.setFontSize(16);
-    // doc.text("Gestión de Tickets - Listado filtrado", 14, 18);
-
-    // // Fecha de generación
-    // doc.setFontSize(10);
-    // doc.text(`Fecha: ${new Date().toLocaleString()}`, 14, 25);
 
     doc.setFontSize(18);
     doc.text("Gestión de Tickets", 14, 20);

@@ -57,10 +57,16 @@ function authFetch(url, options, retry) {
                 return fetch(Base_API_URL + url, options);
             }).catch(function (error) {
                 console.error("Error al refrescar el token:", error);
-                return response;
+                throw new Error("No se pudo refrescar el token");
             });
         }
-        return response; // Esto asegura que siempre se retorna la respuesta
+
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.status}`);
+        }
+
+        return response;
     });
 }
+
 

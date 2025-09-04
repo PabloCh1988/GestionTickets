@@ -1,0 +1,87 @@
+<div class="row">
+    <div class="col-12 grid-margin">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">Tickets</h2>
+                <div class="grid-margin">
+                    <button class="btn-lg btn-inverse-success" data-bs-toggle="modal" onclick="AbrirModalCrearTicket()">
+                        <span><i class=" mdi mdi-plus"></i></span> Agregar
+                        Ticket</button>
+                    <button class="btn-lg btn-inverse-info" onclick="ImprimirInforme()">
+                        <span><i class="mdi mdi-fax"></i></span> Generar Informe</button>
+                </div>
+                <!-- Filtros -->
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <label class="control-label">Desde</label>
+                        <!-- Añadido atributo id para facilitar la manipulación desde JavaScript -->
+                        <input class="form-control form-control-sm" type="date" id="FechaInicioBuscar"
+                            onchange="ObtenerTickets()" />
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="control-label">Hasta</label>
+                        <input class="form-control form-control-sm" type="date" id="FechaFinBuscar"
+                            onchange="ObtenerTickets()" />
+                    </div>
+                    <!-- <div class="col-md-3 mb-2">
+                        <label class="control-label">Categoría</label>
+                        <select class="form-control form-control-sm text-light" id="CategoriaIdBuscar"
+                            onchange="ObtenerTickets()"></select>
+                    </div> -->
+                    <div class="col-md-3 mb-2">
+                        <label class="control-label">Prioridad</label>
+                        <select class="form-control form-control-sm text-light" id="PrioridadIdBuscar"
+                            onchange="ObtenerTickets()">
+                            <option value="0">[Todas las Prioridades]</option>
+                            <option value="1">Baja</option>
+                            <option value="2">Media</option>
+                            <option value="3">Alta</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="control-label">Estado</label>
+                        <select class="form-control form-control-sm text-light" id="EstadoIdBuscar"
+                            onchange="ObtenerTickets()">
+                            <option value="0">[Todos los Estados]</option>
+                            <option value="1">Abierto</option>
+                            <option value="2">En Progreso</option>
+                            <option value="3">Cerrado</option>
+                            <option value="4">Cancelado</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="table-responsive">
+                    <table id="tablaTickets" class="table table-hover tabla-con-acciones">
+                        <thead>
+                            <tr>
+
+                                <th class="text-light">Titulo</th>
+                                <th class="text-light">Estado</th>
+                                <th class="text-light">Prioridad</th>
+                                <th class="text-light">Fecha de Creación</th>
+                                <th class="text-light">Categoria</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="todosLosTickets"></tbody>
+                    </table>
+                </div>
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar me-1"></i>
+                            Tickets por Categorias
+                        </div>
+                        <div class="card-body" style="height: 48vh;">
+                            <canvas id="grafico-circular"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="../js/graficosTickets.js"></script>

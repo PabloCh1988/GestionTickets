@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "ZpueT5hcjvQyWWr+RW4MbCXvPD0H67QKHHTA9qYytUg=",
+  "Hash": "Z7QIrn+JM22ht/lZ+AMG2VM7Kirf29r+sh1OmtJh320=",
   "Source": "GestionTickets",
   "BasePath": "_content/GestionTickets",
   "Mode": "Default",
@@ -17212,6 +17212,25 @@
       "OriginalItemSpec": "wwwroot\\js\\Cliente.js"
     },
     {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\js\\clienteTickets.js",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "js/clienteTickets.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\clienteTickets.js"
+    },
+    {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\js\\common\\ObtenerCategoriasDropdown.js",
       "SourceId": "GestionTickets",
       "SourceType": "Discovered",
@@ -17229,6 +17248,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\common\\ObtenerCategoriasDropdown.js"
+    },
+    {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\js\\common\\ObtenerClientesDropdown.js",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "js/common/ObtenerClientesDropdown.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\common\\ObtenerClientesDropdown.js"
     },
     {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\js\\config.js",
@@ -17267,6 +17305,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\desarrollador.js"
+    },
+    {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\js\\graficosTickets.js",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "js/graficosTickets.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\graficosTickets.js"
     },
     {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\js\\index.js",
@@ -17343,6 +17400,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\Ticket.js"
+    },
+    {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\js\\ticketsPorClientes.js",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "js/ticketsPorClientes.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\ticketsPorClientes.js"
     },
     {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\lib\\bootstrap\\css\\bootstrap-grid.css",
@@ -18561,6 +18637,25 @@
       "OriginalItemSpec": "wwwroot\\views\\cliente.html"
     },
     {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\views\\clienteTickets.html",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "views/clienteTickets.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\views\\clienteTickets.html"
+    },
+    {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\views\\desarrollador.html",
       "SourceId": "GestionTickets",
       "SourceType": "Discovered",
@@ -18578,6 +18673,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\views\\desarrollador.html"
+    },
+    {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\views\\graficosTickets.html",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "views/graficosTickets.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\views\\graficosTickets.html"
     },
     {
       "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\views\\home.html",
@@ -18635,6 +18749,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\views\\ticket.html"
+    },
+    {
+      "Identity": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\views\\ticketsPorClientes.html",
+      "SourceId": "GestionTickets",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\",
+      "BasePath": "_content/GestionTickets",
+      "RelativePath": "views/ticketsPorClientes.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\views\\ticketsPorClientes.html"
     }
   ]
 }

@@ -1,0 +1,57 @@
+<div class="row">
+    <div class="col-12 grid-margin">
+        <div class="card">
+            <div class="card-body">
+                <!-- <h2 class="card-title">Tickets</h2>
+        <div class="grid-margin">
+          <button class="btn-lg btn-inverse-success" data-bs-toggle="modal" onclick="AbrirModalCrearTicket()">
+            <span><i class=" mdi mdi-plus"></i></span> Agregar
+            Ticket</button>
+          <button class="btn-lg btn-inverse-info" onclick="ImprimirInforme()">
+            <span><i class="mdi mdi-fax"></i></span> Generar Informe</button>
+        </div> -->
+                <!-- Filtros -->
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <label class="control-label">Desde</label>
+                        <!-- Añadido atributo id para facilitar la manipulación desde JavaScript -->
+                        <input class="form-control form-control-sm" type="date" id="FechaInicioBuscarC" />
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label class="control-label">Hasta</label>
+                        <input class="form-control form-control-sm" type="date" id="FechaFinBuscarC" />
+                    </div>
+                    <!-- <div class="col-md-3 mb-2">
+                        <label class="control-label">Categoría</label>
+                        <select class="form-control form-control-sm text-light" id="CategoriaIdBuscarC"></select>
+                    </div> -->
+                    <div class="col-md-4 mb-2">
+                        <label class="control-label">Cliente</label>
+                        <select class="form-control form-control-sm text-light" id="clientesDropdown" ></select>
+
+                    </div>
+
+
+                    <div class="table-responsive">
+                        <table id="tablaTickets" class="table table-hover tabla-con-acciones">
+                            <thead>
+                                <tr>
+
+                                    <th class="text-light">Titulo</th>
+                                    <th class="text-light">Estado</th>
+                                    <th class="text-light">Prioridad</th>
+                                    <th class="text-light">Fecha de Creación</th>
+                                    <th class="text-light">Categoria</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody id="todosLosClientesFiltro"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="./js/ticketsPorClientes.js" defer></script>

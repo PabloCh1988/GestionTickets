@@ -78,6 +78,15 @@ public class FiltroTicket
     public int? CategoriaId { get; set; } // Hacerlo nullable para permitir body vacío
     public int? Estado { get; set; } // 1: Abierto, 2: Cerrado, 3: En Progreso, 4: Cancelado
     public int? Prioridad { get; set; } // 1: Baja, 2: Media, 3: Alta
-    public DateTime? FechaInicio { get; set; }
-    public DateTime? FechaFin { get; set; }
+    public string? FechaInicio { get; set; }
+    public string? FechaFin { get; set; }
+}
+
+public class BuscarTicket
+{
+    public int? CategoriaId { get; set; } // Hacerlo nullable para permitir body vacío
+
+    public string? FechaInicio { get; set; }
+    public string? FechaFin { get; set; }
+    public int? ClienteId { get; set; }
 }
