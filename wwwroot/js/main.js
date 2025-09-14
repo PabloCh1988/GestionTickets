@@ -115,6 +115,7 @@ function ejecutarInicializacion(view) {
         case 'clienteTickets':
             if (typeof getTickets === "function") {
                 getTickets();
+                comboCategorias();
             }
             break;
     }

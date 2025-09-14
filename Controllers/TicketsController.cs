@@ -242,14 +242,7 @@ namespace GestionTickets.Controllers
             }
 
             // Aplica los filtros adicionales sobre la lista en memoria
-            if (filtro.CategoriaId > 0) // si se especifica una categoría
-                tickets = tickets.Where(t => t.CategoriaId == filtro.CategoriaId).ToList();// Filtra por categoría
 
-            if (filtro.Estado > 0) // si se especifica un estado
-                tickets = tickets.Where(t => t.Estado == (EstadoTicket)filtro.Estado).ToList();// Filtra por estado
-
-            if (filtro.Prioridad > 0) // si se especifica una prioridad
-                tickets = tickets.Where(t => t.Prioridad == (PrioridadTicket)filtro.Prioridad).ToList();// Filtra por prioridad
 
             DateTime fechaInicio = new DateTime();
             bool fechaInicioValida = DateTime.TryParse(filtro.FechaInicio, out fechaInicio);
@@ -262,8 +255,18 @@ namespace GestionTickets.Controllers
                 fechaFin = fechaFin.AddHours(23);
                 fechaFin = fechaFin.AddMinutes(59);
                 fechaFin = fechaFin.AddSeconds(59);
-                tickets = (List<Ticket>)tickets.Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFin);
+                tickets = tickets.Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFin).ToList();
             }
+
+            if (filtro.CategoriaId > 0) // si se especifica una categoría
+                tickets = tickets.Where(t => t.CategoriaId == filtro.CategoriaId).ToList();// Filtra por categoría
+
+            if (filtro.Estado > 0) // si se especifica un estado
+                tickets = tickets.Where(t => t.Estado == (EstadoTicket)filtro.Estado).ToList();// Filtra por estado
+
+            if (filtro.Prioridad > 0) // si se especifica una prioridad
+                tickets = tickets.Where(t => t.Prioridad == (PrioridadTicket)filtro.Prioridad).ToList();// Filtra por prioridad
+
 
             foreach (var ticket in tickets.OrderByDescending(t => t.FechaCreacion)) // Recorre cada ticket y crea una instancia de VistaTickets para mostrar los datos
             {
@@ -298,18 +301,19 @@ namespace GestionTickets.Controllers
             if (filtro.ClienteId > 0)
                 tickets.AddRange(_context.Tickets.Include(t => t.Categoria).Where(t => t.UsuarioClienteId == clienteUserId).ToList());
 
+            // Filtrado por rango de fechas (corregido)
             DateTime fechaInicio = new DateTime();
             bool fechaInicioValida = DateTime.TryParse(filtro.FechaInicio, out fechaInicio);
 
             DateTime fechaFin = new DateTime();
             bool fechaFinValida = DateTime.TryParse(filtro.FechaFin, out fechaFin);
 
-
             if (fechaInicioValida && fechaFinValida)
             {
-                fechaFin = fechaFin.AddHours(23).AddMinutes(59).AddSeconds(59);
-
-                tickets = [.. tickets.Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFin)];// Filtra por rango de fechas
+                fechaFin = fechaFin.AddHours(23);
+                fechaFin = fechaFin.AddMinutes(59);
+                fechaFin = fechaFin.AddSeconds(59);
+                tickets = tickets.Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFin).ToList();
             }
 
             foreach (var ticket in tickets.OrderByDescending(t => t.FechaCreacion))
@@ -345,6 +349,7 @@ namespace GestionTickets.Controllers
             // AsQueryable permite agregar filtros dinámicamente.
             var tickets = _context.Tickets.Include(t => t.Categoria).AsQueryable();
 
+
             // Variables para parsear las fechas que vienen en filtro (suponiendo strings).
             DateTime fechaInicio = new DateTime();
             bool fechaInicioValida = DateTime.TryParse(filtro.FechaInicio, out fechaInicio);
@@ -352,15 +357,12 @@ namespace GestionTickets.Controllers
             DateTime fechaFin = new DateTime();
             bool fechaFinValida = DateTime.TryParse(filtro.FechaFin, out fechaFin);
 
-            // Si las dos fechas son válidas, armo un filtro por rango de fechas.
+            // Filtrado por rango de fechas (corregido)
             if (fechaInicioValida && fechaFinValida)
             {
-                // Ajusta la fecha fin al final del día (23:59:59) para incluir ese día completo.
                 fechaFin = fechaFin.AddHours(23);
                 fechaFin = fechaFin.AddMinutes(59);
                 fechaFin = fechaFin.AddSeconds(59);
-
-                // Aplico el filtro de fecha a la consulta.
                 tickets = tickets.Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFin);
             }
 
@@ -425,22 +427,19 @@ namespace GestionTickets.Controllers
                 tickets = tickets.Where(t => t.UsuarioClienteId == userId);
             }
 
-             // Variables para parsear las fechas que vienen en filtro (suponiendo strings).
+            // Variables para parsear las fechas que vienen en filtro (suponiendo strings).
             DateTime fechaInicio = new DateTime();
             bool fechaInicioValida = DateTime.TryParse(filtro.FechaInicio, out fechaInicio);
 
             DateTime fechaFin = new DateTime();
             bool fechaFinValida = DateTime.TryParse(filtro.FechaFin, out fechaFin);
 
-            // Si las dos fechas son válidas, armo un filtro por rango de fechas.
+            // Filtrado por rango de fechas (corregido)
             if (fechaInicioValida && fechaFinValida)
             {
-                // Ajusta la fecha fin al final del día (23:59:59) para incluir ese día completo.
                 fechaFin = fechaFin.AddHours(23);
                 fechaFin = fechaFin.AddMinutes(59);
                 fechaFin = fechaFin.AddSeconds(59);
-
-                // Aplico el filtro de fecha a la consulta.
                 tickets = tickets.Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFin);
             }
 
@@ -461,14 +460,18 @@ namespace GestionTickets.Controllers
             {
                 //POR CADA TICKETS VAMOS A BUSCAR EL CLIENTE  
                 var categoriaMostrar = categoriasMostrar.Where(c => c.CategoriaId == ticket.CategoriaId).SingleOrDefault();
+                //PREGUNTAMOS SI ENCUENTRA ESA CATEGORIA EN PARTICULAR EN EL LISTADO DE CATEGORIAS MOSTRAR
                 if (categoriaMostrar == null)
                 {
+                    //SI NO LO ENCUENTRA LO AGREGA AL LISTADO
+                    //PARA ELLO LO ARMOO EN UN OBJETO PARA LUEGO INSERTARLO
                     categoriaMostrar = new CategoriaTickets
                     {
                         CategoriaId = ticket.CategoriaId,
                         Nombre = ticket.CategoriaString,
                         Tickets = new List<VistaTickets>()
                     };
+                    //SE INSERTA EL OBJETO
                     categoriasMostrar.Add(categoriaMostrar);
                 }
 
@@ -481,7 +484,7 @@ namespace GestionTickets.Controllers
                     EstadoString = ticket.EstadoString,
                     CategoriaString = ticket.Categoria?.Descripcion,
                     PrioridadString = ticket.PrioridadString,
-                    UsuarioClienteId = ticket.UsuarioClienteId
+                    // UsuarioClienteId = ticket.UsuarioClienteId
                 };
                 categoriaMostrar.Tickets.Add(ticketMostrar);
             }

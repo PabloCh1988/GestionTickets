@@ -2,26 +2,24 @@
     <div class="col-12 grid-margin">
         <div class="card">
             <div class="card-body">
-                <h2 class="card-title">Tickets</h2>
-                <div class="grid-margin">
+                <h2 class="card-title">Gráficos de Tickets</h2>
+                <!-- <div class="grid-margin">
                     <button class="btn-lg btn-inverse-success" data-bs-toggle="modal" onclick="AbrirModalCrearTicket()">
                         <span><i class=" mdi mdi-plus"></i></span> Agregar
                         Ticket</button>
                     <button class="btn-lg btn-inverse-info" onclick="ImprimirInforme()">
                         <span><i class="mdi mdi-fax"></i></span> Generar Informe</button>
-                </div>
+                </div> -->
                 <!-- Filtros -->
                 <div class="row">
                     <div class="col-md-3 mb-2">
                         <label class="control-label">Desde</label>
                         <!-- Añadido atributo id para facilitar la manipulación desde JavaScript -->
-                        <input class="form-control form-control-sm" type="date" id="FechaInicioBuscar"
-                            onchange="ObtenerTickets()" />
+                        <input class="form-control form-control-sm" type="date" id="FechaInicioBuscar" />
                     </div>
                     <div class="col-md-3 mb-2">
                         <label class="control-label">Hasta</label>
-                        <input class="form-control form-control-sm" type="date" id="FechaFinBuscar"
-                            onchange="ObtenerTickets()" />
+                        <input class="form-control form-control-sm" type="date" id="FechaFinBuscar" />
                     </div>
                     <!-- <div class="col-md-3 mb-2">
                         <label class="control-label">Categoría</label>

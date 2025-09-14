@@ -1,12 +1,3 @@
-async function ObtenerClientesDropdown() {
-    await authFetch('clientess', {
-        method: 'GET',
-    })
-        .then(response => response.json())
-        .then(data => DropdownClientes(data))
-        .catch(error => console.log("No se pudo acceder al servicio", error))
-}
-
 const inputFechaDesdeId = document.getElementById("FechaInicioBuscarC");
 inputFechaDesdeId.onchange = function () {
     ObtenerTicketsPorClientes();
@@ -16,6 +7,16 @@ const inputFechaHastaId = document.getElementById("FechaFinBuscarC");
 inputFechaHastaId.onchange = function () {
     ObtenerTicketsPorClientes();
 };
+
+
+async function ObtenerClientesDropdown() {
+    await authFetch('clientess', {
+        method: 'GET',
+    })
+        .then(response => response.json())
+        .then(data => DropdownClientes(data))
+        .catch(error => console.log("No se pudo acceder al servicio", error))
+}
 
 
 async function DropdownClientes(data) {
@@ -52,35 +53,69 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Función para obtener y mostrar los tickets según los filtros seleccionados.
+// async function ObtenerTicketsPorClientes() {
+//     let clienteId = parseInt(document.getElementById("clientesDropdown").value);
+//     let fechaDesde = document.getElementById("FechaInicioBuscarC").value;
+//     let fechaHasta = document.getElementById("FechaFinBuscarC").value;
+//     if (fechaDesde) filtro.FechaInicio = fechaDesde;
+//     if (fechaHasta) filtro.FechaFin = fechaHasta;
+
+//     const filtro = {
+//         FechaInicio: fechaDesde,
+//         FechaFin: fechaHasta,
+//         ClienteId: clienteId
+//     };
+//     console.log(filtro)
+
+//     await authFetch("tickets/buscar", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" }, // <--- IMPORTANTE
+//         body: JSON.stringify(filtro)
+//     })
+//         .then(response => response.json())
+//         .then(data => MostrarTicketsPorClientes(data))
+//         .catch(error => Swal.fire({
+//             title: "Error",
+//             text: "No se pudieron obtener los clientes.",
+//             icon: "error",
+//             background: '#000000',
+//             color: '#f1f1f1',
+//             confirmButtonText: "Aceptar"
+//         }));
+// }
+
 async function ObtenerTicketsPorClientes() {
     let clienteId = parseInt(document.getElementById("clientesDropdown").value);
     let fechaDesde = document.getElementById("FechaInicioBuscarC").value;
     let fechaHasta = document.getElementById("FechaFinBuscarC").value;
-    if (fechaDesde) filtro.FechaInicio = fechaDesde;
-    if (fechaHasta) filtro.FechaFin = fechaHasta;
 
+    // Declaramos el objeto filtro al inicio
     const filtro = {
-        FechaInicio: fechaDesde,
-        FechaFin: fechaHasta,
-        ClienteId: clienteId
+        FechaInicio: fechaDesde || null,
+        FechaFin: fechaHasta || null,
+        ClienteId: clienteId || null
     };
-    console.log(filtro)
+
+    console.log(filtro);
 
     await authFetch("tickets/buscar", {
         method: "POST",
-        headers: { "Content-Type": "application/json" }, // <--- IMPORTANTE
-        body: JSON.stringify(filtro)
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filtro }) // si el backend espera { filtro: {...} }
+        // body: JSON.stringify(filtro)   // si espera solo {...}
     })
         .then(response => response.json())
         .then(data => MostrarTicketsPorClientes(data))
-        .catch(error => Swal.fire({
-            title: "Error",
-            text: "No se pudieron obtener los clientes.",
-            icon: "error",
-            background: '#000000',
-            color: '#f1f1f1',
-            confirmButtonText: "Aceptar"
-        }));
+        .catch(error =>
+            Swal.fire({
+                title: "Error",
+                text: "No se pudieron obtener los clientes.",
+                icon: "error",
+                background: '#000000',
+                color: '#f1f1f1',
+                confirmButtonText: "Aceptar"
+            })
+        );
 }
 
 

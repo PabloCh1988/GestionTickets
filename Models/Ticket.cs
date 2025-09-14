@@ -30,6 +30,8 @@ public class Ticket
     [NotMapped]
     public string? CategoriaString { get { return Categoria?.Descripcion; } }
 
+    public DateTime FechaComienzo { get; set; }
+
     public DateTime FechaCierre { get; set; }
 
     public string? UsuarioClienteId { get; set; }

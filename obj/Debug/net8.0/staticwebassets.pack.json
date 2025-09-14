@@ -3841,6 +3841,22 @@
       "PackagePath": "staticwebassets\\lib\\bootstrap\\js\\bootstrap.min.js.map"
     },
     {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\lib\\jspdf\\jspdf.debug.js",
+      "PackagePath": "staticwebassets\\lib\\jspdf\\jspdf.debug.js"
+    },
+    {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\lib\\jspdf\\jspdf.min.js",
+      "PackagePath": "staticwebassets\\lib\\jspdf\\jspdf.min.js"
+    },
+    {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\lib\\jspdf\\jspdf.plugin.autotable.js",
+      "PackagePath": "staticwebassets\\lib\\jspdf\\jspdf.plugin.autotable.js"
+    },
+    {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\lib\\jspdf\\jspdf.umd.min.js",
+      "PackagePath": "staticwebassets\\lib\\jspdf\\jspdf.umd.min.js"
+    },
+    {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\login.html",
       "PackagePath": "staticwebassets\\login.html"
     },

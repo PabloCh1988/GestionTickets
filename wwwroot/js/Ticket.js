@@ -1,22 +1,70 @@
+async function comboCategoriasTickets() {
+
+    const res = await authFetch("categorias");
+
+    const categorias = await res.json();
+
+    const comboSelectBuscar = document.querySelector("#BuscarCategoriaId");
+    // const comboSelectOpciones = document.querySelector("#ticketCategoriaId");
+    comboSelectBuscar.innerHTML = "";
+    // comboSelectOpciones.innerHTML = "";
 
 
-// }
-function ObtenerCategoriaDropdown() {
-    authFetch(`categorias`, { method: 'GET' })
-        .then(response => {
-            console.log("Respuesta cruda:", response);
-            return response.json();
-        })
-        .then(data => {
-            console.log("Categorias recibidas:", data);
-            CompletarDropdown(data);
-        })
-        .catch(error => console.error("❌ No se pudo acceder al servicio:", error));
+    let opcionesBuscar = `<option value="0">[Todas las categorias]</option>`;
+    categorias.forEach(cat => {
+
+        opcionesBuscar += `<option value="${cat.categoriaId}">${cat.descripcion}</option>`;
+    });
+
+    comboSelectBuscar.innerHTML = opcionesBuscar;
+
+     ObtenerTickets();
 }
+
+
+const inputPrioridad = document.getElementById("PrioridadIdBuscar");
+inputPrioridad.onchange = function () {
+    ObtenerTickets();
+};
+
+const inputEstado = document.getElementById("EstadoIdBuscar");
+inputEstado.onchange = function () {
+    ObtenerTickets();
+};
+
+const inputFechaDesde = document.getElementById("BuscarFechaInicio");
+inputFechaDesde.onchange = function () {
+    ObtenerTickets();
+};
+
+const inputFechaHasta = document.getElementById("BuscarFechaFin");
+inputFechaHasta.onchange = function () {
+    ObtenerTickets();
+};
+
+const inputCategoria = document.getElementById("BuscarCategoriaId");
+inputCategoria.onchange = function () {
+    ObtenerTickets();
+};
+
+
+
+// function ObtenerCategoriaDropdown() {
+//     authFetch(`categorias`, { method: 'GET' })
+//         .then(response => {
+//             console.log("Respuesta cruda:", response);
+//             return response.json();
+//         })
+//         .then(data => {
+//             console.log("Categorias recibidas:", data);
+//             CompletarDropdown(data);
+//         })
+//         .catch(error => console.error("❌ No se pudo acceder al servicio:", error));
+// }
 
 function CompletarDropdown(data) {
     let bodySelect1 = document.getElementById("ticketCategoriaId");
-    let bodySelectFiltro = document.getElementById("CategoriaIdBuscar");
+    let bodySelectFiltro = document.getElementById("BuscarCategoriaId");
 
     if (!bodySelect1 || !bodySelectFiltro) {
         console.error("❌ Los selects no existen en el DOM todavía");
@@ -52,118 +100,6 @@ function CompletarDropdown(data) {
 }
 
 
-// document.addEventListener("DOMContentLoaded", async () => {
-//   // 1. Cargo las categorías en los combos
-//   await comboCategorias();
-
-//   // 2. Asigno los eventos *después* de que el DOM y el innerHTML ya están listos
-//   const inputCategoria   = document.getElementById("CategoriaIdBuscar");
-//   const inputEstado      = document.getElementById("EstadoIdBuscar");
-//   const inputPrioridad   = document.getElementById("PrioridadIdBuscar");
-//   const inputFechaInicio = document.getElementById("FechaInicioBuscar");
-//   const inputFechaFin    = document.getElementById("FechaFinBuscar");
-
-//   if (inputCategoria) {
-//     inputCategoria.addEventListener("change", () => {
-//       console.log("Filtrando por categoría:", inputCategoria.value);
-//       ObtenerTickets();
-//     });
-//   }
-
-//   if (inputEstado) {
-//     inputEstado.addEventListener("change", () => {
-//       console.log("Filtrando por estado:", inputEstado.value);
-//       ObtenerTickets();
-//     });
-//   }
-
-//   if (inputPrioridad) {
-//     inputPrioridad.addEventListener("change", () => {
-//       console.log("Filtrando por prioridad:", inputPrioridad.value);
-//       ObtenerTickets();
-//     });
-//   }
-
-//   if (inputFechaInicio) {
-//     inputFechaInicio.addEventListener("change", () => {
-//       console.log("Filtrando desde fecha:", inputFechaInicio.value);
-//       ObtenerTickets();
-//     });
-//   }
-
-//   if (inputFechaFin) {
-//     inputFechaFin.addEventListener("change", () => {
-//       console.log("Filtrando hasta fecha:", inputFechaFin.value);
-//       ObtenerTickets();
-//     });
-//   }
-// });
-
-
-// async function comboCategorias() {
-//     try {
-//         const res = await authFetch("categorias");
-//         const categorias = await res.json();
-//         console.log("Categorías recibidas:", categorias);
-
-//         const comboSelectBuscar = document.querySelector("#CategoriaIdBuscar");
-//         const comboSelect = document.querySelector("#ticketCategoriaId");
-
-//         if (!comboSelect || !comboSelectBuscar) {
-//             console.error("No se encontraron los combos en el DOM");
-//             return;
-//         }
-
-//         let opcionesBuscar = `<option value="0">[Todas las categorias]</option>`;
-//         let opciones = '';
-
-//         categorias.forEach(cat => {
-//             if (cat && cat.categoriaId && cat.descripcion) {
-//                 opciones += `<option value="${cat.categoriaId}">${cat.descripcion}</option>`;
-//                 opcionesBuscar += `<option value="${cat.categoriaId}">${cat.descripcion}</option>`;
-//             } else {
-//                 console.warn("Categoría inválida:", cat);
-//             }
-//         });
-
-//         comboSelect.innerHTML = opciones;
-//         comboSelectBuscar.innerHTML = opcionesBuscar;
-
-//         console.log("Opciones generadas:", opcionesBuscar);
-
-//         ObtenerTickets();
-//     } catch (error) {
-//         console.error("Error en comboCategorias:", error);
-//     }
-//     ObtenerTickets();
-// }
-
-
-// const inputCategoria = document.getElementById("CategoriaIdBuscar");
-// inputCategoria.onchange = function () {
-//     ObtenerTickets();
-// };
-
-// const inputEstado = document.getElementById("EstadoIdBuscar");
-// inputEstado.onchange = function () {
-//     ObtenerTickets();
-// };
-
-// const inputPrioridad = document.getElementById("PrioridadIdBuscar");
-// inputPrioridad.onchange = function () {
-//     ObtenerTickets();
-// };
-
-// const inputFechaInicio = document.getElementById("FechaInicioBuscar");
-// inputFechaInicio.onchange = function () {
-//     ObtenerTickets();
-// };
-
-// const inputFechaFin = document.getElementById("FechaFinBuscar");
-// inputFechaFin.onchange = function () {
-//     ObtenerTickets();
-// };
-
 function obtenerClasePrioridad(prioridad) {
     switch (prioridad) {
         case "Alta":
@@ -178,9 +114,9 @@ function obtenerClasePrioridad(prioridad) {
 }
 // Función para obtener y mostrar los tickets según los filtros seleccionados.
 async function ObtenerTickets() {
-    let fechaDesde = document.getElementById("FechaInicioBuscar").value;
-    let fechaHasta = document.getElementById("FechaFinBuscar").value;
-    let categoriaIdBuscar = document.getElementById("CategoriaIdBuscar").value;
+    let fechaDesde = document.getElementById("BuscarFechaInicio").value;
+    let fechaHasta = document.getElementById("BuscarFechaFin").value;
+    let categoriaIdBuscar = document.getElementById("BuscarCategoriaId").value;
     let estadoBuscar = document.getElementById("EstadoIdBuscar").value;
     let prioridadBuscar = document.getElementById("PrioridadIdBuscar").value;
 
@@ -189,15 +125,15 @@ async function ObtenerTickets() {
 
     if (fecha1 > fecha2) {
         fechaHasta = fechaDesde;
-        document.getElementById("FechaFinBuscar").value = fechaDesde;
+        document.getElementById("BuscarFechaFin").value = fechaDesde;
     }
     // Prepara el objeto de filtros para enviar a la API
     const filtro = {
-        CategoriaId: categoriaIdBuscar && categoriaIdBuscar !== "0" ? parseInt(categoriaIdBuscar) : null,
-        Estado: estadoBuscar && estadoBuscar !== "0" ? parseInt(estadoBuscar) : null,
-        Prioridad: prioridadBuscar && prioridadBuscar !== "0" ? parseInt(prioridadBuscar) : null,
-        FechaInicio: fechaDesde || null,
-        FechaFin: fechaHasta || null
+        categoriaId: categoriaIdBuscar && categoriaIdBuscar !== "0" ? parseInt(categoriaIdBuscar) : null,
+        estado: estadoBuscar && estadoBuscar !== "0" ? parseInt(estadoBuscar) : null,
+        prioridad: prioridadBuscar && prioridadBuscar !== "0" ? parseInt(prioridadBuscar) : null,
+        fechaInicio: fechaDesde || null,
+        fechaFin: fechaHasta || null
     };
 
     const res = await authFetch("tickets/filtro", {
@@ -635,44 +571,160 @@ window.addEventListener("hashchange", () => {
 });
 
 
+// function ImprimirInforme() {
+//     const jsPDF = window.jspdf.jsPDF;
+//     const doc = new jsPDF();
+
+//     // Títulos de columnas (ajusta según tus columnas visibles)
+//     const columns = [
+//         "Título", "Estado", "Prioridad", "Fecha de Creación", "Categoría"
+//     ];
+
+//     // Obtén las filas visibles del tbody
+//     const tbody = document.getElementById("todosLosTickets");
+//     const rows = Array.from(tbody.querySelectorAll("tr"));
+
+//     // Extrae los datos de cada fila (ajusta los índices si cambias columnas)
+//     const data = rows.map(tr => {
+//         const tds = tr.querySelectorAll("td");
+//         return [
+//             tds[0]?.innerText || "",
+//             tds[1]?.innerText || "",
+//             tds[2]?.innerText || "",
+//             tds[3]?.innerText || "",
+//             tds[4]?.innerText || ""
+//         ];
+//     });
+
+//     doc.setFontSize(18);
+//     doc.text("Gestión de Tickets", 14, 20);
+//     doc.setFontSize(14);
+//     doc.text("Listado filtrado", 14, 30);
+//     doc.setFontSize(10);
+//     doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 14, 36);
+//     // Genera la tabla
+//     doc.autoTable({
+//         head: [columns],
+//         body: data,
+//         startY: 40,
+//         styles: { fontSize: 9 }
+//     });
+
+//     doc.save("Listado_Tickets_Filtrados.pdf");
+// }
+
 function ImprimirInforme() {
-    const jsPDF = window.jspdf.jsPDF;
-    const doc = new jsPDF();
+    // Crear una instancia del documento PDF
+    var doc = new jsPDF();
+    // Alternativa para orientación horizontal: var doc = new jsPDF('l', 'mm', [297, 210]);
 
-    // Títulos de columnas (ajusta según tus columnas visibles)
-    const columns = [
-        "Título", "Estado", "Prioridad", "Fecha de Creación", "Categoría"
-    ];
+    // Placeholder para total de páginas
+    var totalPagesExp = "{total_pages_count_string}";
 
-    // Obtén las filas visibles del tbody
-    const tbody = document.getElementById("todosLosTickets");
-    const rows = Array.from(tbody.querySelectorAll("tr"));
+    // Función que se ejecuta en cada página del PDF
+    var pageContent = function (data) {
+        // Dibujar rectángulos decorativos en el encabezado
+        doc.setDrawColor(153, 102, 255); // Lila intenso
+        doc.setLineWidth(0.7);
+        doc.rect(14, 10, 30, 20, 'S'); // Caja izquierda
+        doc.rect(44, 10, 151, 20, 'S'); // Caja principal
 
-    // Extrae los datos de cada fila (ajusta los índices si cambias columnas)
-    const data = rows.map(tr => {
-        const tds = tr.querySelectorAll("td");
-        return [
-            tds[0]?.innerText || "",
-            tds[1]?.innerText || "",
-            tds[2]?.innerText || "",
-            tds[3]?.innerText || "",
-            tds[4]?.innerText || ""
-        ];
+        // Texto del encabezado
+        doc.setFontSize(12);
+        doc.text("Listado de Tickets", 46, 15);
+        doc.text("Con métodos de búsqueda", 46, 22);
+        doc.text("Version del sistema: 1.0.0", 46, 28.5);
+
+        // Líneas horizontales decorativas
+        doc.setLineWidth(0.5);
+        doc.line(44, 17, 195, 17, 'S');
+        doc.line(44, 24, 195, 24, 'S');
+
+        // Obtener dimensiones de la página
+        var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+        var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+        // Pie de página con número de página
+        var str = "Pagina " + data.pageCount;
+        if (typeof doc.putTotalPages == 'function') {
+            str += " de " + totalPagesExp;
+        }
+
+        // Línea decorativa del pie
+        doc.setLineWidth(8);
+        doc.setDrawColor(153, 102, 255) // Lila intenso
+        doc.setTextColor(255, 255, 255); //texto blanco
+        doc.line(14, pageHeight - 11, 196, pageHeight - 11);
+
+        // Texto del pie de página
+        doc.setFontSize(10);
+        doc.setFontStyle('bold');
+        doc.text(str, 17, pageHeight - 10);
+    };
+
+    // Obtener la tabla HTML por su ID
+    var elem = document.getElementById("tablaTickets");
+
+    // Convertir la tabla HTML en formato compatible con autoTable
+    var res = doc.autoTableHtmlToJson(elem);
+
+    // Eliminar la columna 5 (índice 5) tanto del encabezado como de los datos
+    res.columns.splice(5, 1);
+    res.data = res.data.map(row => {
+        row.splice(5, 1);
+        return row;
     });
 
-    doc.setFontSize(18);
-    doc.text("Gestión de Tickets", 14, 20);
-    doc.setFontSize(14);
-    doc.text("Listado filtrado", 14, 30);
-    doc.setFontSize(10);
-    doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 14, 36);
-    // Genera la tabla
-    doc.autoTable({
-        head: [columns],
-        body: data,
-        startY: 40,
-        styles: { fontSize: 9 }
+    // Generar la tabla en el PDF con estilos personalizados
+    doc.autoTable(res.columns, res.data, {
+        addPageContent: pageContent, // Agrega encabezado y pie en cada página
+        margin: { top: 32 }, // Margen superior para dejar espacio al encabezado
+        styles: {
+            fillStyle: 'DF',
+            overflow: 'linebreak',
+            columnWidth: 110,
+            lineWidth: 0.1,
+            lineColor: [238, 238, 238]
+        },
+        headerStyles: {
+            fillColor: [153, 102, 255], // Lila intenso
+            textColor: [255, 255, 255]
+        },
+        columnStyles: {
+            0: { columnWidth: 28 }, // Fecha
+            1: { columnWidth: 62 }, // Título
+            2: { columnWidth: 50 }, // Categoría
+            3: { columnWidth: 20 }, // Prioridad
+            4: { columnWidth: 20 }  // Estado
+        },
+        createdHeaderCell: function (cell, opts) {
+            // Alineación centrada para columnas específicas en el encabezado
+            if (opts.column.index == 0 || opts.column.index == 3 || opts.column.index == 4) {
+                cell.styles.halign = 'center';
+            }
+            cell.styles.fontSize = 8;
+        },
+        createdCell: function (cell, opts) {
+            // Alineación centrada y tamaño de fuente para celdas
+            cell.styles.fontSize = 7;
+            if (opts.column.index == 0 || opts.column.index == 3 || opts.column.index == 4) {
+                cell.styles.halign = 'center';
+            }
+        }
     });
 
-    doc.save("Listado_Tickets_Filtrados.pdf");
+    // Calcular el total de páginas antes de mostrar el PDF
+    if (typeof doc.putTotalPages === 'function') {
+        doc.putTotalPages(totalPagesExp);
+    }
+
+    // Mostrar el PDF en una nueva ventana dentro de un iframe
+    var string = doc.output('datauristring');
+    var iframe = "<iframe width='100%' height='100%' src='" + string + "'></iframe>";
+    var x = window.open();
+    x.document.open();
+    x.document.write(iframe);
+    x.document.close();
 }
+
+comboCategoriasTickets();
