@@ -140,19 +140,7 @@ namespace GestionTickets.Controllers
                     _context.HistorialTicket.Add(historialTicket);
                     await _context.SaveChangesAsync();
                 }
-                // {
-                //     var historialTicket = new HistorialTicket
-                //     {
-                //         TicketId = ticket.TicketId,
-                //         CampoModificado = "Descripcion",
-                //         ValorAnterior = originalDescripcion,
-                //         ValorNuevo = ticket.Descripcion,
-                //         FechaCambio = DateTime.Now,
-                //         UsuarioNombre = userId // Asignar el ID del usuario que realizó el cambio
-                //     };
-                //     _context.HistorialTicket.Add(historialTicket);
-                //     await _context.SaveChangesAsync();
-                // }
+
                 if (originalPrioridad != ticket.Prioridad) // Si la prioridad ha cambiado
                 {
                     var historialTicket = new HistorialTicket
@@ -197,6 +185,69 @@ namespace GestionTickets.Controllers
 
             return NoContent();
         }
+
+        [HttpPut("cambiarestado/{id}")]
+        public async Task<IActionResult> cambiarestado(int id)
+        {
+            var ticket = await _context.Tickets.FindAsync(id);
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            var rol = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+            var desarrolladorEmail = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value; // Obtiene el ID del desarrollador logueado
+            var desarrollador = await _context.Desarrollador.Where(d => d.Email == desarrolladorEmail).Select(d => d.DesarrolladorId.ToString()).FirstOrDefaultAsync();
+
+            if (rol == "DESARROLLADOR")
+            {
+                if (ticket.Estado == EstadoTicket.Abierto)
+                {
+                    ticket.Estado = EstadoTicket.EnProgreso;
+                    ticket.FechaComienzo = DateTime.Now;
+                }
+                else if (ticket.Estado == EstadoTicket.EnProgreso)
+                {
+                    ticket.Estado = EstadoTicket.Cerrado;
+                    ticket.FechaCierre = DateTime.Now;
+                    ticket.DesarrolladorId = int.Parse(desarrollador ?? "0");
+                }
+
+                _context.Tickets.Update(ticket);
+                await _context.SaveChangesAsync();
+
+                var vista = MapearVistaTicket(ticket, rol);
+                return Ok(vista); // ✅ Devuelve el DTO con EstadoString
+            }
+            else
+            {
+                return BadRequest("Solo los desarrolladores pueden cambiar el estado del ticket.");
+            }
+        }
+        // 👇 Método auxiliar para mapear Ticket a VistaTickets
+        private VistaTickets MapearVistaTicket(Ticket ticket, string rol)
+        {
+            var vista = new VistaTickets
+            {
+                TicketId = ticket.TicketId,
+                Titulo = ticket.Titulo,
+                Prioridad = ticket.Prioridad,
+                EstadoString = ticket.EstadoString,
+                FechaCreacionString = ticket.FechaCreacion.ToString("dd/MM/yyyy HH:mm"),
+                PrioridadString = ticket.PrioridadString,
+                CategoriaString = ticket.CategoriaString
+            };
+
+            if (rol == "DESARROLLADOR")
+            {
+                vista.FechaComienzoString = ticket.FechaComienzo.ToString("dd/MM/yyyy HH:mm");
+                vista.FechaCierreString = ticket.FechaCierre.ToString("dd/MM/yyyy HH:mm");
+            }
+
+            return vista;
+        }
+
+
         // POST: api/Tickets/filtro
         // Este método permite filtrar los tickets según diferentes criterios
         [HttpPost("filtro")]
@@ -286,56 +337,6 @@ namespace GestionTickets.Controllers
             return vista.ToList(); // Retorna la lista de tickets filtrados
         }
 
-        [Authorize(Roles = "ADMINISTRADOR")]
-        [HttpPost("buscar")]
-        public async Task<ActionResult<IEnumerable<VistaTickets>>> BuscarTicket([FromBody] BuscarTicket filtro)
-        {
-            List<VistaTickets> vistaCliente = new List<VistaTickets>();
-            var tickets = new List<Ticket>();
-
-            // 1. Obtener el usuario del cliente
-            var emailUsuario = await _context.Cliente.Where(c => c.ClienteId == filtro.ClienteId).Select(c => c.Email).FirstOrDefaultAsync();
-
-            var clienteUserId = await _context.Users.Where(u => u.Email == emailUsuario).Select(u => u.Id).FirstOrDefaultAsync();
-
-            if (filtro.ClienteId > 0)
-                tickets.AddRange(_context.Tickets.Include(t => t.Categoria).Where(t => t.UsuarioClienteId == clienteUserId).ToList());
-
-            // Filtrado por rango de fechas (corregido)
-            DateTime fechaInicio = new DateTime();
-            bool fechaInicioValida = DateTime.TryParse(filtro.FechaInicio, out fechaInicio);
-
-            DateTime fechaFin = new DateTime();
-            bool fechaFinValida = DateTime.TryParse(filtro.FechaFin, out fechaFin);
-
-            if (fechaInicioValida && fechaFinValida)
-            {
-                fechaFin = fechaFin.AddHours(23);
-                fechaFin = fechaFin.AddMinutes(59);
-                fechaFin = fechaFin.AddSeconds(59);
-                tickets = tickets.Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFin).ToList();
-            }
-
-            foreach (var ticket in tickets.OrderByDescending(t => t.FechaCreacion))
-            {
-                var ticketMostrar = new VistaTickets
-                {
-                    TicketId = ticket.TicketId,
-                    Titulo = ticket.Titulo,
-                    FechaCreacionString = ticket.FechaCreacionString,
-                    Prioridad = ticket.Prioridad,
-                    EstadoString = ticket.EstadoString,
-                    CategoriaString = ticket.Categoria?.Descripcion,
-                    PrioridadString = ticket.PrioridadString,
-                    UsuarioClienteId = ticket.UsuarioClienteId
-                };
-                vistaCliente.Add(ticketMostrar);
-            }
-
-            return vistaCliente.ToList();
-        }
-
-
 
         [HttpPost("grafico")]
         //TicketsPorCategoria se obtiene del Model Categorias
@@ -408,7 +409,38 @@ namespace GestionTickets.Controllers
             // Devuelvo la lista (será serializada a JSON).
             return listadoCategoriasMostrar.ToList();
         }
+        [HttpPost("tickets-cerrados-por-mes")]
+        public async Task<ActionResult<IEnumerable<TicketsCerradosPorMes>>> TicketsCerradosPorMes([FromBody] FiltroTicket filtro)
+        {
+            var hoy = DateTime.Now;
+            var primerDiaMesActual = new DateTime(hoy.Year, hoy.Month, 1);
+            var primerDiaMesInicio = primerDiaMesActual.AddMonths(-3); // Últimos 4 meses
 
+            var tickets = await _context.Tickets
+                .Where(t => t.Estado == EstadoTicket.Cerrado && t.FechaCierre >= primerDiaMesInicio)
+                .ToListAsync();
+
+            var agrupados = tickets
+                .GroupBy(t => t.FechaCierre.ToString("yyyy-MM"))
+                .Select(g => new TicketsCerradosPorMes
+                {
+                    Mes = g.Key,
+                    Cantidad = g.Count()
+                })
+                .OrderBy(x => x.Mes)
+                .ToList();
+
+            // Asegura que siempre haya 4 meses en el resultado, aunque no haya tickets
+            var meses = Enumerable.Range(0, 4)
+                .Select(i => primerDiaMesInicio.AddMonths(i).ToString("yyyy-MM"))
+                .ToList();
+
+            var resultado = meses
+                .Select(m => agrupados.FirstOrDefault(x => x.Mes == m) ?? new TicketsCerradosPorMes { Mes = m, Cantidad = 0 })
+                .ToList();
+
+            return resultado;
+        }
 
         [HttpPost("ticketsporcategoria")]
         public async Task<ActionResult<IEnumerable<CategoriaTickets>>> TicketsPorCliente([FromBody] FiltroTicket filtro)
@@ -492,6 +524,165 @@ namespace GestionTickets.Controllers
             return categoriasMostrar.ToList();
         }
 
+        [HttpPost("ticketspordesarrollador")]
+        public async Task<ActionResult<IEnumerable<DesarrolladorTickets>>> TicketsPorDesarrollador([FromBody] FiltroTicket filtro)
+        {
+            List<DesarrolladorTickets> desarrolladoresMostrar = new List<DesarrolladorTickets>();
+
+            var tickets = _context.Tickets.Include(t => t.Desarrollador).AsQueryable();
+
+            // Variables para parsear las fechas que vienen en filtro (suponiendo strings).
+            DateTime fechaInicio = new DateTime();
+            bool fechaInicioValida = DateTime.TryParse(filtro.FechaInicio, out fechaInicio);
+
+            DateTime fechaFin = new DateTime();
+            bool fechaFinValida = DateTime.TryParse(filtro.FechaFin, out fechaFin);
+
+            // Filtrado por rango de fechas (corregido)
+            if (!string.IsNullOrEmpty(filtro.FechaInicio) && !string.IsNullOrEmpty(filtro.FechaFin) && fechaInicioValida && fechaFinValida)
+            {
+                fechaFin = fechaFin.AddHours(23).AddMinutes(59).AddSeconds(59);
+                tickets = tickets.Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFin);
+            }
+
+            foreach (var ticket in tickets.OrderByDescending(t => t.FechaCreacion))
+            {
+                // Solo mostrar tickets cerrados y con desarrollador asignado
+                if (ticket.DesarrolladorId == null)
+                    continue;
+
+                var desarrolladorMostrar = desarrolladoresMostrar.FirstOrDefault(c => c.DesarrolladorId == ticket.DesarrolladorId.Value);
+
+                if (desarrolladorMostrar == null)
+                {
+                    desarrolladorMostrar = new DesarrolladorTickets
+                    {
+                        DesarrolladorId = ticket.DesarrolladorId.Value,
+                        Nombre = ticket.Desarrollador?.Nombre ?? "Sin nombre",
+                        Email = ticket.Desarrollador?.Email ?? "Sin email",
+                        Tickets = new List<VistaTickets>()
+                    };
+                    desarrolladoresMostrar.Add(desarrolladorMostrar);
+                }
+
+                var ticketMostrar = new VistaTickets
+                {
+                    TicketId = ticket.TicketId,
+                    Titulo = ticket.Titulo,
+                    FechaCreacionString = ticket.FechaCreacionString,
+                    FechaCierreString = ticket.FechaCierre.ToString("dd/MM/yyyy HH:mm"),
+                    CategoriaString = ticket.Categoria?.Descripcion,
+                    PrioridadString = ticket.PrioridadString,
+                    EstadoString = ticket.EstadoString
+                };
+                desarrolladorMostrar.Tickets.Add(ticketMostrar);
+            }
+            return desarrolladoresMostrar.ToList();
+        }
+
+        [HttpPost("ticketsporclientes")]
+        public async Task<ActionResult<IEnumerable<ClienteTickets>>> TicketsCliente([FromBody] FiltroTicket filtro)
+        {
+            List<ClienteTickets> clientesMostrar = new List<ClienteTickets>();
+
+            var tickets = _context.Tickets.Where(t => t.UsuarioClienteId != null).AsQueryable();
+
+            //VER DE ACUERDO AL ROL QUE TIENE SI DEBE FILTRAR POR USUARIO O NO
+            //var usuarioLogueadoID = HttpContext.User.Identity.Name;
+            var usuarios = _context.Users.ToList();
+            var clientes = _context.Cliente.ToList();
+
+            // if (rol == "CLIENTE")
+            // {
+            //     tickets = tickets.Where(t => t.UsuarioClienteId == userId);
+            // }
+
+            // Variables para parsear las fechas que vienen en filtro (suponiendo strings).
+            DateTime fechaInicio = new DateTime();
+            bool fechaInicioValida = DateTime.TryParse(filtro.FechaInicio, out fechaInicio);
+
+            DateTime fechaFin = new DateTime();
+            bool fechaFinValida = DateTime.TryParse(filtro.FechaFin, out fechaFin);
+
+            // Filtrado por rango de fechas (corregido)
+            if (fechaInicioValida && fechaFinValida)
+            {
+                fechaFin = fechaFin.AddHours(23);
+                fechaFin = fechaFin.AddMinutes(59);
+                fechaFin = fechaFin.AddSeconds(59);
+                tickets = tickets.Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFin);
+            }
+
+            if (filtro.CategoriaId > 0)
+                tickets = tickets.Where(t => t.CategoriaId == filtro.CategoriaId);
+
+            if (filtro.Prioridad > 0)
+            {
+                tickets = tickets.Where(t => t.Prioridad == (PrioridadTicket)filtro.Prioridad);
+            }
+
+            if (filtro.Estado > 0)
+            {
+                tickets = tickets.Where(t => t.Estado == (EstadoTicket)filtro.Estado);
+            }
+
+            // foreach (var ticket in tickets.OrderByDescending(t => t.FechaCreacion))
+            // {
+            //     //POR CADA TICKETS VAMOS A BUSCAR EL CLIENTE  
+            //     var clienteMostrar = clientesMostrar.FirstOrDefault(c => c.Email == ticket.UsuarioClienteId);
+            //     //PREGUNTAMOS SI ENCUENTRA ESe cliente EN PARTICULAR EN EL LISTADO DE CATEGORIAS MOSTRAR
+            //     if (clienteMostrar == null)
+            //     {
+            //         //SI NO LO ENCUENTRA LO AGREGA AL LISTADO
+            //         //PARA ELLO LO ARMOO EN UN OBJETO PARA LUEGO INSERTARLO
+            //         clienteMostrar = new ClienteTickets
+            //         {
+            //             ClienteId = 0, // o dejalo sin usar si no tenés un ID numérico
+            //             Nombre = ticket.UsuarioNombre ?? "Sin nombre",
+            //             Email = ticket.UsuarioClienteId ?? "Sin email",
+            //             Tickets = new List<VistaTickets>()
+            //         };
+            foreach (var ticket in tickets.OrderByDescending(t => t.FechaCreacion))
+            {
+                var usuario = usuarios.FirstOrDefault(u => u.Id == ticket.UsuarioClienteId);
+                var email = usuario?.UserName;
+
+                var cliente = clientes.FirstOrDefault(c => c.Email == email);
+
+                // ⛔️ Si no hay cliente, ignoramos el ticket
+                if (cliente == null)
+                    continue;
+
+                var clienteMostrar = clientesMostrar.FirstOrDefault(c => c.Email == email);
+
+                if (clienteMostrar == null)
+                {
+                    clienteMostrar = new ClienteTickets
+                    {
+                        ClienteId = cliente.ClienteId,
+                        Nombre = cliente.Nombre,
+                        Email = email,
+                        Tickets = new List<VistaTickets>()
+                    };
+                    clientesMostrar.Add(clienteMostrar);
+                }
+
+                var ticketMostrar = new VistaTickets
+                {
+                    TicketId = ticket.TicketId,
+                    Titulo = ticket.Titulo,
+                    FechaCreacionString = ticket.FechaCreacionString,
+                    Prioridad = ticket.Prioridad,
+                    EstadoString = ticket.EstadoString,
+                    CategoriaString = ticket.Categoria?.Descripcion,
+                    PrioridadString = ticket.PrioridadString
+                };
+
+                clienteMostrar.Tickets.Add(ticketMostrar);
+            }
+
+            return clientesMostrar.ToList();
+        }
 
 
 
@@ -511,7 +702,7 @@ namespace GestionTickets.Controllers
             // Verifica si ya existe un Ticket con la misma descripción
             var yaExisteTicket = await _context.Tickets.Where(t => t.Titulo == ticket.Titulo).CountAsync();
             if (yaExisteTicket > 0) // Si existe un ticket con la misma descripción
-            // se retorna un mensaje de error
+                                    // se retorna un mensaje de error
             {
                 return BadRequest("Ya existe un ticket con la misma descripción.");
             }

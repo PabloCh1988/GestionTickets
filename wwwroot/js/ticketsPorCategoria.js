@@ -98,7 +98,7 @@ async function getTickets() {
   categorias.forEach((categoria) => {
     const rowCategoria = document.createElement("tr");
     rowCategoria.innerHTML = `          
-            <td class='text-bold text-light table-primary' colspan='4'>${categoria.nombre}</td>          
+            <td colspan='4' style='text-align: center;' class='text-bold text-light table-primary'>${categoria.nombre}</td>          
         `;
     tbody.appendChild(rowCategoria);
 
@@ -108,9 +108,8 @@ async function getTickets() {
       fila.innerHTML = `
                 <td>${item.titulo || ""}</td>
                 <td>${item.estadoString || ""}</td>
-                <td><span class="${clasePrioridad}">${
-        item.prioridadString || ""
-      }</td>
+                <td><span class="${clasePrioridad}">${item.prioridadString || ""
+        }</td>
                 <td>${item.fechaCreacionString || ""}</td>
             `;
       tbody.appendChild(fila);

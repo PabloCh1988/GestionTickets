@@ -1,4 +1,5 @@
 let graficoCircularCategorias;
+let graficoBarrasTicketsCerrados;
 
 const inputPrioridad = document.getElementById("PrioridadIdBuscar");
 inputPrioridad.onchange = function () {
@@ -112,3 +113,44 @@ function generarColorAzul() {
     .padStart(2, "0")}${bb.toString(16).padStart(2, "0")}`;
   return colorHex;
 }
+
+async function armarGraficoBarrasTicketsCerrados() {
+  const res = await authFetch("tickets/tickets-cerrados-por-mes", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({}) // Puedes enviar filtros si lo necesitas
+  });
+
+  const datos = await res.json();
+
+  const labels = datos.map(d => d.mes); // Ej: ["2025-01", "2025-02", ...]
+  const cantidades = datos.map(d => d.cantidad);
+
+  const ctxBar = document.getElementById("grafico-barras");
+
+  // Destruye el gráfico anterior si existe
+  if (graficoBarrasTicketsCerrados) {
+    graficoBarrasTicketsCerrados.destroy();
+  }
+
+  graficoBarrasTicketsCerrados = new Chart(ctxBar, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Tickets cerrados por mes',
+        data: cantidades,
+        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+}
+
+armarGraficoBarrasTicketsCerrados();

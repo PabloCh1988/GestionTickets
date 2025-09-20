@@ -1,163 +1,120 @@
-const inputFechaDesdeId = document.getElementById("FechaInicioBuscarC");
+//HACER PRIMERO EL METODO PARA ARMAR EL COMBO DESPLEGABLE DE CATEGORIAS
+async function comboCategorias() {
+    const res = await authFetch("categorias");
+
+    const categorias = await res.json();
+
+    const comboSelectBuscar = document.querySelector("#CategoriaIdBuscar");
+    comboSelectBuscar.innerHTML = "";
+
+    let opcionesBuscar = `<option value="0">[Todas las categorias]</option>`;
+    categorias.forEach((cat) => {
+        opcionesBuscar += `<option value="${cat.categoriaId}">${cat.descripcion}</option>`;
+    });
+
+    comboSelectBuscar.innerHTML = opcionesBuscar;
+
+    getTicketsClientes();
+}
+
+const inputPrioridadId = document.getElementById("PrioridadIdBuscar");
+inputPrioridadId.onchange = function () {
+    getTicketsClientes();
+};
+
+const inputEstadoId = document.getElementById("EstadoIdBuscar");
+inputEstadoId.onchange = function () {
+    getTicketsClientes();
+};
+
+const inputFechaDesdeId = document.getElementById("FechaInicioBuscar");
 inputFechaDesdeId.onchange = function () {
-    ObtenerTicketsPorClientes();
+    getTicketsClientes();
 };
 
-const inputFechaHastaId = document.getElementById("FechaFinBuscarC");
+const inputFechaHastaId = document.getElementById("FechaFinBuscar");
 inputFechaHastaId.onchange = function () {
-    ObtenerTicketsPorClientes();
+    getTicketsClientes();
 };
 
+const inputCategoriaId = document.getElementById("CategoriaIdBuscar");
+inputCategoriaId.onchange = function () {
+    getTicketsClientes();
+};
 
-async function ObtenerClientesDropdown() {
-    await authFetch('clientess', {
-        method: 'GET',
-    })
-        .then(response => response.json())
-        .then(data => DropdownClientes(data))
-        .catch(error => console.log("No se pudo acceder al servicio", error))
+function obtenerClasePrioridad(prioridad) {
+    switch (prioridad) {
+        case "Alta":
+            return "badge badge-outline-danger";
+        case "Media":
+            return "badge badge-outline-warning";
+        case "Baja":
+            return "badge badge-outline-success";
+        default:
+            return "badge badge-outline-secondary"; // por si viene nulo o desconocido
+    }
 }
 
+async function getTicketsClientes() {
+    let fechaDesde = document.getElementById("FechaInicioBuscar").value;
+    let fechaHasta = document.getElementById("FechaFinBuscar").value;
 
-async function DropdownClientes(data) {
-    let bodySelect = document.getElementById("clientesDropdown");
-    bodySelect.innerHTML = "";
+    // Normalizar formato a yyyy-MM-dd si existe valor
+    fechaDesde = fechaDesde
+        ? new Date(fechaDesde).toISOString().slice(0, 10)
+        : "";
+    fechaHasta = fechaHasta
+        ? new Date(fechaHasta).toISOString().slice(0, 10)
+        : "";
 
-    optFiltro = document.createElement("option");
-    optFiltro.value = '';
-    optFiltro.text = "[Seleccione un cliente]"
-
-    bodySelect.add(optFiltro);
-
-    data.forEach(element => {
-        optFiltro = document.createElement("option");
-        optFiltro.value = element.clienteId;
-        optFiltro.text = element.nombre
-
-        bodySelect.add(optFiltro);
-    })
-    // Asegurarse de que el listener se agregue después de poblar el select
-    bodySelect.addEventListener("change", ObtenerTicketsPorClientes);
-}
-
-
-document.addEventListener("DOMContentLoaded", () => {
-    const inputCliente = document.getElementById("clientesDropdown");
-    if (inputCliente) {
-        inputCliente.addEventListener("change", ObtenerTicketsPorClientes);
-    } else {
-        console.warn("Elemento 'clientesDropdown' no encontrado en el DOM.");
+    // Validación: fechaDesde <= fechaHasta
+    if (fechaDesde && fechaHasta && fechaDesde > fechaHasta) {
+        fechaHasta = fechaDesde;
+        document.getElementById("FechaFinBuscar").value = fechaDesde;
     }
 
-    ObtenerClientesDropdown();
-});
-
-// Función para obtener y mostrar los tickets según los filtros seleccionados.
-// async function ObtenerTicketsPorClientes() {
-//     let clienteId = parseInt(document.getElementById("clientesDropdown").value);
-//     let fechaDesde = document.getElementById("FechaInicioBuscarC").value;
-//     let fechaHasta = document.getElementById("FechaFinBuscarC").value;
-//     if (fechaDesde) filtro.FechaInicio = fechaDesde;
-//     if (fechaHasta) filtro.FechaFin = fechaHasta;
-
-//     const filtro = {
-//         FechaInicio: fechaDesde,
-//         FechaFin: fechaHasta,
-//         ClienteId: clienteId
-//     };
-//     console.log(filtro)
-
-//     await authFetch("tickets/buscar", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" }, // <--- IMPORTANTE
-//         body: JSON.stringify(filtro)
-//     })
-//         .then(response => response.json())
-//         .then(data => MostrarTicketsPorClientes(data))
-//         .catch(error => Swal.fire({
-//             title: "Error",
-//             text: "No se pudieron obtener los clientes.",
-//             icon: "error",
-//             background: '#000000',
-//             color: '#f1f1f1',
-//             confirmButtonText: "Aceptar"
-//         }));
-// }
-
-async function ObtenerTicketsPorClientes() {
-    let clienteId = parseInt(document.getElementById("clientesDropdown").value);
-    let fechaDesde = document.getElementById("FechaInicioBuscarC").value;
-    let fechaHasta = document.getElementById("FechaFinBuscarC").value;
-
-    // Declaramos el objeto filtro al inicio
-    const filtro = {
-        FechaInicio: fechaDesde || null,
-        FechaFin: fechaHasta || null,
-        ClienteId: clienteId || null
+    const filtros = {
+        categoriaId:
+            parseInt(document.getElementById("CategoriaIdBuscar").value) || 0,
+        prioridad:
+            parseInt(document.getElementById("PrioridadIdBuscar").value) || 0,
+        estado: parseInt(document.getElementById("EstadoIdBuscar").value) || 0,
+        fechaInicio: fechaDesde || "",
+        fechaFin: fechaHasta || "",
     };
 
-    console.log(filtro);
-
-    await authFetch("tickets/buscar", {
+    const res = await authFetch(`tickets/ticketsporclientes`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ filtro }) // si el backend espera { filtro: {...} }
-        // body: JSON.stringify(filtro)   // si espera solo {...}
-    })
-        .then(response => response.json())
-        .then(data => MostrarTicketsPorClientes(data))
-        .catch(error =>
-            Swal.fire({
-                title: "Error",
-                text: "No se pudieron obtener los clientes.",
-                icon: "error",
-                background: '#000000',
-                color: '#f1f1f1',
-                confirmButtonText: "Aceptar"
-            })
-        );
-}
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(filtros),
+    });
 
+    const clientes = await res.json();
+    const tbody = document.querySelector("#tablaTicketsClientes tbody");
+    tbody.innerHTML = "";
 
-function MostrarTicketsPorClientes(data) {
-    const tabla = document.getElementById("todosLosClientesFiltro"); // <tbody> o <table>
-    if (!tabla) {
-        console.warn("No existe #todosLosClientesFiltro en el DOM");
-        return;
-    }
+    clientes.forEach((cliente) => {
+        const rowClientes = document.createElement("tr");
+        rowClientes.innerHTML = `          
+           <td colspan='4' style='text-align: center;' class='text-bold text-light table-info'>${cliente.nombre} - ${cliente.email}</td>          
+        `;
+        tbody.appendChild(rowClientes);
 
-    tabla.innerHTML = ""; // limpiamos
-
-    data.forEach(item => {
-        const fila = document.createElement("tr");
-        let prioridad = item.prioridadString;
-        let clase = '';
-
-        switch (prioridad) {
-            case 'Alta':
-                clase = 'badge badge-outline-danger';
-                break;
-            case "Media":
-                clase = "badge badge-outline-warning";
-                break;
-            case "Baja":
-                clase = "badge badge-outline-success";
-                break;
-            default:
-                clase = "badge badge-outline-secondary"; // por si viene nulo o desconocido
-                break;
-        };
-        fila.innerHTML = `
-                <td>${item.titulo || ''}</td>
-                <td>${item.estadoString || ''}</td>
-                <td><span class="${clase}">${item.prioridadString || ''}</td>
-                <td>${item.fechaCreacionString || ''}</td>
-                <td>${item.categoriaString || ''}</td>
+        cliente.tickets.forEach((item) => {
+            const clasePrioridad = obtenerClasePrioridad(item.prioridadString);
+            const fila = document.createElement("tr");
+            fila.innerHTML = `
+                <td>${item.titulo || ""}</td>
+                <td>${item.estadoString || ""}</td>
+                <td><span class="${clasePrioridad}">${item.prioridadString || ""
+                }</span></td>
+                <td>${item.fechaCreacionString || ""}</td>
             `;
-        tabla.appendChild(fila);
-    })
+            tbody.appendChild(fila);
+        });
+    });
 }
 
-$(document).on("change", "#clientesDropdown", ObtenerTicketsPorClientes);
-
-ObtenerClientesDropdown();
+comboCategorias();

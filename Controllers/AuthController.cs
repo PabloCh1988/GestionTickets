@@ -47,7 +47,7 @@ public class AuthController : ControllerBase
         {
             var roleResult = await _rolManager.CreateAsync(new IdentityRole("ADMINISTRADOR")); //CREAMOS EL ROL SI NO EXISTE
         }
-        
+
         var clienteRolCrearExiste = _context.Roles.Where(r => r.Name == "CLIENTE").SingleOrDefault();
         if (clienteRolCrearExiste == null)
         {
@@ -151,6 +151,10 @@ public class AuthController : ControllerBase
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest model)
     {
+        if (string.IsNullOrEmpty(model.Email))
+        {
+            return BadRequest("El email no puede ser nulo o vacío.");
+        }
         var user = await _userManager.FindByEmailAsync(model.Email);
         if (user == null)
             return Unauthorized("Usuario no encontrado");

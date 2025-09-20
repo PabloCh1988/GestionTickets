@@ -103,8 +103,9 @@ function ejecutarInicializacion(view) {
             }
             break;
         case 'ticketsPorClientes':
-            if (typeof ObtenerClientesDropdown === "function") {
-                ObtenerClientesDropdown();
+            if (typeof getTicketsClientes === "function") {
+                getTicketsClientes();
+                comboCategorias();
             }
             break;
         case 'graficosTickets':
@@ -112,12 +113,16 @@ function ejecutarInicializacion(view) {
                 armarGrafico();
             }
             break;
-        case 'clienteTickets':
+        case 'ticketsPorCategoria':
             if (typeof getTickets === "function") {
                 getTickets();
                 comboCategorias();
             }
             break;
+        case 'ticketsPorDesarrollador':
+            if (typeof getTicketsDesarrollador === "function") {
+                getTicketsDesarrollador();
+            }
     }
 }
 

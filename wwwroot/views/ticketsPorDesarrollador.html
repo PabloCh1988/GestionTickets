@@ -2,7 +2,7 @@
     <div class="col-12 grid-margin">
         <div class="card">
             <div class="card-body">
-                <h2 class="card-title">Tickets por Clientes</h2>
+                <h2 class="card-title">Tickets por Desarrollador</h2>
                 <!-- <div class="grid-margin">
                     <button class="btn-lg btn-inverse-success" data-bs-toggle="modal" onclick="AbrirModalCrearTicket()">
                         <span><i class=" mdi mdi-plus"></i></span> Agregar
@@ -21,7 +21,7 @@
                         <label class="control-label">Hasta</label>
                         <input class="form-control form-control-sm" type="date" id="FechaFinBuscar" />
                     </div>
-                    <div class="col-md-3 mb-2">
+                    <!-- <div class="col-md-3 mb-2">
                         <label class="control-label">Categoría</label>
                         <select class="form-control form-control-sm text-light" id="CategoriaIdBuscar"></select>
                     </div>
@@ -43,19 +43,19 @@
                             <option value="3">Cerrado</option>
                             <option value="4">Cancelado</option>
                         </select>
-                    </div>
+                    </div> -->
                 </div>
 
 
                 <div class="table-responsive">
-                    <table id="tablaTicketsClientes" class="table table-hover">
+                    <table id="tablaTicketsPorDesarrollador" class="table table-hover">
                         <thead>
                             <tr>
 
                                 <th class="text-light">Titulo</th>
                                 <th class="text-light">Estado</th>
-                                <th class="text-light">Prioridad</th>
                                 <th class="text-light">Fecha de Creación</th>
+                                <th class="text-light">Fecha de Cierre</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -67,4 +67,4 @@
     </div>
 </div>
 
-<script src="../js/ticketsPorClientes.js"></script>
+<script src="../js/ticketsPorDesarrollador.js"></script>

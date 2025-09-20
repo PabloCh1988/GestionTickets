@@ -66,14 +66,27 @@
                         <tbody id="todosLosTickets"></tbody>
                     </table>
                 </div>
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-chart-bar me-1"></i>
-                            Tickets por Categorias
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-chart-pie me-1"></i>
+                                Tickets por Categorías
+                            </div>
+                            <div class="card-body" style="height: 48vh;">
+                                <canvas id="grafico-circular"></canvas>
+                            </div>
                         </div>
-                        <div class="card-body" style="height: 48vh;">
-                            <canvas id="grafico-circular"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-chart-bar me-1"></i>
+                                Tickets cerrados últimos 4 meses
+                            </div>
+                            <div class="card-body" style="height: 48vh;">
+                                <canvas id="grafico-barras"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>

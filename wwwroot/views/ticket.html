@@ -25,10 +25,11 @@
             <label class="control-label">Hasta</label>
             <input class="form-control form-control-sm" type="date" id="BuscarFechaFin" />
           </div>
-          
+
           <div class="col-md-3 mb-2">
             <label class="control-label">Categoría</label>
-            <select class="form-control form-control-sm text-light" id="BuscarCategoriaId" onchange="ObtenerTickets()"></select>
+            <select class="form-control form-control-sm text-light" id="BuscarCategoriaId"
+              onchange="ObtenerTickets()"></select>
           </div>
           <div class="col-md-2 mb-2">
             <label class="control-label">Prioridad</label>
@@ -44,8 +45,8 @@
             <select class="form-control form-control-sm text-light" id="EstadoIdBuscar" onchange="ObtenerTickets()">
               <option value="0">[Todos los Estados]</option>
               <option value="1">Abierto</option>
-              <option value="2">En Progreso</option>
-              <option value="3">Cerrado</option>
+              <option value="2">Cerrado</option>
+              <option value="3">En Progreso</option>
               <option value="4">Cancelado</option>
             </select>
           </div>
@@ -94,7 +95,7 @@
                     <option value="Alta">Alta</option>
                   </select>
 
-                  <label for="ticketCategoriaId"  class="form-label">Categoría</label>
+                  <label for="ticketCategoriaId" class="form-label">Categoría</label>
                   <select id="ticketCategoriaId" class="form-control form-select text-light"></select>
 
                   <p id="errorCrear" hidden style="color:red"></p>

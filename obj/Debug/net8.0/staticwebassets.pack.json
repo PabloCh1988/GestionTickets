@@ -3625,10 +3625,6 @@
       "PackagePath": "staticwebassets\\js\\Ticket.js"
     },
     {
-      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\js\\clienteTickets.js",
-      "PackagePath": "staticwebassets\\js\\clienteTickets.js"
-    },
-    {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\js\\common\\ObtenerCategoriasDropdown.js",
       "PackagePath": "staticwebassets\\js\\common\\ObtenerCategoriasDropdown.js"
     },
@@ -3661,8 +3657,16 @@
       "PackagePath": "staticwebassets\\js\\puestoLaboral.js"
     },
     {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\js\\ticketsPorCategoria.js",
+      "PackagePath": "staticwebassets\\js\\ticketsPorCategoria.js"
+    },
+    {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\js\\ticketsPorClientes.js",
       "PackagePath": "staticwebassets\\js\\ticketsPorClientes.js"
+    },
+    {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\js\\ticketsPorDesarrollador.js",
+      "PackagePath": "staticwebassets\\js\\ticketsPorDesarrollador.js"
     },
     {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\lib\\bootstrap\\css\\bootstrap-grid.css",
@@ -3937,10 +3941,6 @@
       "PackagePath": "staticwebassets\\views\\cliente.html"
     },
     {
-      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\views\\clienteTickets.html",
-      "PackagePath": "staticwebassets\\views\\clienteTickets.html"
-    },
-    {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\views\\desarrollador.html",
       "PackagePath": "staticwebassets\\views\\desarrollador.html"
     },
@@ -3961,8 +3961,16 @@
       "PackagePath": "staticwebassets\\views\\ticket.html"
     },
     {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\views\\ticketsPorCategoria.html",
+      "PackagePath": "staticwebassets\\views\\ticketsPorCategoria.html"
+    },
+    {
       "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\views\\ticketsPorClientes.html",
       "PackagePath": "staticwebassets\\views\\ticketsPorClientes.html"
+    },
+    {
+      "Id": "C:\\Users\\pablo\\Desktop\\GestionTickets - Pablo Chavez\\wwwroot\\views\\ticketsPorDesarrollador.html",
+      "PackagePath": "staticwebassets\\views\\ticketsPorDesarrollador.html"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.GestionTickets.Microsoft.AspNetCore.StaticWebAssets.props",

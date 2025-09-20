@@ -41,6 +41,8 @@ public class Ticket
 
     // Relación con la tabla de Categorías
     public virtual Categoria? Categoria { get; set; }
+    public int? DesarrolladorId { get; set; }
+    public virtual Desarrollador? Desarrollador { get; set; }
 
     public virtual ICollection<ComentariosTicket>? Comentarios { get; set; }
 
@@ -58,6 +60,11 @@ public class VistaTickets
 
     public string? PrioridadString { get; set; }
     public string? CategoriaString { get; set; }
+
+    // 👇 Nuevas propiedades condicionales
+    public string? FechaComienzoString { get; set; }
+    public string? FechaCierreString { get; set; }
+
 }
 
 public enum EstadoTicket
@@ -82,13 +89,4 @@ public class FiltroTicket
     public int? Prioridad { get; set; } // 1: Baja, 2: Media, 3: Alta
     public string? FechaInicio { get; set; }
     public string? FechaFin { get; set; }
-}
-
-public class BuscarTicket
-{
-    public int? CategoriaId { get; set; } // Hacerlo nullable para permitir body vacío
-
-    public string? FechaInicio { get; set; }
-    public string? FechaFin { get; set; }
-    public int? ClienteId { get; set; }
 }

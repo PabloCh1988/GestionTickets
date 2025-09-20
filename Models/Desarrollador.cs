@@ -11,4 +11,5 @@ public class Desarrollador
     public bool Eliminado { get; set; }
     public int PuestoLaboralId { get; set; }
     public virtual PuestoLaboral? PuestoLaboral { get; set; }
+    public virtual ICollection<Ticket>? Tickets { get; set; }
 }
